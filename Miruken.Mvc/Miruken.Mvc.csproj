@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Miruken, Version=0.0.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Miruken.0.0.1.1-prerelease\lib\net461\Miruken.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -38,9 +42,39 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="ConcurrencyExtensions.cs" />
+    <Compile Include="Controller.cs" />
+    <Compile Include="ControllerExtensions.cs" />
+    <Compile Include="ControllerPolicy.cs" />
+    <Compile Include="IController.cs" />
+    <Compile Include="IMVC.cs" />
+    <Compile Include="MVCHandler.cs" />
+    <Compile Include="Options\AnimationBuilder.cs" />
+    <Compile Include="Options\AnimationOptions.cs" />
+    <Compile Include="Options\LayerOptions.cs" />
+    <Compile Include="Options\RegionOptions.cs" />
+    <Compile Include="Policy\DefaultPolicy.cs" />
+    <Compile Include="Policy\IPolicy.cs" />
+    <Compile Include="Policy\PromisePolicy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\IView.cs" />
+    <Compile Include="Views\IViewRegion.cs" />
+    <Compile Include="Views\IViewStack.cs" />
+    <Compile Include="Views\PartialExtensions.cs" />
+    <Compile Include="Views\RegionExtensions.cs" />
+    <Compile Include="Views\ViewAdapter.cs" />
+    <Compile Include="Views\ViewExtensions.cs" />
+    <Compile Include="Views\ViewLayerExtensions.cs" />
+    <Compile Include="Views\ViewPolicy.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
