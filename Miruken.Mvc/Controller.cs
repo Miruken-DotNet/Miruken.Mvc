@@ -13,15 +13,15 @@
     {
         private IContext _context;
         private ControllerPolicy _policy;
-        internal MemorizeAction _lastAction;
-        internal MemorizeAction _retryAction;
+        protected internal MemorizeAction _lastAction;
+        protected internal MemorizeAction _retryAction;
         protected bool _disposed;
 
         public delegate ICallbackHandler FilterBuilder(ICallbackHandler handler);
-        internal delegate Promise<IContext> MemorizeAction(ICallbackHandler handler);
+        protected internal delegate Promise<IContext> MemorizeAction(ICallbackHandler handler);
 
         public static FilterBuilder GlobalFilters;
-        internal static ICallbackHandler _io;
+        protected internal static ICallbackHandler _io;
 
         public IContext Context
         {
