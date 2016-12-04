@@ -1,8 +1,8 @@
-﻿namespace Miruken.Mvc.Options
-{
-    using System;
-    using Callback;
+﻿using System;
+using SixFlags.CF.Miruken.Callback;
 
+namespace SixFlags.CF.Miruken.MVC.Options
+{
     public enum AnimationEffect
     {
         None = 0,

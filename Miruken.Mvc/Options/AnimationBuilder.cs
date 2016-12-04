@@ -1,4 +1,4 @@
-﻿namespace Miruken.Mvc.Options
+﻿namespace SixFlags.CF.Miruken.MVC.Options
 {
     public class AnimationBuilder
     {

@@ -1,7 +1,7 @@
-﻿namespace Miruken.Mvc.Policy
-{
-    using System;
+﻿using System;
 
+namespace SixFlags.CF.Miruken.MVC.Policy
+{
     public interface IPolicy : IDisposable
     {
         IPolicy Track();

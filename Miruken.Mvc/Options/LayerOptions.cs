@@ -1,10 +1,10 @@
-﻿namespace Miruken.Mvc.Options
-{
-    using System;
-    using System.Linq;
-    using Callback;
-    using Miruken.Mvc.Views;
+﻿using System;
+using System.Linq;
+using SixFlags.CF.Miruken.Callback;
+using SixFlags.CF.Miruken.MVC.Views;
 
+namespace SixFlags.CF.Miruken.MVC.Options
+{
     public class LayerOptions : CallbackOptions<LayerOptions>
     {
         public bool? Push      { get; set; }

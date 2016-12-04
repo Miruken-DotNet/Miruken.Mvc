@@ -1,8 +1,8 @@
-﻿namespace Miruken.Mvc.Views
-{
-    using System;
-    using Miruken.Mvc.Policy;
+﻿using System;
+using SixFlags.CF.Miruken.MVC.Policy;
 
+namespace SixFlags.CF.Miruken.MVC.Views
+{
     public class ViewPolicy : DefaultPolicy
     {
         private readonly WeakReference _view;

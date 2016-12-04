@@ -1,7 +1,7 @@
-﻿namespace Miruken.Mvc.Options
-{
-    using Callback;
+﻿using SixFlags.CF.Miruken.Callback;
 
+namespace SixFlags.CF.Miruken.MVC.Options
+{
     public class RegionOptions : CallbackOptions<RegionOptions>
     {
         public object           Tag       { get; set; }

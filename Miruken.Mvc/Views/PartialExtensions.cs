@@ -1,8 +1,9 @@
-﻿namespace Miruken.Mvc.Views
-{
-    using System;
-    using Callback;
+﻿using System;
+using SixFlags.CF.Miruken.Callback;
+using SixFlags.CF.Miruken.Context;
 
+namespace SixFlags.CF.Miruken.MVC.Views
+{
     /// <summary>
     /// View adapter thats pushes a new <see cref="C"/>
     /// controller in a new child <see cref="IContext"/>
@@ -33,7 +34,7 @@
         public override IViewLayer Display(IViewRegion region)
         {
             var regionAdapter = new RegionAdapter(region);
-            var context       = new IMVC(new CallbackHandler(regionAdapter)
+            var context       = new INavigate(new CallbackHandler(regionAdapter)
                                     .Chain(_composer))
                                     .Part(_action);
             Layer = regionAdapter.ViewLayer;

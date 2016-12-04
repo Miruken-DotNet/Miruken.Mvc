@@ -1,8 +1,8 @@
-﻿namespace Miruken.Mvc.Views
-{
-    using System;
-    using Miruken.Mvc.Policy;
+﻿using System;
+using SixFlags.CF.Miruken.MVC.Policy;
 
+namespace SixFlags.CF.Miruken.MVC.Views
+{
     public interface IView : IPolicyOwner<ViewPolicy>
     {
         IController Controller { get; set; }
@@ -21,6 +21,8 @@
     {
         event EventHandler Transitioned;
         event EventHandler Disposed;
+
+        int Index { get; }
 
         IDisposable Duration(TimeSpan duration, Action<bool> complete);
     }

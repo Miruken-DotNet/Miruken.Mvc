@@ -1,9 +1,9 @@
-﻿namespace Miruken.Mvc
-{
-    using System;
-    using Miruken.Container;
-    using Miruken.Mvc.Policy;
+﻿using System;
+using SixFlags.CF.Miruken.Container;
+using SixFlags.CF.Miruken.MVC.Policy;
 
+namespace SixFlags.CF.Miruken.MVC
+{
     public class ControllerPolicy : DefaultPolicy
     {
         private readonly WeakReference _controller;

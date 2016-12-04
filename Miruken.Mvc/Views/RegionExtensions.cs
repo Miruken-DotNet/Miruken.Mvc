@@ -1,9 +1,9 @@
-﻿namespace Miruken.Mvc.Views
-{
-    using System;
-    using Callback;
-    using Miruken.Context;
+﻿using System;
+using SixFlags.CF.Miruken.Callback;
+using SixFlags.CF.Miruken.Context;
 
+namespace SixFlags.CF.Miruken.MVC.Views
+{
     abstract class RegionViewAdapter : ViewAdapter
     {
         /// <summary>
@@ -67,10 +67,10 @@
         /// <returns>The layer representing the new controller</returns>
         public override IViewLayer Display(IViewRegion region)
         {
-            var stack = new IMVC(_composer).View<IViewStackView>();
+            var stack = new IViewRegion(_composer).View<IViewStackView>();
             var stackAdapter = new ViewStackAdapter(region, stack);
             // Temporarily install the stack region adapter.
-            new IMVC(new CallbackHandler(stackAdapter).Chain(_composer)).Push<C>(
+            new INavigate(new CallbackHandler(stackAdapter).Chain(_composer)).Push<C>(
                 controller => {
                     stack.Controller = controller;
                     var context = controller.Context;

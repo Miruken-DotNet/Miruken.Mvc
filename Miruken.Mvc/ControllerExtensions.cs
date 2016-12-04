@@ -1,12 +1,12 @@
-﻿namespace Miruken.Mvc
-{
-    using System;
-    using Callback;
-    using Concurrency;
-    using Miruken.Context;
-    using Miruken.Mvc.Policy;
-    using Miruken.Mvc.Views;
+﻿using System;
+using SixFlags.CF.Miruken.Callback;
+using SixFlags.CF.Miruken.Concurrency;
+using SixFlags.CF.Miruken.Context;
+using SixFlags.CF.Miruken.MVC.Policy;
+using SixFlags.CF.Miruken.MVC.Views;
 
+namespace SixFlags.CF.Miruken.MVC
+{
     public static class ControllerExtensions
     {
         public static IController Track(this IController controller)

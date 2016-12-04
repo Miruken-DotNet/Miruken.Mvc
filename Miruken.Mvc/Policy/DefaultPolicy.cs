@@ -1,11 +1,10 @@
-﻿namespace Miruken.Mvc.Policy
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using Miruken.Infrastructure;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
+namespace SixFlags.CF.Miruken.MVC.Policy
+{
     public class DefaultPolicy : DisposableObject, IPolicy
     {
         private Action _onRelease;

@@ -1,7 +1,7 @@
-﻿namespace Miruken.Mvc.Views
-{
-    using System;
+﻿using System;
 
+namespace SixFlags.CF.Miruken.MVC.Views
+{
     public static class ViewLayerExtensions
     {
         public static IDisposable Duration(

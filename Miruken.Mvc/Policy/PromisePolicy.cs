@@ -1,8 +1,8 @@
-﻿namespace Miruken.Mvc.Policy
-{
-    using System;
-    using Concurrency;
+﻿using System;
+using SixFlags.CF.Miruken.Concurrency;
 
+namespace SixFlags.CF.Miruken.MVC.Policy
+{
     public class PromisePolicy : DefaultPolicy
     {
         private readonly WeakReference _promise;

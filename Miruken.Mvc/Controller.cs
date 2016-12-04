@@ -1,27 +1,27 @@
-﻿namespace Miruken.Mvc
-{
-    using System;
-    using System.ComponentModel;
-    using Callback;
-    using Concurrency;
-    using Miruken.Context;
-    using Miruken.Error;
-    using Miruken.Mvc.Views;
+﻿using System;
+using System.ComponentModel;
+using SixFlags.CF.Miruken.Callback;
+using SixFlags.CF.Miruken.Concurrency;
+using SixFlags.CF.Miruken.Context;
+using SixFlags.CF.Miruken.Error;
+using SixFlags.CF.Miruken.MVC.Views;
 
+namespace SixFlags.CF.Miruken.MVC
+{
     public class Controller : CallbackHandler, 
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
     {
         private IContext _context;
         private ControllerPolicy _policy;
-        protected internal MemorizeAction _lastAction;
-        protected internal MemorizeAction _retryAction;
+        internal MemorizeAction _lastAction;
+        internal MemorizeAction _retryAction;
         protected bool _disposed;
 
         public delegate ICallbackHandler FilterBuilder(ICallbackHandler handler);
-        protected internal delegate Promise<IContext> MemorizeAction(ICallbackHandler handler);
+        internal delegate Promise<IContext> MemorizeAction(ICallbackHandler handler);
 
         public static FilterBuilder GlobalFilters;
-        protected internal static ICallbackHandler _io;
+        internal static ICallbackHandler _io;
 
         public IContext Context
         {
@@ -63,9 +63,9 @@
             }
         }
 
-        protected IMVC MVC(ICallbackHandler handler)
+        protected INavigate Navigate(ICallbackHandler handler)
         {
-            return new IMVC(handler.MainThread().Recover());
+            return new INavigate(handler.MainThread().Recover());
         }
 
         protected Promise<IContext> Next<C>(Action<C> action) where C : IController
@@ -76,7 +76,7 @@
         protected Promise<IContext> Next<C>(ICallbackHandler handler, Action<C> action) 
             where C : IController
         {
-            return MVC(handler).Next(action);
+            return Navigate(handler).Next(action);
         }
 
         protected Promise<IContext> Push<C>(Action<C> action) where C : IController
@@ -87,7 +87,7 @@
         protected Promise<IContext> Push<C>(ICallbackHandler handler, Action<C> action) 
             where C : IController
         {
-            return MVC(handler).Push(action);
+            return Navigate(handler).Push(action);
         }
 
         protected Promise<IContext> Part<C>(Action<C> action) where C : IController
@@ -98,7 +98,7 @@
         protected Promise<IContext> Part<C>(ICallbackHandler handler, Action<C> action)
             where C : IController
         {
-            return MVC(handler).Part(action);
+            return Navigate(handler).Part(action);
         }
 
         protected FilterBuilder Filters;

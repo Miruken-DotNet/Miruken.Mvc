@@ -1,71 +1,36 @@
-﻿namespace Miruken.Mvc
-{
-    using System;
-    using System.Linq;
-    using Callback;
-    using Concurrency;
-    using Miruken.Container;
-    using Miruken.Context;
-    using Miruken.Mvc.Options;
-    using Miruken.Mvc.Views;
+﻿using System;
+using SixFlags.CF.Miruken.Callback;
+using SixFlags.CF.Miruken.Concurrency;
+using SixFlags.CF.Miruken.Container;
+using SixFlags.CF.Miruken.Context;
+using SixFlags.CF.Miruken.MVC.Options;
+using SixFlags.CF.Miruken.MVC.Views;
 
-    public class MVCHandler : CompositeCallbackHandler, IMVC
+namespace SixFlags.CF.Miruken.MVC
+{
+    public class NavigateHandler : CompositeCallbackHandler, INavigate
     {
-        public MVCHandler(IViewRegion mainRegion)
+        public NavigateHandler(IViewRegion mainRegion)
         {
             AddHandlers(mainRegion);
         }
 
-        V IMVC.View<V>()
+        Promise<IContext> INavigate.Next<C>(Action<C> action)
         {
-            var composer   = Composer;
-            var controller = ResolveViewController(composer, typeof(V));
-            var container  = new IContainer(composer);
-            var view       = container.Resolve<V>();
-            view.Controller = controller;
-            view.Policy.OnRelease(() => container.Release(view));
-            view.Policy.Track();
-            return view;
+            return ((INavigate)this).Navigate(action, NavigationStyle.Next);
         }
 
-        V IMVC.View<V>(Action<V> init)
+        Promise<IContext> INavigate.Push<C>(Action<C> action)
         {
-            var view = ((IMVC)this).View<V>();
-            if (init != null) init(view);
-            return view;
+            return ((INavigate)this).Navigate(action, NavigationStyle.Push);
         }
 
-        IViewLayer IMVC.ShowView<V>()
+        Promise<IContext> INavigate.Part<C>(Action<C> action)
         {
-            return ObtainAndShow<V>(null);
+            return ((INavigate)this).Navigate(action, NavigationStyle.Part);
         }
 
-        IViewLayer IMVC.ShowView<V>(V view)
-        {
-            return Show(view);
-        }
-
-        IViewLayer IMVC.ShowView<V>(Action<V> init)
-        {
-            return ObtainAndShow(init);
-        }
-
-        Promise<IContext> IMVC.Next<C>(Action<C> action)
-        {
-            return ((IMVC)this).Nav(action, NavigationStyle.Next);
-        }
-
-        Promise<IContext> IMVC.Push<C>(Action<C> action)
-        {
-            return ((IMVC)this).Nav(action, NavigationStyle.Push);
-        }
-
-        Promise<IContext> IMVC.Part<C>(Action<C> action)
-        {
-            return ((IMVC)this).Nav(action, NavigationStyle.Part);
-        }
-
-        Promise<IContext> IMVC.Nav<C>(Action<C> action, NavigationStyle navStyle)
+        Promise<IContext> INavigate.Navigate<C>(Action<C> action, NavigationStyle navStyle)
         {
             var composer = Composer;
             if (action == null || composer == null) return null;
@@ -103,7 +68,7 @@
                     var init = initiator as Controller;
                     if (ctrl != null && init != null)
                     {
-                        ctrl._lastAction  = h => new IMVC(h).Next(action);
+                        ctrl._lastAction  = h => new INavigate(h).Next(action);
                         ctrl._retryAction = init._lastAction;
                     }
                 }
@@ -132,7 +97,7 @@
             return Promise.Resolved(ctx);
         }
 
-        Promise<IContext> IMVC.GoBack()
+        Promise<IContext> INavigate.GoBack()
         {
             var composer = Composer;
             if (composer == null) return null;
@@ -140,34 +105,6 @@
             return (controller != null && controller._retryAction != null)
                  ? controller._retryAction(composer)
                  : null;
-        }
-
-        private IViewLayer ObtainAndShow<V>(Action<V> init)
-            where V : IView
-        {
-            var view = ((IMVC)this).View(init);
-            return Show(view);
-        }
-
-        private static IViewLayer Show(IView view)
-        {
-            return view.Display(new IViewRegion(Composer));
-        }
-
-        private static IController ResolveViewController(
-            ICallbackHandler handler, Type viewType)
-        {
-            var controllerType = viewType.GetInterfaces()
-                .Where(i => i.IsGenericType &&
-                    i.GetGenericTypeDefinition() == typeof(IView<>))
-                .Select(i => i.GetGenericArguments()[0])
-                .FirstOrDefault() ?? typeof(IController);
-            var controller = handler.Resolve(controllerType) as IController;
-            if (controller == null)
-                throw new InvalidOperationException(string.Format(
-                    "Unable to find a compatible controller for {0}",
-                    viewType.Name));
-            return controller;
         }
 
         private static IController ResolveController(IContext context, Type type)

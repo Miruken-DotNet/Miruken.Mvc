@@ -1,4 +1,4 @@
-﻿namespace Miruken.Mvc.Views
+﻿namespace SixFlags.CF.Miruken.MVC.Views
 {
     public static class ViewExtensions
     {
