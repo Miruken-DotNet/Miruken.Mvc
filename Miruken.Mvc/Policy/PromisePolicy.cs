@@ -1,7 +1,7 @@
 ﻿using System;
-using SixFlags.CF.Miruken.Concurrency;
+using Miruken.Concurrency;
 
-namespace SixFlags.CF.Miruken.MVC.Policy
+namespace Miruken.Mvc.Policy
 {
     public class PromisePolicy : DefaultPolicy
     {
@@ -10,15 +10,12 @@ namespace SixFlags.CF.Miruken.MVC.Policy
         public PromisePolicy(Promise promise)
         {
             if (promise == null)
-                throw new ArgumentNullException("promise");
+                throw new ArgumentNullException(nameof(promise));
             _promise = new WeakReference(promise);
             Track();
         }
 
-        public Promise Promise
-        {
-           get { return _promise.Target as Promise; }
-        }
+        public Promise Promise => _promise.Target as Promise;
 
         public PromisePolicy AutoRelease()
         {

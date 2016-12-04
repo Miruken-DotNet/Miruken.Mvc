@@ -1,7 +1,7 @@
 ﻿using System;
-using SixFlags.CF.Miruken.MVC.Policy;
+using Miruken.Mvc.Policy;
 
-namespace SixFlags.CF.Miruken.MVC.Views
+namespace Miruken.Mvc.Views
 {
     public class ViewPolicy : DefaultPolicy
     {
@@ -10,13 +10,10 @@ namespace SixFlags.CF.Miruken.MVC.Views
         public ViewPolicy(IView view)
         {
             if (view == null)
-                throw new ArgumentNullException("view");
+                throw new ArgumentNullException(nameof(view));
             _view = new WeakReference(view);
         }
 
-        public IView View
-        {
-            get { return _view.Target as IView; }
-        }
+        public IView View => _view.Target as IView;
     }
 }

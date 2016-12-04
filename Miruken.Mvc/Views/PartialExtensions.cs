@@ -1,8 +1,9 @@
 ﻿using System;
-using SixFlags.CF.Miruken.Callback;
-using SixFlags.CF.Miruken.Context;
+using Miruken.Callback;
+using Miruken.Context;
+using Miruken.MVC;
 
-namespace SixFlags.CF.Miruken.MVC.Views
+namespace Miruken.Mvc.Views
 {
     /// <summary>
     /// View adapter thats pushes a new <see cref="C"/>
@@ -38,14 +39,18 @@ namespace SixFlags.CF.Miruken.MVC.Views
                                     .Chain(_composer))
                                     .Part(_action);
             Layer = regionAdapter.ViewLayer;
-            EventHandler transitioned = null;
-            transitioned = (s, e) => {
-                var initiator = CallbackHandler.Composer.Resolve<IController>();
-                if (initiator == null || initiator.Context == context) return;
-                context.End();
-                Layer.Transitioned -= transitioned;
-            };
-            Layer.Transitioned += transitioned;
+            context.Then((ctx, _) =>
+            {
+                EventHandler transitioned = null;
+                transitioned = (s, e) =>
+                {
+                    var initiator = CallbackHandler.Composer.Resolve<IController>();
+                    if (initiator == null || initiator.Context == ctx) return;
+                    context.End();
+                    Layer.Transitioned -= transitioned;
+                };
+                Layer.Transitioned += transitioned;
+            });
             Layer.Disposed += (s, e) => context.End();
             return Layer;
         }

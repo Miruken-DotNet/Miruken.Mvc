@@ -1,12 +1,13 @@
 ﻿using System;
-using SixFlags.CF.Miruken.Callback;
-using SixFlags.CF.Miruken.Concurrency;
-using SixFlags.CF.Miruken.Container;
-using SixFlags.CF.Miruken.Context;
-using SixFlags.CF.Miruken.MVC.Options;
-using SixFlags.CF.Miruken.MVC.Views;
+using Miruken.Callback;
+using Miruken.Concurrency;
+using Miruken.Container;
+using Miruken.Context;
+using Miruken.Mvc;
+using Miruken.Mvc.Options;
+using Miruken.Mvc.Views;
 
-namespace SixFlags.CF.Miruken.MVC
+namespace Miruken.MVC
 {
     public class NavigateHandler : CompositeCallbackHandler, INavigate
     {
@@ -99,12 +100,9 @@ namespace SixFlags.CF.Miruken.MVC
 
         Promise<IContext> INavigate.GoBack()
         {
-            var composer = Composer;
-            if (composer == null) return null;
-            var controller = composer.Resolve<Controller>();
-            return (controller != null && controller._retryAction != null)
-                 ? controller._retryAction(composer)
-                 : null;
+            var composer   = Composer;
+            var controller = composer?.Resolve<Controller>();
+            return controller?._retryAction?.Invoke(composer);
         }
 
         private static IController ResolveController(IContext context, Type type)

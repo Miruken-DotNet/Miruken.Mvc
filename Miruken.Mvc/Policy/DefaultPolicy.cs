@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Miruken.Infrastructure;
 
-namespace SixFlags.CF.Miruken.MVC.Policy
+namespace Miruken.Mvc.Policy
 {
     public class DefaultPolicy : DisposableObject, IPolicy
     {
@@ -33,10 +34,7 @@ namespace SixFlags.CF.Miruken.MVC.Policy
 
         public bool IsTracked { get; private set; }
 
-        public IPolicy[] Dependencies
-        {
-            get { return _dependencies.ToArray(); }
-        }
+        public IPolicy[] Dependencies => _dependencies.ToArray();
 
         public bool IsDependency(IPolicy policy)
         {
@@ -52,8 +50,7 @@ namespace SixFlags.CF.Miruken.MVC.Policy
             if (dependency.IsDependency(this))
                 throw new InvalidOperationException("Cyclic dependency detected");
 
-            if (dependency.Parent != null)
-                dependency.Parent.RemoveDependency(dependency);
+            dependency.Parent?.RemoveDependency(dependency);
 
             if (!_dependencies.Contains(dependency))
                 _dependencies.Add(dependency);
@@ -74,8 +71,7 @@ namespace SixFlags.CF.Miruken.MVC.Policy
             if (Interlocked.CompareExchange(ref _releasing, 1, 0) != 0)
                 return;
 
-            if (Parent != null)
-                Parent.RemoveDependency(this);
+            Parent?.RemoveDependency(this);
 
             if (IsTracked)
             {
@@ -83,7 +79,7 @@ namespace SixFlags.CF.Miruken.MVC.Policy
                     dependency.Release();
 
                 var onRelease = _onRelease;
-                if (onRelease != null) onRelease();
+                onRelease?.Invoke();
 
                 Reset();
             }

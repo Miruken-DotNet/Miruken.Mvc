@@ -1,8 +1,9 @@
 ﻿using System;
-using SixFlags.CF.Miruken.Callback;
-using SixFlags.CF.Miruken.Context;
+using Miruken.Callback;
+using Miruken.Context;
+using Miruken.MVC;
 
-namespace SixFlags.CF.Miruken.MVC.Views
+namespace Miruken.Mvc.Views
 {
     abstract class RegionViewAdapter : ViewAdapter
     {

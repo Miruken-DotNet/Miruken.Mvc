@@ -1,8 +1,8 @@
 ﻿using System;
-using SixFlags.CF.Miruken.Container;
-using SixFlags.CF.Miruken.MVC.Policy;
+using Miruken.Container;
+using Miruken.Mvc.Policy;
 
-namespace SixFlags.CF.Miruken.MVC
+namespace Miruken.Mvc
 {
     public class ControllerPolicy : DefaultPolicy
     {
@@ -11,15 +11,12 @@ namespace SixFlags.CF.Miruken.MVC
         public ControllerPolicy(IController controller)
         {
             if (controller == null)
-                throw new ArgumentNullException("controller");
+                throw new ArgumentNullException(nameof(controller));
             _controller = new WeakReference(controller);
             Track();
         }
 
-        public IController Controller
-        {
-           get { return _controller.Target as IController; }
-        }
+        public IController Controller => _controller.Target as IController;
 
         public ControllerPolicy AutoRelease()
         {

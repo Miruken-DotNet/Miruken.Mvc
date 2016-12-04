@@ -1,4 +1,4 @@
-﻿namespace SixFlags.CF.Miruken.MVC.Options
+﻿namespace Miruken.Mvc.Options
 {
     public class AnimationBuilder
     {
@@ -7,7 +7,7 @@
             AnimationOptions = new AnimationOptions();
         }
 
-        public AnimationOptions AnimationOptions { get; private set; }
+        public AnimationOptions AnimationOptions { get; }
 
         public AnimationBuilder Duration(double duration)
         {
@@ -21,25 +21,13 @@
             return this;
         }
 
-        public DirectionBuilder Push
-        {
-            get { return new PushMoveBuilder(true, this); }
-        }
+        public DirectionBuilder Push => new PushMoveBuilder(true, this);
 
-        public DirectionBuilder Move
-        {
-            get { return new PushMoveBuilder(false, this); }
-        }
+        public DirectionBuilder Move => new PushMoveBuilder(false, this);
 
-        public DirectionBuilder Cover
-        {
-            get { return new CoverUncoverBuilder(true, this); }
-        }
+        public DirectionBuilder Cover => new CoverUncoverBuilder(true, this);
 
-        public DirectionBuilder Uncover
-        {
-            get { return new CoverUncoverBuilder(false, this); }
-        }
+        public DirectionBuilder Uncover => new CoverUncoverBuilder(false, this);
 
         public AnimationBuilder AlphaBlend()
         {

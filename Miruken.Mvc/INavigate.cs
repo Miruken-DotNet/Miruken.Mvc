@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using SixFlags.CF.Miruken.Callback;
-using SixFlags.CF.Miruken.Concurrency;
-using SixFlags.CF.Miruken.Context;
+using Miruken.Callback;
+using Miruken.Concurrency;
+using Miruken.Context;
+using Miruken.Mvc;
 
-namespace SixFlags.CF.Miruken.MVC
+namespace Miruken.MVC
 {
     public enum NavigationStyle
     {

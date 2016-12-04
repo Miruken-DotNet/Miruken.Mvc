@@ -1,59 +1,55 @@
-﻿using System;
-using SixFlags.CF.Miruken.Callback;
-using SixFlags.CF.Miruken.Concurrency;
-using SixFlags.CF.Miruken.Context;
-using SixFlags.CF.Miruken.MVC.Policy;
-using SixFlags.CF.Miruken.MVC.Views;
+﻿using Miruken.Callback;
+using Miruken.Concurrency;
+using Miruken.Context;
+using Miruken.Mvc.Policy;
+using Miruken.Mvc.Views;
 
-namespace SixFlags.CF.Miruken.MVC
+namespace Miruken.Mvc
 {
     public static class ControllerExtensions
     {
         public static IController Track(this IController controller)
         {
-            if (controller != null && controller.Policy != null)
-                controller.Policy.Track();
+            controller?.Policy?.Track();
             return controller;
         }
 
         public static IController Retain(this IController controller)
         {
-            if (controller != null && controller.Policy != null)
-                controller.Policy.Retain();
+            controller?.Policy?.Retain();
             return controller;
         }
 
         public static IController Release(this IController controller)
         {
-            if (controller != null && controller.Policy != null)
-                controller.Policy.Release();
+            controller?.Policy?.Release();
             return controller;
         }
 
         public static IController DependsOn(this IController controller, IView dependency)
         {
-            if (controller != null && controller.Policy != null && dependency != null)
+            if (controller?.Policy != null && dependency != null)
                 controller.Policy.AddDependency(dependency.Policy);
             return controller;
         }
 
         public static IController DoestNotDependOn(this IController controller, IView dependency)
         {
-            if (controller != null && controller.Policy != null && dependency != null)
+            if (controller?.Policy != null && dependency != null)
                 controller.Policy.RemoveDependency(dependency.Policy);
             return controller;
         }
 
         public static IController DependsOn(this IController controller, IController dependency)
         {
-            if (controller != null && controller.Policy != null && dependency != null)
+            if (controller?.Policy != null && dependency != null)
                 controller.Policy.AddDependency(dependency.Policy);
             return controller;
         }
 
         public static bool DoesDependOn(this IController controller, IView dependency)
         {
-            if (controller != null && controller.Policy != null && dependency != null)
+            if (controller?.Policy != null && dependency != null)
                 return controller.Policy.IsDependency(dependency.Policy);
             return false;
         }
@@ -77,20 +73,17 @@ namespace SixFlags.CF.Miruken.MVC
         {
             if (parentPolicy == null) return handler;
             return handler.Filter((callback, composer, proceed) => {
-                var handled = ((Func<bool>) proceed)();
+                var handled = proceed();
                 if (handled)
                 {
                   var cb = callback as ICallback;
-                  if (cb != null)
-                  {
-                      var promise = cb.Result as Promise;
-                      if (promise != null)
-                      {
-                          var dependency = new PromisePolicy(promise).AutoRelease();
-                          parentPolicy.AddDependency(dependency);
-                          promise.Finally(() => parentPolicy.RemoveDependency(dependency));
-                      }
-                  }
+                    var promise = cb?.Result as Promise;
+                    if (promise != null)
+                    {
+                        var dependency = new PromisePolicy(promise).AutoRelease();
+                        parentPolicy.AddDependency(dependency);
+                        promise.Finally(() => parentPolicy.RemoveDependency(dependency));
+                    }
                 }
                 return handled;
            });

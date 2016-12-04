@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using SixFlags.CF.Miruken.Callback;
-using SixFlags.CF.Miruken.MVC.Views;
+using Miruken.Callback;
+using Miruken.Mvc.Views;
 
-namespace SixFlags.CF.Miruken.MVC.Options
+namespace Miruken.Mvc.Options
 {
     public class LayerOptions : CallbackOptions<LayerOptions>
     {
@@ -19,7 +19,7 @@ namespace SixFlags.CF.Miruken.MVC.Options
  
         public IViewLayer Choose(IViewLayer[] layers)
         {
-            return Selector != null ? Selector(layers) : null;
+            return Selector?.Invoke(layers);
         }
 
         public override void MergeInto(LayerOptions other)

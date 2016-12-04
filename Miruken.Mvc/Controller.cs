@@ -1,12 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
-using SixFlags.CF.Miruken.Callback;
-using SixFlags.CF.Miruken.Concurrency;
-using SixFlags.CF.Miruken.Context;
-using SixFlags.CF.Miruken.Error;
-using SixFlags.CF.Miruken.MVC.Views;
+using Miruken.Callback;
+using Miruken.Concurrency;
+using Miruken.Context;
+using Miruken.Mvc.Views;
 
-namespace SixFlags.CF.Miruken.MVC
+namespace Miruken.Mvc
 {
     public class Controller : CallbackHandler, 
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
@@ -28,16 +27,10 @@ namespace SixFlags.CF.Miruken.MVC
             get { return _context; }
             set
             {
-                if (_context == value)
-                    return;
-
-                if (_context != null)
-                    _context.RemoveHandlers(this);
-
+                if (_context == value) return;
+                _context?.RemoveHandlers(this);
                 _context = value;
-
-                if (_context != null)
-                    _context.InsertHandlers(0, this);
+                _context?.InsertHandlers(0, this);
             }
         }
 
@@ -63,44 +56,6 @@ namespace SixFlags.CF.Miruken.MVC
             }
         }
 
-        protected INavigate Navigate(ICallbackHandler handler)
-        {
-            return new INavigate(handler.MainThread().Recover());
-        }
-
-        protected Promise<IContext> Next<C>(Action<C> action) where C : IController
-        {
-            return Next(IO, action);
-        }
-
-        protected Promise<IContext> Next<C>(ICallbackHandler handler, Action<C> action) 
-            where C : IController
-        {
-            return Navigate(handler).Next(action);
-        }
-
-        protected Promise<IContext> Push<C>(Action<C> action) where C : IController
-        {
-            return Push(IO, action);
-        }
-
-        protected Promise<IContext> Push<C>(ICallbackHandler handler, Action<C> action) 
-            where C : IController
-        {
-            return Navigate(handler).Push(action);
-        }
-
-        protected Promise<IContext> Part<C>(Action<C> action) where C : IController
-        {
-            return Part(IO, action);
-        }
-
-        protected Promise<IContext> Part<C>(ICallbackHandler handler, Action<C> action)
-            where C : IController
-        {
-            return Navigate(handler).Part(action);
-        }
-
         protected FilterBuilder Filters;
 
         protected IContext AddRegion(IViewRegion region)
@@ -111,8 +66,7 @@ namespace SixFlags.CF.Miruken.MVC
         protected void EndContext()
         {
             var context = Context;
-            if (context != null)
-                context.End();    
+            context?.End();
         }
 
         protected void EndCallingContext()
@@ -154,18 +108,14 @@ namespace SixFlags.CF.Miruken.MVC
         protected virtual void OnPropertyChanged(string propertyName)
         {
             var handler = PropertyChanged;
-            if (handler != null) 
-                handler(this, new PropertyChangedEventArgs(propertyName));
+            handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion
 
         #region IDisposable
 
-        protected bool IsDisposed
-        {
-            get { return _disposed; }
-        }
+        protected bool IsDisposed => _disposed;
 
         public void Dispose()
         {

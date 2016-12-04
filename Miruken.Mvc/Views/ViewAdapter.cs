@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SixFlags.CF.Miruken.MVC.Views
+namespace Miruken.Mvc.Views
 {
     public abstract class ViewAdapter : IView
     {
@@ -25,7 +25,7 @@ namespace SixFlags.CF.Miruken.MVC.Views
             Inner = inner;
         }
 
-        public IViewRegion Inner     { get; private set; }
+        public IViewRegion Inner     { get; }
 
         public IViewLayer  ViewLayer { get; private set; }
 

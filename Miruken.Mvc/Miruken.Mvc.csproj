@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Miruken, Version=0.0.1.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Miruken.0.0.1.1-prerelease\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=0.0.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Miruken.0.0.1.6-prerelease\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -48,13 +48,12 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ConcurrencyExtensions.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="ControllerExtensions.cs" />
     <Compile Include="ControllerPolicy.cs" />
     <Compile Include="IController.cs" />
-    <Compile Include="IMVC.cs" />
-    <Compile Include="MVCHandler.cs" />
+    <Compile Include="INavigate.cs" />
+    <Compile Include="NavigateHandler.cs" />
     <Compile Include="Options\AnimationBuilder.cs" />
     <Compile Include="Options\AnimationOptions.cs" />
     <Compile Include="Options\LayerOptions.cs" />

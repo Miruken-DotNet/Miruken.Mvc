@@ -1,7 +1,7 @@
 ﻿using System;
-using SixFlags.CF.Miruken.Callback;
+using Miruken.Callback;
 
-namespace SixFlags.CF.Miruken.MVC.Options
+namespace Miruken.Mvc.Options
 {
     public enum AnimationEffect
     {

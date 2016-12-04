@@ -1,7 +1,7 @@
 ﻿using System;
-using SixFlags.CF.Miruken.MVC.Policy;
+using Miruken.Mvc.Policy;
 
-namespace SixFlags.CF.Miruken.MVC.Views
+namespace Miruken.Mvc.Views
 {
     public interface IView : IPolicyOwner<ViewPolicy>
     {

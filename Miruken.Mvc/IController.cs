@@ -1,7 +1,7 @@
-﻿using SixFlags.CF.Miruken.Context;
-using SixFlags.CF.Miruken.MVC.Policy;
+﻿using Miruken.Context;
+using Miruken.Mvc.Policy;
 
-namespace SixFlags.CF.Miruken.MVC
+namespace Miruken.Mvc
 {
     public interface IController : IContextual, IPolicyOwner<ControllerPolicy>
     {

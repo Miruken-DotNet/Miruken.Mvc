@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SixFlags.CF.Miruken.MVC.Policy
+namespace Miruken.Mvc.Policy
 {
     public interface IPolicy : IDisposable
     {
@@ -25,7 +25,7 @@ namespace SixFlags.CF.Miruken.MVC.Policy
         void Release();
     }
 
-    public interface IPolicyOwner<P> where P : IPolicy
+    public interface IPolicyOwner<out P> where P : IPolicy
     {
         P Policy { get; }
     }
