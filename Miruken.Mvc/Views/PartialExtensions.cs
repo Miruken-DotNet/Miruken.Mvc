@@ -50,8 +50,8 @@ namespace Miruken.Mvc.Views
                     Layer.Transitioned -= transitioned;
                 };
                 Layer.Transitioned += transitioned;
+                Layer.Disposed += (s, e) => ctx.End();
             });
-            Layer.Disposed += (s, e) => context.End();
             return Layer;
         }
     }

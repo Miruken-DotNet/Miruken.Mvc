@@ -3,7 +3,9 @@ using System.ComponentModel;
 using Miruken.Callback;
 using Miruken.Concurrency;
 using Miruken.Context;
+using Miruken.Error;
 using Miruken.Mvc.Views;
+using Miruken.MVC;
 
 namespace Miruken.Mvc
 {
@@ -54,6 +56,44 @@ namespace Miruken.Mvc
                     io = globalFilters(io);
                 return io;
             }
+        }
+
+        protected INavigate Navigate(ICallbackHandler handler)
+        {
+            return new INavigate(handler.Recover());
+        }
+
+        protected Promise<IContext> Next<C>(Action<C> action) where C : IController
+        {
+            return Next(IO, action);
+        }
+
+        protected Promise<IContext> Next<C>(ICallbackHandler handler, Action<C> action)
+            where C : IController
+        {
+            return Navigate(handler).Next(action);
+        }
+
+        protected Promise<IContext> Push<C>(Action<C> action) where C : IController
+        {
+            return Push(IO, action);
+        }
+
+        protected Promise<IContext> Push<C>(ICallbackHandler handler, Action<C> action)
+            where C : IController
+        {
+            return Navigate(handler).Push(action);
+        }
+
+        protected Promise<IContext> Part<C>(Action<C> action) where C : IController
+        {
+            return Part(IO, action);
+        }
+
+        protected Promise<IContext> Part<C>(ICallbackHandler handler, Action<C> action)
+            where C : IController
+        {
+            return Navigate(handler).Part(action);
         }
 
         protected FilterBuilder Filters;
