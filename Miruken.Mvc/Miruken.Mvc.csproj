@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Miruken, Version=0.0.1.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Miruken.0.0.1.7-prerelease\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=0.0.1.8, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Miruken.0.0.1.8-prerelease\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -73,6 +73,9 @@
     <Compile Include="Views\ViewPolicy.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Miruken.Mvc.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
