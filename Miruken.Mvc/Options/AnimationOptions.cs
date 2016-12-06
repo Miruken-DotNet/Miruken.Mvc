@@ -86,11 +86,11 @@ namespace Miruken.Mvc.Options
 
     public static class AnimationOptionsExtensions
     {
-        public static ICallbackHandler Animate(
-            this ICallbackHandler handler, AnimationEffect effect)
+        public static IHandler Animate(
+            this IHandler handler, AnimationEffect effect)
         {
             return handler == null ? null
-                 : new CallbackOptionsHandler<RegionOptions>(handler,
+                 : new OptionsHandler<RegionOptions>(handler,
                    new RegionOptions {
                        Animation = new AnimationOptions {
                            Effect = effect
@@ -98,11 +98,11 @@ namespace Miruken.Mvc.Options
                    });
         }
 
-        public static ICallbackHandler Animate(
-            this ICallbackHandler handler, AnimationEffect effect, double duration)
+        public static IHandler Animate(
+            this IHandler handler, AnimationEffect effect, double duration)
         {
             return handler == null ? null
-                 : new CallbackOptionsHandler<RegionOptions>(handler, 
+                 : new OptionsHandler<RegionOptions>(handler, 
                      new RegionOptions {
                          Animation = new AnimationOptions {
                              Effect   = effect,
@@ -111,14 +111,14 @@ namespace Miruken.Mvc.Options
                      });
         }
 
-        public static ICallbackHandler Animate(
-             this ICallbackHandler handler, Action<AnimationBuilder> build)
+        public static IHandler Animate(
+             this IHandler handler, Action<AnimationBuilder> build)
         {
             if (handler == null || build == null) 
                 return handler;
             var builder = new AnimationBuilder();
             build(builder);
-            return new CallbackOptionsHandler<RegionOptions>(handler,
+            return new OptionsHandler<RegionOptions>(handler,
                 new RegionOptions {
                     Animation = builder.AnimationOptions
                 });

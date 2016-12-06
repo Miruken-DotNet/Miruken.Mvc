@@ -43,48 +43,48 @@ namespace Miruken.Mvc.Options
 
     public static class LayerOptionsExtensions
     {
-        public static ICallbackHandler PushLayer(this ICallbackHandler handler)
+        public static IHandler PushLayer(this IHandler handler)
         {
             return handler == null ? null
-                 : new CallbackOptionsHandler<RegionOptions>(handler,
+                 : new OptionsHandler<RegionOptions>(handler,
                      new RegionOptions {
                         Layer = new LayerOptions { Push = true }
                      });
         }
 
-        public static ICallbackHandler Overlay(this ICallbackHandler handler)
+        public static IHandler Overlay(this IHandler handler)
         {
             return handler == null ? null
-                 : new CallbackOptionsHandler<RegionOptions>(handler,
+                 : new OptionsHandler<RegionOptions>(handler,
                      new RegionOptions
                      {
                          Layer = new LayerOptions { Overlay = true }
                      });
         }
 
-        public static ICallbackHandler UnloadRegion(this ICallbackHandler handler)
+        public static IHandler UnloadRegion(this IHandler handler)
         {
             return handler == null ? null
-                 : new CallbackOptionsHandler<RegionOptions>(handler,
+                 : new OptionsHandler<RegionOptions>(handler,
                      new RegionOptions {
                         Layer = new LayerOptions { Unload = true }
                      });
         }
 
-        public static ICallbackHandler DisplayImmediate(this ICallbackHandler handler)
+        public static IHandler DisplayImmediate(this IHandler handler)
         {
             return handler == null ? null
-                 : new CallbackOptionsHandler<RegionOptions>(handler,
+                 : new OptionsHandler<RegionOptions>(handler,
                      new RegionOptions
                      {
                          Layer = new LayerOptions { Immediate = true }
                      });
         }
 
-        public static ICallbackHandler Layer(this ICallbackHandler handler, IViewLayer layer)
+        public static IHandler Layer(this IHandler handler, IViewLayer layer)
         {
             return handler == null ? null
-                 : new CallbackOptionsHandler<RegionOptions>(handler, 
+                 : new OptionsHandler<RegionOptions>(handler, 
                      new RegionOptions {
                          Layer = new LayerOptions {
                             Selector = layers => {
@@ -96,10 +96,10 @@ namespace Miruken.Mvc.Options
                      });
         }
 
-        public static ICallbackHandler Layer(this ICallbackHandler handler, int offset)
+        public static IHandler Layer(this IHandler handler, int offset)
         {
             return handler == null ? null
-                 : new CallbackOptionsHandler<RegionOptions>(handler,
+                 : new OptionsHandler<RegionOptions>(handler,
                      new RegionOptions {
                         Layer = new LayerOptions {
                             Selector = layers => {

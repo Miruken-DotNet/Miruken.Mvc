@@ -9,7 +9,7 @@ using Miruken.MVC;
 
 namespace Miruken.Mvc
 {
-    public class Controller : CallbackHandler, 
+    public class Controller : Handler, 
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
     {
         private IContext _context;
@@ -18,11 +18,11 @@ namespace Miruken.Mvc
         internal MemorizeAction _retryAction;
         protected bool _disposed;
 
-        public delegate ICallbackHandler FilterBuilder(ICallbackHandler handler);
-        internal delegate Promise<IContext> MemorizeAction(ICallbackHandler handler);
+        public delegate IHandler FilterBuilder(IHandler handler);
+        internal delegate Promise<IContext> MemorizeAction(IHandler handler);
 
         public static FilterBuilder GlobalFilters;
-        internal static ICallbackHandler _io;
+        internal static IHandler _io;
 
         public IContext Context
         {
@@ -42,7 +42,7 @@ namespace Miruken.Mvc
             set { _policy = value; }
         }
 
-        protected ICallbackHandler IO
+        protected IHandler IO
         {
             get
             {
@@ -58,7 +58,7 @@ namespace Miruken.Mvc
             }
         }
 
-        protected INavigate Navigate(ICallbackHandler handler)
+        protected INavigate Navigate(IHandler handler)
         {
             return new INavigate(handler.Recover());
         }
@@ -68,7 +68,7 @@ namespace Miruken.Mvc
             return Next(IO, action);
         }
 
-        protected Promise<IContext> Next<C>(ICallbackHandler handler, Action<C> action)
+        protected Promise<IContext> Next<C>(IHandler handler, Action<C> action)
             where C : IController
         {
             return Navigate(handler).Next(action);
@@ -79,7 +79,7 @@ namespace Miruken.Mvc
             return Push(IO, action);
         }
 
-        protected Promise<IContext> Push<C>(ICallbackHandler handler, Action<C> action)
+        protected Promise<IContext> Push<C>(IHandler handler, Action<C> action)
             where C : IController
         {
             return Navigate(handler).Push(action);
@@ -90,7 +90,7 @@ namespace Miruken.Mvc
             return Part(IO, action);
         }
 
-        protected Promise<IContext> Part<C>(ICallbackHandler handler, Action<C> action)
+        protected Promise<IContext> Part<C>(IHandler handler, Action<C> action)
             where C : IController
         {
             return Navigate(handler).Part(action);

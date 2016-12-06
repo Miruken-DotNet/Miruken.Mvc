@@ -54,22 +54,22 @@ namespace Miruken.Mvc
             return false;
         }
 
-        public static ICallbackHandler PublishFromRoot(this ICallbackHandler handler)
+        public static IHandler PublishFromRoot(this IHandler handler)
         {
             var context = handler.Resolve<IContext>();
             return context != null ? context.Root.Publish() : handler;
         }
 
-        public static ICallbackHandler TrackPromise<P>(
-            this ICallbackHandler handler, IPolicyOwner<P> policyOwner)
+        public static IHandler TrackPromise<P>(
+            this IHandler handler, IPolicyOwner<P> policyOwner)
             where P : IPolicy
         {
             return policyOwner == null ? handler
                  : TrackPromise(handler, policyOwner.Policy);
         }
 
-        public static ICallbackHandler TrackPromise(
-            this ICallbackHandler handler, IPolicy parentPolicy)
+        public static IHandler TrackPromise(
+            this IHandler handler, IPolicy parentPolicy)
         {
             if (parentPolicy == null) return handler;
             return handler.Filter((callback, composer, proceed) => {

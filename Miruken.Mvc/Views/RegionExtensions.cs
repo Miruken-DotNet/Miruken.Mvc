@@ -50,9 +50,9 @@ namespace Miruken.Mvc.Views
     class RegionView<C> : RegionViewAdapter where C : IController
     {
         private readonly Action<C> _action;
-        private readonly ICallbackHandler _composer;
+        private readonly IHandler _composer;
 
-        public RegionView(Action<C> action, ICallbackHandler composer)
+        public RegionView(Action<C> action, IHandler composer)
         {
             _action   = action;
             _composer = composer;
@@ -71,7 +71,7 @@ namespace Miruken.Mvc.Views
             var stack = new IViewRegion(_composer).View<IViewStackView>();
             var stackAdapter = new ViewStackAdapter(region, stack);
             // Temporarily install the stack region adapter.
-            new INavigate(new CallbackHandler(stackAdapter).Chain(_composer)).Push<C>(
+            new INavigate(new Handler(stackAdapter).Chain(_composer)).Push<C>(
                 controller => {
                     stack.Controller = controller;
                     var context = controller.Context;
@@ -85,7 +85,7 @@ namespace Miruken.Mvc.Views
 
     public static class RegionExtensions
     {
-        public static IView Region<C>(this ICallbackHandler handler,
+        public static IView Region<C>(this IHandler handler,
             Action<C> action) where C : IController
         {
             return new RegionView<C>(action, handler);

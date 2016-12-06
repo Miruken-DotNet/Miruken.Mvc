@@ -9,7 +9,7 @@ using Miruken.Mvc.Views;
 
 namespace Miruken.MVC
 {
-    public class NavigateHandler : CompositeCallbackHandler, INavigate
+    public class NavigateHandler : CompositeHandler, INavigate
     {
         public NavigateHandler(IViewRegion mainRegion)
         {

@@ -14,9 +14,9 @@ namespace Miruken.Mvc.Views
     public class PartialView<C> : ViewAdapter where C : IController
     {
         private readonly Action<C> _action;
-        private readonly ICallbackHandler _composer;
+        private readonly IHandler _composer;
 
-        public PartialView(Action<C> action, ICallbackHandler composer)
+        public PartialView(Action<C> action, IHandler composer)
         {
             _action   = action;
             _composer = composer;
@@ -35,7 +35,7 @@ namespace Miruken.Mvc.Views
         public override IViewLayer Display(IViewRegion region)
         {
             var regionAdapter = new RegionAdapter(region);
-            var context       = new INavigate(new CallbackHandler(regionAdapter)
+            var context       = new INavigate(new Handler(regionAdapter)
                                     .Chain(_composer))
                                     .Part(_action);
             Layer = regionAdapter.ViewLayer;
@@ -44,7 +44,7 @@ namespace Miruken.Mvc.Views
                 EventHandler transitioned = null;
                 transitioned = (s, e) =>
                 {
-                    var initiator = CallbackHandler.Composer.Resolve<IController>();
+                    var initiator = Handler.Composer.Resolve<IController>();
                     if (initiator == null || initiator.Context == ctx) return;
                     context.End();
                     Layer.Transitioned -= transitioned;
@@ -58,7 +58,7 @@ namespace Miruken.Mvc.Views
 
     public static class PartialExtensions
     {
-        public static IView Partial<C>(this ICallbackHandler handler,
+        public static IView Partial<C>(this IHandler handler,
             Action<C> action) where C : IController
         {
             return new PartialView<C>(action, handler);
