@@ -1,6 +1,7 @@
 ﻿using System;
 using Miruken.Container;
 using Miruken.Mvc.Policy;
+using static Miruken.Protocol;
 
 namespace Miruken.Mvc
 {
@@ -26,7 +27,7 @@ namespace Miruken.Mvc
                 if (controller == null) return;
                 var context = controller.Context;
                 if (context != null)
-                    new IContainer(context).Release(controller);
+                    P<IContainer>(context).Release(controller);
             });
             return this;
         }

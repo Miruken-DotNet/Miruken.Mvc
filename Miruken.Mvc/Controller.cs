@@ -6,6 +6,7 @@ using Miruken.Context;
 using Miruken.Error;
 using Miruken.Mvc.Views;
 using Miruken.MVC;
+using static Miruken.Protocol;
 
 namespace Miruken.Mvc
 {
@@ -60,7 +61,7 @@ namespace Miruken.Mvc
 
         protected INavigate Navigate(IHandler handler)
         {
-            return new INavigate(handler.Recover());
+            return P<INavigate>(handler.Recover());
         }
 
         protected Promise<IContext> Next<C>(Action<C> action) where C : IController

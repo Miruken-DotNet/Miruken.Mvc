@@ -2,6 +2,7 @@
 using Miruken.Callback;
 using Miruken.Context;
 using Miruken.MVC;
+using static Miruken.Protocol;
 
 namespace Miruken.Mvc.Views
 {
@@ -68,10 +69,10 @@ namespace Miruken.Mvc.Views
         /// <returns>The layer representing the new controller</returns>
         public override IViewLayer Display(IViewRegion region)
         {
-            var stack = new IViewRegion(_composer).View<IViewStackView>();
+            var stack = P<IViewRegion>(_composer).View<IViewStackView>();
             var stackAdapter = new ViewStackAdapter(region, stack);
             // Temporarily install the stack region adapter.
-            new INavigate(new Handler(stackAdapter).Chain(_composer)).Push<C>(
+            P<INavigate>(new Handler(stackAdapter).Chain(_composer)).Push<C>(
                 controller => {
                     stack.Controller = controller;
                     var context = controller.Context;

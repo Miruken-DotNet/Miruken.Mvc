@@ -2,6 +2,7 @@
 using Miruken.Callback;
 using Miruken.Context;
 using Miruken.MVC;
+using static Miruken.Protocol;
 
 namespace Miruken.Mvc.Views
 {
@@ -35,7 +36,7 @@ namespace Miruken.Mvc.Views
         public override IViewLayer Display(IViewRegion region)
         {
             var regionAdapter = new RegionAdapter(region);
-            var context       = new INavigate(new Handler(regionAdapter)
+            var context       = P<INavigate>(new Handler(regionAdapter)
                                     .Chain(_composer))
                                     .Part(_action);
             Layer = regionAdapter.ViewLayer;

@@ -6,6 +6,7 @@ using Miruken.Context;
 using Miruken.Mvc;
 using Miruken.Mvc.Options;
 using Miruken.Mvc.Views;
+using static Miruken.Protocol;
 
 namespace Miruken.MVC
 {
@@ -69,7 +70,7 @@ namespace Miruken.MVC
                     var init = initiator as Controller;
                     if (ctrl != null && init != null)
                     {
-                        ctrl._lastAction  = h => new INavigate(h).Next(action);
+                        ctrl._lastAction  = h => P<INavigate>(h).Next(action);
                         ctrl._retryAction = init._lastAction;
                     }
                 }
@@ -107,7 +108,7 @@ namespace Miruken.MVC
 
         private static IController ResolveController(IContext context, Type type)
         {
-            var controller = (IController)new IContainer(context).Resolve(type);
+            var controller = (IController)P<IContainer>(context).Resolve(type);
             context.ContextEnded += _ => controller.Release();
             controller.Policy.AutoRelease();
             controller.Context = context;
