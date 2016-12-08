@@ -31,11 +31,16 @@ namespace Miruken.Mvc
             set
             {
                 if (_context == value) return;
+                ContextChanging?.Invoke(_context, value);
                 _context?.RemoveHandlers(this);
                 _context = value;
                 _context?.InsertHandlers(0, this);
+                ContextChanged?.Invoke(_context, value);
             }
         }
+
+        public event ContextDelegate<IContext> ContextChanging;
+        public event ContextDelegate<IContext> ContextChanged;
 
         public ControllerPolicy Policy
         {
@@ -148,8 +153,7 @@ namespace Miruken.Mvc
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            var handler = PropertyChanged;
-            handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion
