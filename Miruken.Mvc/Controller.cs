@@ -31,17 +31,18 @@ namespace Miruken.Mvc
             set
             {
                 if (_context == value) return;
-                ContextChanging?.Invoke(this, _context, value);
+                var newContext = value;
+                ContextChanging?.Invoke(this, _context, ref newContext);
                 _context?.RemoveHandlers(this);
                 var oldContext = _context;
-                _context = value;
+                _context = newContext;
                 _context?.InsertHandlers(0, this);
                 ContextChanged?.Invoke(this, oldContext, _context);
             }
         }
 
-        public event ContextDelegate<IContext> ContextChanging;
-        public event ContextDelegate<IContext> ContextChanged;
+        public event ContextChangingDelegate<IContext> ContextChanging;
+        public event ContextChangedDelegate<IContext> ContextChanged;
 
         public ControllerPolicy Policy
         {
