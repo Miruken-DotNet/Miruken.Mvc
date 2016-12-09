@@ -5,16 +5,9 @@ namespace Miruken.Mvc.Views
 {
     public interface IView : IPolicyOwner<ViewPolicy>
     {
-        IController Controller { get; set; }
+        IViewLayer Layer { get; }
 
-        IViewLayer  Layer      { get; }
-
-        IViewLayer  Display(IViewRegion region);
-    }
-
-    public interface IView<T> : IView where T : IController
-    {
-        new T Controller { get; set; }
+        IViewLayer Display(IViewRegion region);
     }
 
     public interface IViewLayer : IDisposable

@@ -74,7 +74,6 @@ namespace Miruken.Mvc.Views
             // Temporarily install the stack region adapter.
             P<INavigate>(new Handler(stackAdapter).Chain(_composer)).Push<C>(
                 controller => {
-                    stack.Controller = controller;
                     var context = controller.Context;
                     context.AddHandlers(stack);
                     _action(controller);
