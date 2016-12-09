@@ -10,9 +10,10 @@ using static Miruken.Protocol;
 
 namespace Miruken.Mvc
 {
-    public class Controller : Contextual, 
+    public class Controller : Handler, 
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
     {
+        private IContext _context;
         private ControllerPolicy _policy;
         internal MemorizeAction _lastAction;
         internal MemorizeAction _retryAction;
@@ -23,6 +24,25 @@ namespace Miruken.Mvc
 
         public static FilterBuilder GlobalFilters;
         internal static IHandler _io;
+
+        public IContext Context
+        {
+            get { return _context; }
+            set
+            {
+                if (_context == value) return;
+                var newContext = value;
+                ContextChanging?.Invoke(this, _context, ref newContext);
+                _context?.RemoveHandlers(this);
+                var oldContext = _context;
+                _context = newContext;
+                _context?.InsertHandlers(0, this);
+                ContextChanged?.Invoke(this, oldContext, _context);
+            }
+        }
+
+        public event ContextChangingDelegate<IContext> ContextChanging;
+        public event ContextChangedDelegate<IContext> ContextChanged;
 
         public ControllerPolicy Policy
         {
@@ -99,7 +119,7 @@ namespace Miruken.Mvc
 
         protected void EndCallingContext()
         {
-            var context = HandleMethod.Composer?.Resolve<IContext>();
+            var context = Composer.Resolve<IContext>();
             if ((context != null) && (context != Context))
                 context.End();
         }
