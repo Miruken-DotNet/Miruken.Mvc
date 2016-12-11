@@ -1,12 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using Miruken.Callback;
-using Miruken.Concurrency;
 using Miruken.Context;
-using Miruken.Error;
 using Miruken.Mvc.Views;
 using Miruken.MVC;
-using static Miruken.Protocol;
 
 namespace Miruken.Mvc
 {
@@ -20,7 +17,7 @@ namespace Miruken.Mvc
         protected bool _disposed;
 
         public delegate IHandler FilterBuilder(IHandler handler);
-        internal delegate Promise<IContext> MemorizeAction(IHandler handler);
+        internal delegate object MemorizeAction(IHandler handler);
 
         public static FilterBuilder GlobalFilters;
         internal static IHandler _io;
@@ -66,42 +63,35 @@ namespace Miruken.Mvc
             }
         }
 
-        protected INavigate Navigate(IHandler handler)
+        protected C Next<C>() where C : IController
         {
-            return P<INavigate>(handler.Recover());
+            return Next<C>(IO);
         }
 
-        protected Promise<IContext> Next<C>(Action<C> action) where C : IController
+        protected C Next<C>(IHandler handler) where C : IController
         {
-            return Next(IO, action);
+            return handler.Next<C>();
         }
 
-        protected Promise<IContext> Next<C>(IHandler handler, Action<C> action)
+        protected C Push<C>() where C : IController
+        {
+            return Push<C>(IO);
+        }
+
+        protected C Push<C>(IHandler handler) where C : IController
+        {
+            return handler.Push<C>();
+        }
+
+        protected C Navigate<C>(NavigationStyle style) where C : IController
+        {
+            return Push<C>(IO);
+        }
+
+        protected C Navigate<C>(IHandler handler, NavigationStyle style)
             where C : IController
         {
-            return Navigate(handler).Next(action);
-        }
-
-        protected Promise<IContext> Push<C>(Action<C> action) where C : IController
-        {
-            return Push(IO, action);
-        }
-
-        protected Promise<IContext> Push<C>(IHandler handler, Action<C> action)
-            where C : IController
-        {
-            return Navigate(handler).Push(action);
-        }
-
-        protected Promise<IContext> Part<C>(Action<C> action) where C : IController
-        {
-            return Part(IO, action);
-        }
-
-        protected Promise<IContext> Part<C>(IHandler handler, Action<C> action)
-            where C : IController
-        {
-            return Navigate(handler).Part(action);
+            return handler.Navigate<C>(style);
         }
 
         protected FilterBuilder Filters;

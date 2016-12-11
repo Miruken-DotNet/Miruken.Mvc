@@ -1,6 +1,5 @@
 ﻿using System;
 using Miruken.Callback;
-using Miruken.Concurrency;
 using Miruken.Container;
 using Miruken.Context;
 using Miruken.Mvc;
@@ -17,30 +16,35 @@ namespace Miruken.MVC
             AddHandlers(mainRegion);
         }
 
-        Promise<IContext> INavigate.Next<C>(Action<C> action)
+        object INavigate.Next<C>(Func<C, object> action)
         {
-            return ((INavigate)this).Navigate(action, NavigationStyle.Next);
+            return Navigate(action, NavigationStyle.Next);
         }
 
-        Promise<IContext> INavigate.Push<C>(Action<C> action)
+        object INavigate.Push<C>(Func<C, object> action)
         {
-            return ((INavigate)this).Navigate(action, NavigationStyle.Push);
+            return Navigate(action, NavigationStyle.Push);
         }
 
-        Promise<IContext> INavigate.Part<C>(Action<C> action)
+        object INavigate.Navigate<C>(Func<C, object> action, NavigationStyle style)
         {
-            return ((INavigate)this).Navigate(action, NavigationStyle.Part);
+            return Navigate(action, style);
         }
 
-        Promise<IContext> INavigate.Navigate<C>(Action<C> action, NavigationStyle navStyle)
+        private static object Navigate<C>(Func<C, object> action, NavigationStyle style)
+            where C : IController
         {
-            var composer = Composer;
-            if (action == null || composer == null) return null;
+            if (action == null) return null;
 
-            var context   = composer.Resolve<IContext>();
+            var composer  = Composer;
+            var context   = composer?.Resolve<IContext>();
+            if (context == null)
+                throw new InvalidOperationException(
+                    "A context is required for navigation");
+
             var initiator = composer.Resolve<IController>();
 
-            var ctx = navStyle != NavigationStyle.Next
+            var ctx = style != NavigationStyle.Next
                     ? context.CreateChild()
                     : context;
 
@@ -51,18 +55,18 @@ namespace Miruken.MVC
                 if (initiator != null && initiator.Context != ctx)
                     initiator.DependsOn(controller);
             }
-            catch (Exception exception)
+            catch
             {
-                if (navStyle != NavigationStyle.Next)
+                if (style != NavigationStyle.Next)
                     ctx.End();
-                return Promise<IContext>.Rejected(exception);
+                throw;
             }
 
             var oldIO = Controller._io;
 
             try
             {
-                if (navStyle == NavigationStyle.Push)
+                if (style == NavigationStyle.Push)
                     composer = composer.PushLayer();
                 else
                 {
@@ -75,31 +79,34 @@ namespace Miruken.MVC
                     }
                 }
 
-                // Propogate handler options
+                // Propogate composer options
                 Controller._io = ctx.Chain(composer);
 
-                action(controller);
-
-                if (initiator != null && initiator.Context == ctx)
-                    initiator.Release();
+                try
+                {
+                    return action(controller);
+                }
+                finally 
+                {
+                    if (initiator != null && initiator.Context == ctx)
+                        initiator.Release();
+                }
             }
-            catch (Exception exception)
+            catch
             {
-                if (navStyle != NavigationStyle.Next)
+                if (style != NavigationStyle.Next)
                     ctx.End();
                 else if (initiator != null && initiator.Context == ctx)
                     controller.DependsOn(initiator);
-                return Promise<IContext>.Rejected(exception);
+                throw;
             }
             finally
             {
                 Controller._io = oldIO;
             }
-
-            return Promise.Resolved(ctx);
         }
 
-        Promise<IContext> INavigate.GoBack()
+        object INavigate.GoBack()
         {
             var composer   = Composer;
             var controller = composer?.Resolve<Controller>();

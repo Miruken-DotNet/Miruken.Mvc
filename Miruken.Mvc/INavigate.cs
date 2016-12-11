@@ -1,6 +1,4 @@
 ﻿using System;
-using Miruken.Concurrency;
-using Miruken.Context;
 using Miruken.Mvc;
 
 namespace Miruken.MVC
@@ -8,21 +6,18 @@ namespace Miruken.MVC
     public enum NavigationStyle
     {
         Next,
-        Push,
-        Part
+        Push
     }
 
     public interface INavigate
     {
-        Promise<IContext> Next<C>(Action<C> action) where C : IController;
+        object Next<C>(Func<C, object> action) where C : IController;
 
-        Promise<IContext> Push<C>(Action<C> action) where C : IController;
+        object Push<C>(Func<C, object> action) where C : IController;
 
-        Promise<IContext> Part<C>(Action<C> action) where C : IController;
-
-        Promise<IContext> Navigate<C>(Action<C> action, NavigationStyle navStyle)
+        object Navigate<C>(Func<C, object> action, NavigationStyle style)
             where C : IController;
 
-        Promise<IContext> GoBack();
+        object GoBack();
     }
 }

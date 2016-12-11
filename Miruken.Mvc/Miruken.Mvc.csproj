@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Miruken, Version=0.0.1.58, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Miruken.0.0.1.58-prerelease\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=0.0.1.63, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Miruken.0.0.1.63-prerelease\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -51,11 +51,11 @@
     <Compile Include="Controller.cs" />
     <Compile Include="ControllerExtensions.cs" />
     <Compile Include="ControllerPolicy.cs" />
+    <Compile Include="Handler.Navigate.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="INavigate.cs" />
     <Compile Include="NavigateHandler.cs" />
-    <Compile Include="Options\AnimationBuilder.cs" />
-    <Compile Include="Options\AnimationOptions.cs" />
+    <Compile Include="NavigateInterceptor.cs" />
     <Compile Include="Options\LayerOptions.cs" />
     <Compile Include="Options\RegionOptions.cs" />
     <Compile Include="Policy\DefaultPolicy.cs" />
@@ -65,7 +65,6 @@
     <Compile Include="Views\IView.cs" />
     <Compile Include="Views\IViewRegion.cs" />
     <Compile Include="Views\IViewStack.cs" />
-    <Compile Include="Views\PartialExtensions.cs" />
     <Compile Include="Views\RegionExtensions.cs" />
     <Compile Include="Views\ViewAdapter.cs" />
     <Compile Include="Views\ViewExtensions.cs" />

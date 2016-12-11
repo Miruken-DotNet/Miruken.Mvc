@@ -4,9 +4,8 @@ namespace Miruken.Mvc.Options
 {
     public class RegionOptions : CallbackOptions<RegionOptions>
     {
-        public object           Tag       { get; set; }
-        public LayerOptions     Layer     { get; set; }
-        public AnimationOptions Animation { get; set; }
+        public object       Tag   { get; set; }
+        public LayerOptions Layer { get; set; }
 
         public override void MergeInto(RegionOptions other)
         {
@@ -16,14 +15,6 @@ namespace Miruken.Mvc.Options
                 Layer.MergeInto(l);
                 if (other.Layer == null)
                     other.Layer = l;
-            }
-
-            if (Animation != null)
-            {
-                var a = other.Animation ?? new AnimationOptions();
-                Animation.MergeInto(a);
-                if (other.Animation == null)
-                    other.Animation = a;
             }
         }
     }

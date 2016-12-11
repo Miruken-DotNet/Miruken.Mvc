@@ -1,7 +1,6 @@
 ﻿using System;
 using Miruken.Callback;
 using Miruken.Context;
-using Miruken.MVC;
 using static Miruken.Protocol;
 
 namespace Miruken.Mvc.Views
@@ -48,7 +47,7 @@ namespace Miruken.Mvc.Views
     /// new <see cref="C"/>controller on to the stack.
     /// </summary>
     /// <typeparam name="C">Concrete controller</typeparam>
-    class RegionView<C> : RegionViewAdapter where C : IController
+    internal class RegionView<C> : RegionViewAdapter where C : IController
     {
         private readonly Action<C> _action;
         private readonly IHandler _composer;
@@ -72,14 +71,12 @@ namespace Miruken.Mvc.Views
             var stack = P<IViewRegion>(_composer).View<IViewStackView>();
             var stackAdapter = new ViewStackAdapter(region, stack);
             // Temporarily install the stack region adapter.
-            P<INavigate>(new Handler(stackAdapter).Chain(_composer)).Push<C>(
-                controller => {
-                    var context = controller.Context;
-                    context.AddHandlers(stack);
-                    _action(controller);
-                    stackAdapter.ViewLayer.Disposed += (s,e) => context.End();
-                });
-            return (Layer = stackAdapter.ViewLayer);
+            var controller = new Handler(stackAdapter).Chain(_composer).Push<C>();
+            var context    = controller.Context;
+            context.AddHandlers(stack);
+            _action(controller);
+            stackAdapter.ViewLayer.Disposed += (s,e) => context.End();
+            return Layer = stackAdapter.ViewLayer;
         }
     }
 
