@@ -7,7 +7,7 @@ using Miruken.MVC;
 
 namespace Miruken.Mvc
 {
-    public class Controller : Handler, 
+    public class Controller : Handler,
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
     {
         private IContext _context;
@@ -114,14 +114,6 @@ namespace Miruken.Mvc
                 context.End();
         }
 
-        protected virtual void Reset()
-        {
-            Context      = null;
-            Policy       = null;
-            _lastAction  = null;
-            _retryAction = null;
-        }
-
         #region ISupportInitialize
 
         void ISupportInitialize.BeginInit()
@@ -164,7 +156,6 @@ namespace Miruken.Mvc
 
         protected virtual void Dispose(bool disposing)
         {
-            Reset();
         }
 
         ~Controller()
