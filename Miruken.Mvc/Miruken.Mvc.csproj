@@ -56,6 +56,8 @@
     <Compile Include="INavigate.cs" />
     <Compile Include="NavigateHandler.cs" />
     <Compile Include="NavigateInterceptor.cs" />
+    <Compile Include="Options\AnimationBuilder.cs" />
+    <Compile Include="Options\AnimationOptions.cs" />
     <Compile Include="Options\LayerOptions.cs" />
     <Compile Include="Options\RegionOptions.cs" />
     <Compile Include="Policy\DefaultPolicy.cs" />
