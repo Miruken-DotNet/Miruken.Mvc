@@ -5,7 +5,7 @@ using static Miruken.Protocol;
 
 namespace Miruken.Mvc.Views
 {
-    abstract class RegionViewAdapter : ViewAdapter
+    internal abstract class RegionViewAdapter : ViewAdapter
     {
         /// <summary>
         /// Region Adapter to capture the controllers <see cref="IView"/>
