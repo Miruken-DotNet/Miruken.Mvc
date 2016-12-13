@@ -3,7 +3,6 @@ using System.ComponentModel;
 using Miruken.Callback;
 using Miruken.Context;
 using Miruken.Mvc.Views;
-using Miruken.MVC;
 
 namespace Miruken.Mvc
 {

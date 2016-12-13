@@ -4,7 +4,6 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Proxies;
 using Miruken.Callback;
-using Miruken.MVC;
 using static Miruken.Protocol;
 
 namespace Miruken.Mvc

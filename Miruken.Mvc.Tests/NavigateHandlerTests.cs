@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Miruken.Context;
-using Miruken.MVC;
-using static Miruken.Protocol;
 
 namespace Miruken.Mvc.Tests
 {

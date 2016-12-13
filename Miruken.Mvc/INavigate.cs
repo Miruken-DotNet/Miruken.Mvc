@@ -1,7 +1,6 @@
 ﻿using System;
-using Miruken.Mvc;
 
-namespace Miruken.MVC
+namespace Miruken.Mvc
 {
     public enum NavigationStyle
     {

@@ -1,5 +1,4 @@
 ﻿using Miruken.Callback;
-using Miruken.MVC;
 
 namespace Miruken.Mvc
 {

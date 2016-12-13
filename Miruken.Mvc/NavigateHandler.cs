@@ -2,12 +2,11 @@
 using Miruken.Callback;
 using Miruken.Container;
 using Miruken.Context;
-using Miruken.Mvc;
 using Miruken.Mvc.Options;
 using Miruken.Mvc.Views;
 using static Miruken.Protocol;
 
-namespace Miruken.MVC
+namespace Miruken.Mvc
 {
     public class NavigateHandler : CompositeHandler, INavigate
     {
