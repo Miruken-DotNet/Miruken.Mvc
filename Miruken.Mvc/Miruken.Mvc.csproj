@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Miruken, Version=0.0.1.73, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Miruken.0.0.1.73-prerelease\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=0.0.1.74, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Miruken.0.0.1.74-prerelease\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
