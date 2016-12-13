@@ -1,9 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Miruken.Context;
-
-namespace Miruken.Mvc.Tests
+﻿namespace Miruken.Mvc.Tests
 {
+    using System;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Context;
+    using Options;
+
     [TestClass]
     public class NavigateHandlerTests
     {
@@ -12,16 +13,19 @@ namespace Miruken.Mvc.Tests
 
         public class HelloController : Controller
         {
-            public void SayHello()
+            public RegionOptions SayHello()
             {
                 Console.WriteLine("Hello");
+
+                var options = new RegionOptions();
+                return IO.Handle(options) ? options : null;
             }
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            _rootContext = new Context.Context();
+            _rootContext = new Context();
             _navigate    = new NavigateHandler(new TestViewRegion());
             _rootContext.AddHandlers(_navigate, new TestContainer());
         }
@@ -46,6 +50,20 @@ namespace Miruken.Mvc.Tests
             var controller = _rootContext.Push<HelloController>();
             Assert.AreSame(_rootContext, controller.Context.Parent);
             controller.SayHello();
+        }
+
+        [TestMethod]
+        public void Should_Propogate_Options()
+        {
+            var controller = 
+                _rootContext.Animate(a => a.Push.Left())
+                .Next<HelloController>();
+            Assert.AreSame(_rootContext, controller.Context);
+            var options = controller.SayHello();
+            Assert.IsNotNull(options);
+            var animation = options.Animation;
+            Assert.IsNotNull(animation);
+            Assert.AreEqual(animation.Effect, AnimationEffect.PushLeft);
         }
 
         [TestMethod, 

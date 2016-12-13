@@ -6,20 +6,22 @@ using Miruken.Mvc.Views;
 
 namespace Miruken.Mvc
 {
+    public delegate IHandler FilterBuilder(IHandler handler);
+
     public class Controller : Handler,
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
     {
+        internal IHandler _io;
         private IContext _context;
         private ControllerPolicy _policy;
         internal MemorizeAction _lastAction;
         internal MemorizeAction _retryAction;
         protected bool _disposed;
 
-        public delegate IHandler FilterBuilder(IHandler handler);
         internal delegate object MemorizeAction(IHandler handler);
 
-        public static FilterBuilder GlobalFilters;
-        internal static IHandler _io;
+        public static FilterBuilder GlobalPrepare;
+        public static FilterBuilder GlobalExecute;
 
         public IContext Context
         {
@@ -46,21 +48,7 @@ namespace Miruken.Mvc
             set { _policy = value; }
         }
 
-        protected IHandler IO
-        {
-            get
-            {
-                var io = _io ?? Context;
-                if (io == null) return null;
-                var filters       = Filters;
-                var globalFilters = GlobalFilters;
-                if (filters != null)
-                    io = filters(io);
-                if (globalFilters != null)
-                    io = globalFilters(io);
-                return io;
-            }
-        }
+        protected IHandler IO => _io ?? Context;
 
         protected C Next<C>() where C : IController
         {
@@ -92,8 +80,6 @@ namespace Miruken.Mvc
         {
             return handler.Navigate<C>(style);
         }
-
-        protected FilterBuilder Filters;
 
         protected IContext AddRegion(IViewRegion region)
         {
@@ -155,6 +141,8 @@ namespace Miruken.Mvc
 
         protected virtual void Dispose(bool disposing)
         {
+            Context = null;
+            _io     = null;
         }
 
         ~Controller()

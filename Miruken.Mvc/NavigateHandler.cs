@@ -8,6 +8,8 @@ using static Miruken.Protocol;
 
 namespace Miruken.Mvc
 {
+    using System.Linq;
+
     public class NavigateHandler : CompositeHandler, INavigate
     {
         public NavigateHandler(IViewRegion mainRegion)
@@ -61,7 +63,7 @@ namespace Miruken.Mvc
                 throw;
             }
 
-            var oldIO = Controller._io;
+            var ctrl = controller as Controller;
 
             try
             {
@@ -69,7 +71,6 @@ namespace Miruken.Mvc
                     composer = composer.PushLayer();
                 else
                 {
-                    var ctrl = controller as Controller;
                     var init = initiator as Controller;
                     if (ctrl != null && init != null)
                     {
@@ -78,15 +79,26 @@ namespace Miruken.Mvc
                     }
                 }
 
-                // Propogate composer options
-                Controller._io = ctx.Chain(composer);
+                if (ctrl != null)
+                {
+                    // Propogate composer options
+                    var io = ctx.Chain(composer);
+                    var prepare = Controller.GlobalPrepare;
+                    if (prepare != null)
+                    {
+                        io = prepare.GetInvocationList().Cast<FilterBuilder>()
+                            .Aggregate(io, (current, builder) => builder(current) ?? current);
+                    }
+                    ctrl._io = io;
+                }
 
                 try
                 {
                     return action(controller);
                 }
-                finally 
+                finally
                 {
+                    if (ctrl != null) ctrl._io = null;
                     if (initiator != null && initiator.Context == ctx)
                         initiator.Release();
                 }
@@ -98,10 +110,6 @@ namespace Miruken.Mvc
                 else if (initiator != null && initiator.Context == ctx)
                     controller.DependsOn(initiator);
                 throw;
-            }
-            finally
-            {
-                Controller._io = oldIO;
             }
         }
 

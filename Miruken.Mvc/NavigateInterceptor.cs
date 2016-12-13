@@ -19,7 +19,7 @@ namespace Miruken.Mvc
             : base(typeof(C))
         {
             _handler = handler;
-            _style = style;
+            _style   = style;
         }
 
         public string TypeName { get; set; }
