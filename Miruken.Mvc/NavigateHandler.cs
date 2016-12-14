@@ -98,7 +98,6 @@ namespace Miruken.Mvc
                 }
                 finally
                 {
-                    if (ctrl != null) ctrl._io = null;
                     if (initiator != null && initiator.Context == ctx)
                         initiator.Release();
                 }
