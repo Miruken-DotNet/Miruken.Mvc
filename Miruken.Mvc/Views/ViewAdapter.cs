@@ -9,11 +9,11 @@ namespace Miruken.Mvc.Views
             Policy = new ViewPolicy(this);
         }
 
-        public IController Controller { get; set; }
+        public object      ViewModel { get; set; }
 
-        public ViewPolicy  Policy     { get; set; }
+        public ViewPolicy  Policy    { get; set; }
 
-        public IViewLayer  Layer      { get; protected set; }
+        public IViewLayer  Layer     { get; protected set; }
 
         public abstract IViewLayer Display(IViewRegion region);
     }

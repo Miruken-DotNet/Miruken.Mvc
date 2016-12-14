@@ -5,6 +5,8 @@ namespace Miruken.Mvc.Views
 {
     public interface IView : IPolicyOwner<ViewPolicy>
     {
+        object ViewModel { get; set; }
+
         IViewLayer Layer { get; }
 
         IViewLayer Display(IViewRegion region);
