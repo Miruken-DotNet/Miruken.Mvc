@@ -132,6 +132,15 @@ namespace Miruken.Mvc
                 ref field, value, this, comparer, propertyName);
         }
 
+        protected bool ChangeProperty<T>(T property, T value, Action<T> set, 
+            IEqualityComparer<T> comparer = null,
+            [CallerMemberName] string propertyName = null)
+        {
+            var ret = ChangeProperty(ref property, value, comparer, propertyName);
+            if (ret) set(property);
+            return ret;
+        }
+
         #endregion
 
         #region IDisposable
