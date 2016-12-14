@@ -137,7 +137,7 @@ namespace Miruken.Mvc
             [CallerMemberName] string propertyName = null)
         {
             var ret = ChangeProperty(ref property, value, comparer, propertyName);
-            if (ret) set(property);
+            if (ret) set?.Invoke(property);
             return ret;
         }
 
