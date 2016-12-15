@@ -41,6 +41,7 @@
         {
             var controller = _rootContext.Next<HelloController>();
             controller.SayHello();
+            Assert.AreEqual(_rootContext, controller.Context);
         }
 
         [TestMethod]
@@ -48,24 +49,15 @@
         {
             var controller = _rootContext.Push<HelloController>();
             controller.SayHello();
+            Assert.AreEqual(_rootContext, controller.Context.Parent);
         }
 
         [TestMethod, 
          ExpectedException(typeof(InvalidOperationException))]
-        public void Should_Reject_Property_Navigation()
+        public void Should_Reject_Initial_Property_Navigation()
         {
             var controller = _rootContext.Next<HelloController>();
-            var context = controller.Context;
-        }
-
-        [TestMethod,
-         ExpectedException(typeof(InvalidOperationException),
-            "Controller Miruken.Mvc.Tests.HelloWorldController has already completed navigation")]
-        public void Should_Reject_Multiple_Navigations()
-        {
-            var controller = _rootContext.Next<HelloController>();
-            controller.SayHello();
-            controller.SayHello();
+            Assert.AreEqual(_rootContext, controller.Context);
         }
 
         [TestMethod]

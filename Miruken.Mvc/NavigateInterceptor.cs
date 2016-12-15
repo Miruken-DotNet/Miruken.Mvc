@@ -13,7 +13,7 @@ namespace Miruken.Mvc
     {
         private readonly IHandler _handler;
         private readonly NavigationStyle _style;
-        private bool _completed;
+        private C _controller;
 
         public NavigateInterceptor(
             IHandler handler, NavigationStyle style)
@@ -32,17 +32,15 @@ namespace Miruken.Mvc
 
         public override IMessage Invoke(IMessage msg)
         {
-            EnsureValidAction(msg);
-
-            if (_completed)
-                throw new InvalidOperationException(
-                    $"Controller {typeof(C).FullName} has already completed navigation");
+            if (_controller == null)
+                EnsureValidAction(msg);
 
             var methodCall = (IMethodCallMessage)msg;
 
             Func<C, object> action = controller =>
             {
-                _completed = true;
+                if (_controller == null)
+                    _controller = controller;
                 return methodCall.MethodBase.Invoke(controller,
                     BindingFlags.Instance | BindingFlags.Public,
                     null, methodCall.Args, null);
@@ -50,8 +48,11 @@ namespace Miruken.Mvc
 
             try
             {
-                return new ReturnMessage(
-                    P<INavigate>(_handler).Navigate(action, _style),
+                var result = _controller == null
+                           ? P<INavigate>(_handler).Navigate(action, _style)
+                           : action(_controller);
+
+                return new ReturnMessage(result,
                     methodCall.Args, methodCall.ArgCount,
                     methodCall.LogicalCallContext, methodCall);
             }
@@ -65,7 +66,8 @@ namespace Miruken.Mvc
         {
             var methodCall = msg as IMethodCallMessage;
             if (methodCall == null)
-                throw new InvalidOperationException("Action must be done on a method");
+                throw new InvalidOperationException(
+                    "Initial action must be done on a method");
 
             var method     = methodCall.MethodBase;
             var methodName = methodCall.MethodName;
@@ -73,7 +75,7 @@ namespace Miruken.Mvc
             if (method.IsSpecialName && (methodName.StartsWith("get_") ||
                 methodName.StartsWith("_set")))
                 throw new InvalidOperationException(
-                    $"Action must be done on a method:  {methodName} is not a method");
+                    $"Initial action must be done on a method:  {methodName} is not a method");
         }
     }
 }
