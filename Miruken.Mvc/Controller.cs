@@ -54,33 +54,36 @@ namespace Miruken.Mvc
 
         protected IHandler IO => _io ?? Context;
 
-        protected C Next<C>() where C : IController
+        protected C Next<C>() where C : class, IController
         {
             return Next<C>(IO);
         }
 
-        protected C Next<C>(IHandler handler) where C : IController
+        protected C Next<C>(IHandler handler) 
+            where C : class, IController
         {
             return handler.Next<C>();
         }
 
-        protected C Push<C>() where C : IController
+        protected C Push<C>() where C : class, IController
         {
             return Push<C>(IO);
         }
 
-        protected C Push<C>(IHandler handler) where C : IController
+        protected C Push<C>(IHandler handler) 
+            where C : class, IController
         {
             return handler.Push<C>();
         }
 
-        protected C Navigate<C>(NavigationStyle style) where C : IController
+        protected C Navigate<C>(NavigationStyle style) 
+            where C : class, IController
         {
             return Push<C>(IO);
         }
 
         protected C Navigate<C>(IHandler handler, NavigationStyle style)
-            where C : IController
+            where C : class, IController
         {
             return handler.Navigate<C>(style);
         }

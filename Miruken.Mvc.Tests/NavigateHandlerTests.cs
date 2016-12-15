@@ -40,7 +40,6 @@
         public void Should_Navigate_Next()
         {
             var controller = _rootContext.Next<HelloController>();
-            Assert.AreSame(_rootContext, controller.Context);
             controller.SayHello();
         }
 
@@ -48,7 +47,24 @@
         public void Should_Navigate_Push()
         {
             var controller = _rootContext.Push<HelloController>();
-            Assert.AreSame(_rootContext, controller.Context.Parent);
+            controller.SayHello();
+        }
+
+        [TestMethod, 
+         ExpectedException(typeof(InvalidOperationException))]
+        public void Should_Reject_Property_Navigation()
+        {
+            var controller = _rootContext.Next<HelloController>();
+            var context = controller.Context;
+        }
+
+        [TestMethod,
+         ExpectedException(typeof(InvalidOperationException),
+            "Controller Miruken.Mvc.Tests.HelloWorldController has already completed navigation")]
+        public void Should_Reject_Multiple_Navigations()
+        {
+            var controller = _rootContext.Next<HelloController>();
+            controller.SayHello();
             controller.SayHello();
         }
 
@@ -58,7 +74,6 @@
             var controller = 
                 _rootContext.Animate(a => a.Push.Left())
                 .Next<HelloController>();
-            Assert.AreSame(_rootContext, controller.Context);
             var options = controller.SayHello();
             Assert.IsNotNull(options);
             var animation = options.Animation;

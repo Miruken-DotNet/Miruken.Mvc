@@ -33,7 +33,7 @@ namespace Miruken.Mvc
         }
 
         private static object Navigate<C>(Func<C, object> action, NavigationStyle style)
-            where C : IController
+            where C : class, IController
         {
             if (action == null) return null;
 
@@ -53,7 +53,7 @@ namespace Miruken.Mvc
             try
             {
                 controller = (C)ResolveController(ctx, typeof(C));
-                if (initiator != null && !Equals(initiator, controller) &&
+                if (initiator != null && initiator != controller &&
                     initiator.Context != ctx)
                     initiator.DependsOn(controller);
             }
@@ -100,7 +100,7 @@ namespace Miruken.Mvc
                 finally
                 {
                     if (initiator != null && initiator.Context == ctx &&
-                        !Equals(initiator, controller))
+                        initiator != controller)
                     {
                         initiator.Release();
                         initiator.Context = null;

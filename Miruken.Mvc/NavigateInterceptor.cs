@@ -9,10 +9,11 @@ using static Miruken.Protocol;
 namespace Miruken.Mvc
 {
     public class NavigateInterceptor<C> : RealProxy, IRemotingTypeInfo
-        where C : IController
+        where C : class, IController
     {
         private readonly IHandler _handler;
         private readonly NavigationStyle _style;
+        private bool _completed;
 
         public NavigateInterceptor(
             IHandler handler, NavigationStyle style)
@@ -31,12 +32,21 @@ namespace Miruken.Mvc
 
         public override IMessage Invoke(IMessage msg)
         {
+            EnsureValidAction(msg);
+
+            if (_completed)
+                throw new InvalidOperationException(
+                    $"Controller {typeof(C).FullName} has already completed navigation");
+
             var methodCall = (IMethodCallMessage)msg;
 
-            Func<C, object> action = controller => 
-                methodCall.MethodBase.Invoke(controller,
-                    BindingFlags.Instance | BindingFlags.Public, 
+            Func<C, object> action = controller =>
+            {
+                _completed = true;
+                return methodCall.MethodBase.Invoke(controller,
+                    BindingFlags.Instance | BindingFlags.Public,
                     null, methodCall.Args, null);
+            };
 
             try
             {
@@ -49,6 +59,21 @@ namespace Miruken.Mvc
             {
                 return new ReturnMessage(tex.InnerException, methodCall);
             }
+        }
+
+        private static void EnsureValidAction(IMessage msg)
+        {
+            var methodCall = msg as IMethodCallMessage;
+            if (methodCall == null)
+                throw new InvalidOperationException("Action must be done on a method");
+
+            var method     = methodCall.MethodBase;
+            var methodName = methodCall.MethodName;
+
+            if (method.IsSpecialName && (methodName.StartsWith("get_") ||
+                methodName.StartsWith("_set")))
+                throw new InvalidOperationException(
+                    $"Action must be done on a method:  {methodName} is not a method");
         }
     }
 }

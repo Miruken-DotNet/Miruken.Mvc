@@ -47,7 +47,8 @@ namespace Miruken.Mvc.Views
     /// new <see cref="C"/>controller on to the stack.
     /// </summary>
     /// <typeparam name="C">Concrete controller</typeparam>
-    internal class RegionView<C> : RegionViewAdapter where C : IController
+    internal class RegionView<C> : RegionViewAdapter 
+        where C : class, IController
     {
         private readonly Action<C> _action;
         private readonly IHandler _composer;
@@ -83,7 +84,7 @@ namespace Miruken.Mvc.Views
     public static class RegionExtensions
     {
         public static IView Region<C>(this IHandler handler,
-            Action<C> action) where C : IController
+            Action<C> action) where C : class, IController
         {
             return new RegionView<C>(action, handler);
         }
