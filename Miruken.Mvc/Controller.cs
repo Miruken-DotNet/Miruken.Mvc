@@ -1,14 +1,14 @@
-﻿using System;
-using System.ComponentModel;
-using Miruken.Callback;
-using Miruken.Context;
-using Miruken.Mvc.Views;
-
-namespace Miruken.Mvc
+﻿namespace Miruken.Mvc
 {
+    using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Runtime.CompilerServices;
+    using Callback;
+    using Context;
     using Infrastructure;
+    using Views;
+    using static Protocol;
 
     public delegate IHandler FilterBuilder(IHandler handler);
 
@@ -53,6 +53,16 @@ namespace Miruken.Mvc
         }
 
         protected IHandler IO => _io ?? Context;
+
+        protected IViewRegion ViewRegion()
+        {
+            return ViewRegion(IO);
+        }
+
+        protected IViewRegion ViewRegion(IHandler handler)
+        {
+            return P<IViewRegion>(handler);
+        }
 
         protected C Next<C>() where C : class, IController
         {
