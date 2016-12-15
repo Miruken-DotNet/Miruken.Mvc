@@ -53,7 +53,8 @@ namespace Miruken.Mvc
             try
             {
                 controller = (C)ResolveController(ctx, typeof(C));
-                if (initiator != null && initiator.Context != ctx)
+                if (initiator != null && !Equals(initiator, controller) &&
+                    initiator.Context != ctx)
                     initiator.DependsOn(controller);
             }
             catch
@@ -98,8 +99,12 @@ namespace Miruken.Mvc
                 }
                 finally
                 {
-                    if (initiator != null && initiator.Context == ctx)
+                    if (initiator != null && initiator.Context == ctx &&
+                        !Equals(initiator, controller))
+                    {
                         initiator.Release();
+                        initiator.Context = null;
+                    }
                 }
             }
             catch
