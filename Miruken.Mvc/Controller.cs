@@ -54,9 +54,10 @@
 
         protected IHandler IO => _io ?? Context;
 
-        protected IViewRegion ViewRegion()
+        protected IViewLayer Show<V>(Action<V> init = null)
+            where V : IView
         {
-            return ViewRegion(IO);
+            return ViewRegion(IO).Show(init);
         }
 
         protected IViewRegion ViewRegion(IHandler handler)
