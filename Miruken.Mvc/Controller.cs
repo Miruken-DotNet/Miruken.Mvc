@@ -7,6 +7,7 @@
     using Callback;
     using Context;
     using Infrastructure;
+    using Options;
     using Views;
     using static Protocol;
 
@@ -60,6 +61,12 @@
             return ViewRegion(IO).Show(init);
         }
 
+        protected IViewLayer Overlay<V>(Action<V> init = null)
+                  where V : IView
+        {
+            return ViewRegion(IO.PushLayer()).Show(init);
+        }
+
         protected IViewRegion ViewRegion(IHandler handler)
         {
             return P<IViewRegion>(handler);
@@ -76,7 +83,8 @@
             return handler.Next<C>();
         }
 
-        protected C Push<C>() where C : class, IController
+        protected C Push<C>()
+            where C : class, IController
         {
             return Push<C>(IO);
         }
