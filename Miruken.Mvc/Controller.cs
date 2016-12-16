@@ -53,6 +53,11 @@
             set { _policy = value; }
         }
 
+        public object GoBack()
+        {
+            return GoBack(IO);
+        }
+
         protected IHandler IO => _io ?? Context;
 
         protected IViewLayer Show<V>(Action<V> init = null)
@@ -105,11 +110,6 @@
             where C : class, IController
         {
             return handler.Navigate<C>(style);
-        }
-
-        protected object GoBack()
-        {
-            return GoBack(IO);
         }
 
         protected object GoBack(IHandler handler)
