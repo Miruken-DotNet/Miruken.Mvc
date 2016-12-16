@@ -36,12 +36,13 @@ namespace Miruken.Mvc
                 EnsureValidAction(msg);
 
             var methodCall = (IMethodCallMessage)msg;
+            var method     = methodCall.MethodBase;
 
             Func<C, object> action = controller =>
             {
                 if (_controller == null)
                     _controller = controller;
-                return methodCall.MethodBase.Invoke(controller,
+                return method.Invoke(controller,
                     BindingFlags.Instance | BindingFlags.Public,
                     null, methodCall.Args, null);
             };
