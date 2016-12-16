@@ -35,15 +35,20 @@ namespace Miruken.Mvc
         private static object Navigate<C>(Func<C, object> action, NavigationStyle style)
             where C : class, IController
         {
-            if (action == null) return null;
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
 
             var composer  = Composer;
-            var context   = composer?.Resolve<IContext>();
-            if (context == null)
-                throw new InvalidOperationException(
-                    "A context is required for navigation");
+            var initiator = composer?.Resolve<IController>();
+            var context   = initiator?.Context;
 
-            var initiator = composer.Resolve<IController>();
+            if (context == null)
+            {
+                context = composer?.Resolve<IContext>();
+                if (context == null)
+                    throw new InvalidOperationException(
+                        "A context is required for controller navigation");
+            }
 
             var ctx = style != NavigationStyle.Next
                     ? context.CreateChild()
@@ -83,7 +88,8 @@ namespace Miruken.Mvc
                 if (ctrl != null)
                 {
                     // Propogate composer options
-                    var io = ctx.Chain(composer);
+                    var io = ReferenceEquals(context, ctx)
+                           ? composer : ctx.Self().Chain(composer);
                     var prepare = Controller.GlobalPrepare;
                     if (prepare != null)
                     {

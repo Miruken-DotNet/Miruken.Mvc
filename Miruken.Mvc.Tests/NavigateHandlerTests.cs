@@ -16,7 +16,6 @@
             public RegionOptions SayHello()
             {
                 Console.WriteLine("Hello");
-
                 var options = new RegionOptions();
                 return IO.Handle(options) ? options : null;
             }
@@ -61,11 +60,24 @@
         }
 
         [TestMethod]
-        public void Should_Propogate_Options()
+        public void Should_Propogate_Next_Options()
         {
             var controller = 
                 _rootContext.Animate(a => a.Push.Left())
                 .Next<HelloController>();
+            var options = controller.SayHello();
+            Assert.IsNotNull(options);
+            var animation = options.Animation;
+            Assert.IsNotNull(animation);
+            Assert.AreEqual(animation.Effect, AnimationEffect.PushLeft);
+        }
+
+        [TestMethod]
+        public void Should_Propogate_Push_Options()
+        {
+            var controller =
+                _rootContext.Animate(a => a.Push.Left())
+                .Push<HelloController>();
             var options = controller.SayHello();
             Assert.IsNotNull(options);
             var animation = options.Animation;
