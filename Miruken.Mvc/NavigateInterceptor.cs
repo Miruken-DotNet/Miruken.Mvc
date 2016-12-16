@@ -38,16 +38,19 @@ namespace Miruken.Mvc
                 EnsureValidAction(msg);
 
             var methodCall = (IMethodCallMessage)msg;
- 
+            var method     = methodCall.MethodBase;
+            var args       = methodCall.Args;
+
             Func<C, object> action = controller =>
             {
-                var m = methodCall.MethodBase;
+                var m = method;
                 if (_controller == null)
                     _controller = controller;
-                else if (controller != _controller)  // support GoBack
-                    m = RuntimeHelper.SelectMethod((MethodInfo)m, controller.GetType());
-                return m.Invoke(controller, BindingFlags.Public,
-                    null, methodCall.Args, null);
+                else if (controller != _controller)
+                    m = RuntimeHelper.SelectMethod((MethodInfo) method, controller.GetType());
+                return m.Invoke(controller,
+                    BindingFlags.Instance | BindingFlags.Public,
+                    null, args, null);
             };
 
             try
@@ -56,8 +59,7 @@ namespace Miruken.Mvc
                            ? P<INavigate>(_handler).Navigate(action, _style)
                            : action(_controller);
 
-                return new ReturnMessage(result, 
-                    methodCall.Args, methodCall.ArgCount,
+                return new ReturnMessage(result, args, methodCall.ArgCount,
                     methodCall.LogicalCallContext, methodCall);
             }
             catch (TargetInvocationException tex)

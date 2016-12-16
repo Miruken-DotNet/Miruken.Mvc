@@ -189,10 +189,8 @@
 
         protected virtual void Dispose(bool disposing)
         {
-            Policy      = null;
-            Context     = null;
-            _io         = null;
-            _lastAction = _retryAction = null;
+            Context = null;
+            _io     = null;
         }
 
         ~Controller()
