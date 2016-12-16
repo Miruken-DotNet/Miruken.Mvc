@@ -64,8 +64,7 @@ namespace Miruken.Mvc
             }
             catch
             {
-                if (style != NavigationStyle.Next)
-                    ctx.End();
+                if (style != NavigationStyle.Next) ctx.End();
                 throw;
             }
 
@@ -133,6 +132,8 @@ namespace Miruken.Mvc
         private static IController ResolveController(IContext context, Type type)
         {
             var controller = (IController)P<IContainer>(context).Resolve(type);
+            if (controller == null)
+                throw new NotSupportedException($"Controller {type.FullName} could not be resolved");
             context.ContextEnded += _ => controller.Release();
             controller.Policy.AutoRelease();
             controller.Context = context;
