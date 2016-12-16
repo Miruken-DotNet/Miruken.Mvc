@@ -38,21 +38,16 @@ namespace Miruken.Mvc
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
 
-            var composer  = Composer;
-            var initiator = composer?.Resolve<IController>();
-            var context   = initiator?.Context;
-
+            var composer = Composer;
+            var context  = composer?.Resolve<IContext>();
             if (context == null)
-            {
-                context = composer?.Resolve<IContext>();
-                if (context == null)
-                    throw new InvalidOperationException(
-                        "A context is required for controller navigation");
-            }
+                throw new InvalidOperationException(
+                    "A context is required for controller navigation");
 
-            var ctx = style != NavigationStyle.Next
-                    ? context.CreateChild()
-                    : context;
+            var initiator = composer?.Resolve<IController>();
+            var ctx       = style != NavigationStyle.Next
+                          ? context.CreateChild()
+                          : context;
 
             C controller;
             try
