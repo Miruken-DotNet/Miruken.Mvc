@@ -107,6 +107,16 @@
             return handler.Navigate<C>(style);
         }
 
+        protected object GoBack()
+        {
+            return GoBack(IO);
+        }
+
+        protected object GoBack(IHandler handler)
+        {
+            return handler.GoBack();
+        }
+
         protected IContext AddRegion(IViewRegion region)
         {
             return Context.AddRegion(region);

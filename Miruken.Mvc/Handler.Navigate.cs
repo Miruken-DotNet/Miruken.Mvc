@@ -1,8 +1,8 @@
-﻿using Miruken.Callback;
-
-namespace Miruken.Mvc
+﻿namespace Miruken.Mvc
 {
     using System;
+    using Callback;
+    using static Protocol;
 
     public static class HandlerNavigateExtensions
     {
@@ -23,8 +23,13 @@ namespace Miruken.Mvc
         {
             if (handler == null)
                 throw new ArgumentNullException(nameof(handler));
-            return (C)new NavigateInterceptor<C>(handler, style)
+            return (C) new NavigateInterceptor<C>(handler, style)
                 .GetTransparentProxy();
+        }
+
+        public static object GoBack(this IHandler handler)
+        {
+            return P<INavigate>(handler).GoBack();
         }
     }
 }
