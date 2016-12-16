@@ -2,6 +2,8 @@
 
 namespace Miruken.Mvc
 {
+    using System;
+
     public static class HandlerNavigateExtensions
     {
         public static C Next<C>(this IHandler handler)
@@ -19,7 +21,8 @@ namespace Miruken.Mvc
         public static C Navigate<C>(this IHandler handler, NavigationStyle style)
             where C : class, IController
         {
-            if (handler == null) return default(C);
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
             return (C)new NavigateInterceptor<C>(handler, style)
                 .GetTransparentProxy();
         }
