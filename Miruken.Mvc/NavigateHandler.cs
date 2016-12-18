@@ -17,22 +17,24 @@ namespace Miruken.Mvc
             AddHandlers(mainRegion);
         }
 
-        object INavigate.Next<C>(Func<C, object> action)
+        object INavigate.Next<C>(Func<C, object> action, IController initiator)
         {
-            return Navigate(action, NavigationStyle.Next);
+            return Navigate(action, NavigationStyle.Next, initiator);
         }
 
-        object INavigate.Push<C>(Func<C, object> action)
+        object INavigate.Push<C>(Func<C, object> action, Controller initiator)
         {
-            return Navigate(action, NavigationStyle.Push);
+            return Navigate(action, NavigationStyle.Push, initiator);
         }
 
-        object INavigate.Navigate<C>(Func<C, object> action, NavigationStyle style)
+        object INavigate.Navigate<C>(Func<C, object> action, NavigationStyle style,
+                                     IController initiator)
         {
-            return Navigate(action, style);
+            return Navigate(action, style, initiator);
         }
 
-        private static object Navigate<C>(Func<C, object> action, NavigationStyle style)
+        private static object Navigate<C>(Func<C, object> action, NavigationStyle style,
+            IController initiator)
             where C : class, IController
         {
             if (action == null)
@@ -44,10 +46,12 @@ namespace Miruken.Mvc
                 throw new InvalidOperationException(
                     "A context is required for controller navigation");
 
-            var initiator = composer?.Resolve<IController>();
-            var ctx       = style != NavigationStyle.Next
-                          ? context.CreateChild()
-                          : context;
+            if (initiator == null)
+                initiator = composer.Resolve<IController>();
+
+            var ctx = style != NavigationStyle.Next
+                    ? context.CreateChild()
+                    : context;
 
             C controller;
             try
@@ -74,7 +78,7 @@ namespace Miruken.Mvc
                     var init = initiator as Controller;
                     if (ctrl != null && init != null)
                     {
-                        ctrl._lastAction  = h => P<INavigate>(h).Next(action);
+                        ctrl._lastAction  = h => P<INavigate>(h).Next(action, controller);
                         ctrl._retryAction = init._lastAction;
                     }
                 }

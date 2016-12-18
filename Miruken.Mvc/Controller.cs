@@ -9,7 +9,6 @@
     using Infrastructure;
     using Options;
     using Views;
-    using static Protocol;
 
     public delegate IHandler FilterBuilder(IHandler handler);
 
@@ -60,6 +59,16 @@
 
         protected IHandler IO => _io ?? Context;
 
+        protected TProto P<TProto>()
+        {
+            return Protocol.P<TProto>(IO);
+        }
+
+        protected TProto P<TProto>(IHandler handler)
+        {
+            return Protocol.P<TProto>(handler);
+        }
+
         protected IViewLayer Show<V>(Action<V> init = null)
             where V : IView
         {
@@ -67,7 +76,7 @@
         }
 
         protected IViewLayer Overlay<V>(Action<V> init = null)
-                  where V : IView
+            where V : IView
         {
             return ViewRegion(IO.PushLayer()).Show(init);
         }
@@ -85,7 +94,7 @@
         protected C Next<C>(IHandler handler) 
             where C : class, IController
         {
-            return handler.Next<C>();
+            return handler.Next<C>(this);
         }
 
         protected C Push<C>()
@@ -97,7 +106,7 @@
         protected C Push<C>(IHandler handler) 
             where C : class, IController
         {
-            return handler.Push<C>();
+            return handler.Push<C>(this);
         }
 
         protected C Navigate<C>(NavigationStyle style) 
@@ -109,7 +118,7 @@
         protected C Navigate<C>(IHandler handler, NavigationStyle style)
             where C : class, IController
         {
-            return handler.Navigate<C>(style);
+            return handler.Navigate<C>(style, this);
         }
 
         protected object GoBack(IHandler handler)

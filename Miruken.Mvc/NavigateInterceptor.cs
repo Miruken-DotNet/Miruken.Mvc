@@ -15,14 +15,16 @@ namespace Miruken.Mvc
     {
         private readonly IHandler _handler;
         private readonly NavigationStyle _style;
+        private readonly IController _initiator;
         private C _controller;
 
         public NavigateInterceptor(
-            IHandler handler, NavigationStyle style)
+            IHandler handler, NavigationStyle style, IController initiator = null)
             : base(typeof(C))
         {
-            _handler = handler;
-            _style   = style;
+            _handler   = handler;
+            _initiator = initiator;
+            _style     = style;
         }
 
         public string TypeName { get; set; }
@@ -56,7 +58,7 @@ namespace Miruken.Mvc
             try
             {
                 var result = _controller == null
-                           ? P<INavigate>(_handler).Navigate(action, _style)
+                           ? P<INavigate>(_handler).Navigate(action, _style, _initiator)
                            : action(_controller);
 
                 return new ReturnMessage(result, args, methodCall.ArgCount,

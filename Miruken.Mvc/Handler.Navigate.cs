@@ -6,24 +6,25 @@
 
     public static class HandlerNavigateExtensions
     {
-        public static C Next<C>(this IHandler handler)
+        public static C Next<C>(this IHandler handler, IController initiator = null)
             where C : class, IController
         {
-            return Navigate<C>(handler, NavigationStyle.Next);
+            return Navigate<C>(handler, NavigationStyle.Next, initiator);
         }
 
-        public static C Push<C>(this IHandler handler)
+        public static C Push<C>(this IHandler handler, IController initiator = null)
             where C : class, IController
         {
-            return Navigate<C>(handler, NavigationStyle.Push);
+            return Navigate<C>(handler, NavigationStyle.Push, initiator);
         }
 
-        public static C Navigate<C>(this IHandler handler, NavigationStyle style)
+        public static C Navigate<C>(this IHandler handler, NavigationStyle style,
+                                    IController initiator = null)
             where C : class, IController
         {
             if (handler == null)
                 throw new ArgumentNullException(nameof(handler));
-            return (C) new NavigateInterceptor<C>(handler, style)
+            return (C) new NavigateInterceptor<C>(handler, style, initiator)
                 .GetTransparentProxy();
         }
 
