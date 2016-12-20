@@ -10,14 +10,13 @@ namespace Miruken.Mvc
 
     public interface INavigate
     {
-        object Next<C>(Func<C, object> action, IController initiator = null) 
+        object Next<C>(Func<C, object> action) 
             where C : class, IController;
 
-        object Push<C>(Func<C, object> action, Controller initiator = null) 
+        object Push<C>(Func<C, object> action) 
             where C : class, IController;
 
-        object Navigate<C>(Func<C, object> action, NavigationStyle style,
-                           IController initiator = null)
+        object Navigate<C>(Func<C, object> action, NavigationStyle style)
             where C : class, IController;
 
         object GoBack();

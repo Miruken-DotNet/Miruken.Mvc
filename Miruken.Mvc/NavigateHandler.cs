@@ -1,14 +1,13 @@
-﻿using System;
-using Miruken.Callback;
-using Miruken.Container;
-using Miruken.Context;
-using Miruken.Mvc.Options;
-using Miruken.Mvc.Views;
-using static Miruken.Protocol;
-
-namespace Miruken.Mvc
+﻿namespace Miruken.Mvc
 {
+    using System;
     using System.Linq;
+    using Callback;
+    using Container;
+    using Context;
+    using Options;
+    using Views;
+    using static Protocol;
 
     public class NavigateHandler : CompositeHandler, INavigate
     {
@@ -17,24 +16,22 @@ namespace Miruken.Mvc
             AddHandlers(mainRegion);
         }
 
-        object INavigate.Next<C>(Func<C, object> action, IController initiator)
+        object INavigate.Next<C>(Func<C, object> action)
         {
-            return Navigate(action, NavigationStyle.Next, initiator);
+            return Navigate(action, NavigationStyle.Next);
         }
 
-        object INavigate.Push<C>(Func<C, object> action, Controller initiator)
+        object INavigate.Push<C>(Func<C, object> action)
         {
-            return Navigate(action, NavigationStyle.Push, initiator);
+            return Navigate(action, NavigationStyle.Push);
         }
 
-        object INavigate.Navigate<C>(Func<C, object> action, NavigationStyle style,
-                                     IController initiator)
+        object INavigate.Navigate<C>(Func<C, object> action, NavigationStyle style)
         {
-            return Navigate(action, style, initiator);
+            return Navigate(action, style);
         }
 
-        private static object Navigate<C>(Func<C, object> action, NavigationStyle style,
-            IController initiator)
+        private static object Navigate<C>(Func<C, object> action, NavigationStyle style)
             where C : class, IController
         {
             if (action == null)
@@ -46,8 +43,7 @@ namespace Miruken.Mvc
                 throw new InvalidOperationException(
                     "A context is required for controller navigation");
 
-            if (initiator == null)
-                initiator = composer.Resolve<IController>();
+            var initiator = composer.Resolve<IController>();
 
             var ctx = style != NavigationStyle.Next
                     ? context.CreateChild()
@@ -78,7 +74,7 @@ namespace Miruken.Mvc
                     var init = initiator as Controller;
                     if (ctrl != null && init != null)
                     {
-                        ctrl._lastAction  = h => P<INavigate>(h).Next(action, controller);
+                        ctrl._lastAction  = h => P<INavigate>(h).Next(action);
                         ctrl._retryAction = init._lastAction;
                     }
                 }

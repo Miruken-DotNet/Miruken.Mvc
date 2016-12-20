@@ -124,7 +124,7 @@
         protected C Next<C>(IHandler handler) 
             where C : class, IController
         {
-            return handler.Next<C>(this);
+            return handler.Next<C>();
         }
 
         protected C Push<C>()
@@ -136,7 +136,7 @@
         protected C Push<C>(IHandler handler) 
             where C : class, IController
         {
-            return handler.Push<C>(this);
+            return handler.Push<C>();
         }
 
         protected C Navigate<C>(NavigationStyle style) 
@@ -148,7 +148,7 @@
         protected C Navigate<C>(IHandler handler, NavigationStyle style)
             where C : class, IController
         {
-            return handler.Navigate<C>(style, this);
+            return handler.Navigate<C>(style);
         }
 
         public object GoBack()
