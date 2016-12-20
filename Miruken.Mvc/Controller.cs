@@ -11,6 +11,7 @@
     using Views;
 
     public delegate IHandler FilterBuilder(IHandler handler);
+    internal delegate object MemorizeAction(IHandler handler);
 
     public class Controller : Handler,
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
@@ -22,10 +23,10 @@
         internal MemorizeAction _retryAction;
         protected bool _disposed;
 
-        internal delegate object MemorizeAction(IHandler handler);
-
         public static FilterBuilder GlobalPrepare;
         public static FilterBuilder GlobalExecute;
+
+        #region Context
 
         public IContext Context
         {
@@ -43,8 +44,27 @@
             }
         }
 
+        protected IHandler IO => _io ?? Context;
+
         public event ContextChangingDelegate<IContext> ContextChanging;
         public event ContextChangedDelegate<IContext> ContextChanged;
+
+        protected void EndContext()
+        {
+            var context = Context;
+            context?.End();
+        }
+
+        protected void EndCallingContext()
+        {
+            var context = Composer.Resolve<IContext>();
+            if ((context != null) && (context != Context))
+                context.End();
+        }
+
+        #endregion
+
+        #region Policy
 
         public ControllerPolicy Policy
         {
@@ -52,12 +72,9 @@
             set { _policy = value; }
         }
 
-        public object GoBack()
-        {
-            return GoBack(IO);
-        }
+        #endregion
 
-        protected IHandler IO => _io ?? Context;
+        #region Protocol
 
         protected TProto P<TProto>()
         {
@@ -68,6 +85,10 @@
         {
             return Protocol.P<TProto>(handler);
         }
+
+        #endregion
+
+        #region Render
 
         protected IViewLayer Show<V>(Action<V> init = null)
             where V : IView
@@ -85,6 +106,15 @@
         {
             return P<IViewRegion>(handler);
         }
+
+        protected IContext AddRegion(IViewRegion region)
+        {
+            return Context.AddRegion(region);
+        }
+
+        #endregion
+
+        #region Navigate
 
         protected C Next<C>() where C : class, IController
         {
@@ -121,30 +151,19 @@
             return handler.Navigate<C>(style, this);
         }
 
+        public object GoBack()
+        {
+            return GoBack(IO);
+        }
+
         protected object GoBack(IHandler handler)
         {
             return handler.GoBack();
         }
 
-        protected IContext AddRegion(IViewRegion region)
-        {
-            return Context.AddRegion(region);
-        }
+        #endregion
 
-        protected void EndContext()
-        {
-            var context = Context;
-            context?.End();
-        }
-
-        protected void EndCallingContext()
-        {
-            var context = Composer.Resolve<IContext>();
-            if ((context != null) && (context != Context))
-                context.End();
-        }
-
-        #region ISupportInitialize
+        #region Initialize
 
         void ISupportInitialize.BeginInit()
         {
@@ -161,7 +180,7 @@
 
         #endregion
 
-        #region IPropertyNotifyChanged
+        #region Property Change
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -184,7 +203,7 @@
 
         #endregion
 
-        #region IDisposable
+        #region Dispose
 
         protected bool IsDisposed => _disposed;
 
