@@ -76,12 +76,12 @@
 
         #region Protocol
 
-        protected TProto P<TProto>()
+        protected TProto P<TProto>() where TProto : class
         {
             return Protocol.P<TProto>(IO);
         }
 
-        protected TProto P<TProto>(IHandler handler)
+        protected TProto P<TProto>(IHandler handler) where TProto : class
         {
             return Protocol.P<TProto>(handler);
         }
