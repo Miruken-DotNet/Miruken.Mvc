@@ -13,11 +13,10 @@
     public delegate IHandler FilterBuilder(IHandler handler);
     internal delegate object MemorizeAction(IHandler handler);
 
-    public class Controller : Handler,
+    public class Controller : ContextualHandler,
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
     {
         internal IHandler _io;
-        private IContext _context;
         private ControllerPolicy _policy;
         internal MemorizeAction _lastAction;
         internal MemorizeAction _retryAction;
@@ -28,26 +27,7 @@
 
         #region Context
 
-        public IContext Context
-        {
-            get { return _context; }
-            set
-            {
-                if (_context == value) return;
-                var newContext = value;
-                ContextChanging?.Invoke(this, _context, ref newContext);
-                _context?.RemoveHandlers(this);
-                var oldContext = _context;
-                _context = newContext;
-                _context?.InsertHandlers(0, this);
-                ContextChanged?.Invoke(this, oldContext, _context);
-            }
-        }
-
         protected IHandler IO => _io ?? Context;
-
-        public event ContextChangingDelegate<IContext> ContextChanging;
-        public event ContextChangedDelegate<IContext> ContextChanged;
 
         protected void EndContext()
         {
