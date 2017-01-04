@@ -89,26 +89,26 @@ namespace Miruken.Mvc.Options
         public static IHandler Animate(
             this IHandler handler, AnimationEffect effect)
         {
-            return handler == null ? null
-                 : new OptionsHandler<RegionOptions>(handler,
-                   new RegionOptions {
-                       Animation = new AnimationOptions {
-                           Effect = effect
-                       }
-                   });
+            return new RegionOptions
+            {
+                Animation = new AnimationOptions
+                {
+                    Effect = effect
+                }
+            }.Decorate(handler);
         }
 
         public static IHandler Animate(
             this IHandler handler, AnimationEffect effect, double duration)
         {
-            return handler == null ? null
-                 : new OptionsHandler<RegionOptions>(handler,
-                     new RegionOptions {
-                         Animation = new AnimationOptions {
-                             Effect   = effect,
-                             Duration = duration
-                         }
-                     });
+            return new RegionOptions
+            {
+                Animation = new AnimationOptions
+                {
+                    Effect = effect,
+                    Duration = duration
+                }
+            }.Decorate(handler);
         }
 
         public static IHandler Animate(
@@ -118,10 +118,10 @@ namespace Miruken.Mvc.Options
                 return handler;
             var builder = new AnimationBuilder();
             build(builder);
-            return new OptionsHandler<RegionOptions>(handler,
-                new RegionOptions {
-                    Animation = builder.AnimationOptions
-                });
+            return new RegionOptions
+            {
+                Animation = builder.AnimationOptions
+            }.Decorate(handler);
         }
     }
 }

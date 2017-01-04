@@ -7,6 +7,7 @@ namespace Miruken.Mvc.Options
         public object           Tag       { get; set; }
         public LayerOptions     Layer     { get; set; }
         public AnimationOptions Animation { get; set; }
+        public ScreenOptions    Screen    { get; set; }
 
         public override void MergeInto(RegionOptions other)
         {
@@ -24,6 +25,14 @@ namespace Miruken.Mvc.Options
                 Animation.MergeInto(a);
                 if (other.Animation == null)
                     other.Animation = a;
+            }
+
+            if (Screen != null)
+            {
+                var s = other.Screen ?? new ScreenOptions();
+                Screen.MergeInto(s);
+                if (other.Screen == null)
+                    other.Screen = s;
             }
         }
     }

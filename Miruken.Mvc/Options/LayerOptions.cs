@@ -45,73 +45,69 @@ namespace Miruken.Mvc.Options
     {
         public static IHandler PushLayer(this IHandler handler)
         {
-            return handler == null ? null
-                 : new OptionsHandler<RegionOptions>(handler,
-                     new RegionOptions {
-                        Layer = new LayerOptions { Push = true }
-                     });
+            return new RegionOptions
+            {
+                Layer = new LayerOptions {Push = true}
+            }.Decorate(handler);
         }
 
         public static IHandler Overlay(this IHandler handler)
         {
-            return handler == null ? null
-                 : new OptionsHandler<RegionOptions>(handler,
-                     new RegionOptions
-                     {
-                         Layer = new LayerOptions { Overlay = true }
-                     });
+            return new RegionOptions
+            {
+                Layer = new LayerOptions {Overlay = true}
+            }.Decorate(handler);
         }
 
         public static IHandler UnloadRegion(this IHandler handler)
         {
-            return handler == null ? null
-                 : new OptionsHandler<RegionOptions>(handler,
-                     new RegionOptions {
-                        Layer = new LayerOptions { Unload = true }
-                     });
+            return new RegionOptions
+            {
+                Layer = new LayerOptions {Unload = true}
+            }.Decorate(handler);
         }
 
         public static IHandler DisplayImmediate(this IHandler handler)
         {
-            return handler == null ? null
-                 : new OptionsHandler<RegionOptions>(handler,
-                     new RegionOptions
-                     {
-                         Layer = new LayerOptions { Immediate = true }
-                     });
+            return new RegionOptions
+            {
+                Layer = new LayerOptions {Immediate = true}
+            }.Decorate(handler);
         }
 
         public static IHandler Layer(this IHandler handler, IViewLayer layer)
         {
-            return handler == null ? null
-                 : new OptionsHandler<RegionOptions>(handler, 
-                     new RegionOptions {
-                         Layer = new LayerOptions {
-                            Selector = layers => {
-                                if (!layers.Contains(layer))
-                                    throw new ArgumentException("Layer not found");
-                                return layer;
-                            }
-                         }
-                     });
+            return new RegionOptions
+            {
+                Layer = new LayerOptions
+                {
+                    Selector = layers =>
+                    {
+                        if (!layers.Contains(layer))
+                            throw new ArgumentException("Layer not found");
+                        return layer;
+                    }
+                }
+            }.Decorate(handler);
         }
 
         public static IHandler Layer(this IHandler handler, int offset)
         {
-            return handler == null ? null
-                 : new OptionsHandler<RegionOptions>(handler,
-                     new RegionOptions {
-                        Layer = new LayerOptions {
-                            Selector = layers => {
-                                 var index = offset < 0
-                                           ? layers.Length + offset - 1
-                                           : offset;
-                                 if (index < 0 || index >= layers.Length)
-                                     throw new IndexOutOfRangeException();
-                                 return layers[index];
-                             }
-                        }
-                 });
+            return new RegionOptions
+            {
+                Layer = new LayerOptions
+                {
+                    Selector = layers =>
+                    {
+                        var index = offset < 0
+                                  ? layers.Length + offset - 1
+                                  : offset;
+                        if (index < 0 || index >= layers.Length)
+                            throw new IndexOutOfRangeException();
+                        return layers[index];
+                    }
+                }
+            }.Decorate(handler);
         }
     }
 }
