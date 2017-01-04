@@ -5,16 +5,20 @@
 
     public class WindowOptions : CallbackOptions<WindowOptions>
     {
-        public bool?  PrimaryScreen   { get; set; }
-
-        public bool?  SecondaryScreen { get; set; }
-
-        public Screen Screen          { get; set; }
-
+        public bool?  Window          { get; set; }
         public bool?  Modal           { get; set; }
-
+        public bool?  PrimaryScreen   { get; set; }
+        public bool?  SecondaryScreen { get; set; }
+        public Screen Screen          { get; set; }
+ 
         public override void MergeInto(WindowOptions other)
         {
+            if (Window.HasValue && !other.Window.HasValue)
+                other.Window = Window;
+
+            if (Modal.HasValue && !other.Modal.HasValue)
+                other.Modal = Modal;
+
             if (PrimaryScreen.HasValue && !other.PrimaryScreen.HasValue)
                 other.PrimaryScreen = PrimaryScreen;
 
@@ -23,14 +27,27 @@
 
             if (Screen != null && other.Screen == null)
                 other.Screen = Screen;
-
-            if (Modal.HasValue && !other.Modal.HasValue)
-                other.Modal = Modal;
         }
     }
 
-    public static class ScreenOptionsExtensions
+    public static class WindowOptionsExtensions
     {
+        public static IHandler Window(this IHandler handler)
+        {
+            return new RegionOptions
+            {
+                Window = new WindowOptions { Window = true }
+            }.Decorate(handler);
+        }
+
+        public static IHandler Modal(this IHandler handler)
+        {
+            return new RegionOptions
+            {
+                Window = new WindowOptions { Modal = true }
+            }.Decorate(handler);
+        }
+
         public static IHandler PrimaryScreen(this IHandler handler)
         {
             return new RegionOptions
@@ -52,14 +69,6 @@
             return new RegionOptions
             {
                 Window = new WindowOptions { Screen = screen }
-            }.Decorate(handler);
-        }
-
-        public static IHandler Modal(this IHandler handler, bool modal = true)
-        {
-            return new RegionOptions
-            {
-                Window = new WindowOptions { Modal = modal }
             }.Decorate(handler);
         }
     }
