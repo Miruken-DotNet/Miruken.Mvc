@@ -3,7 +3,7 @@
     using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Context;
-    using Options;
+    using Mvc.Options;
 
     [TestClass]
     public class NavigateHandlerTests
