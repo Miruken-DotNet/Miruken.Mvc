@@ -11,7 +11,7 @@
         public void Should_Determine_Virtual_Screen()
         {
             var options      = new WindowOptions {FillScreen = ScreenFill.VirtualScreen};
-            var frame        = options.GetWindowFrame();
+            var frame        = options.GetFrame();
             var virtualFrame = SystemInformation.VirtualScreen;
             Assert.AreEqual(virtualFrame, frame);
         }

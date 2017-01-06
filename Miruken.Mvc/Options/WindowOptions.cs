@@ -10,6 +10,8 @@
     {
         FullScreen,
         VirtualScreen,
+        CenterScreen,
+        CenterVirtualScreen,
         SplitLeft,
         SplitRight,
         SplitTop,
@@ -22,6 +24,7 @@
         public bool?       Modal      { get; set; }
         public Screen      Screen     { get; set; }
         public ScreenFill? FillScreen { get; set; }
+        public Rectangle?  Frame      { get; set; }
 
         public override void MergeInto(WindowOptions other)
         {
@@ -36,10 +39,14 @@
 
             if (FillScreen.HasValue && !other.FillScreen.HasValue)
                 other.FillScreen = FillScreen;
+
+            if (Frame.HasValue && !other.Frame.HasValue)
+                other.Frame = Frame;
         }
 
-        public Rectangle? GetWindowFrame()
+        public Rectangle? GetFrame(Rectangle? hint = null)
         {
+            if (Frame.HasValue) return Frame.Value;
             var screen = Screen ?? Screen.PrimaryScreen;
             if (screen == null || !FillScreen.HasValue)
                 return null;
@@ -49,7 +56,16 @@
                 case ScreenFill.FullScreen:
                     return frame;
                 case ScreenFill.VirtualScreen:
-                    return CalculateVirtualScreen();
+                    return CalculateVirtualFrame();
+                case ScreenFill.CenterScreen:
+                    return hint.HasValue
+                         ? Center(frame, hint.Value.Size)
+                         : frame;
+                case ScreenFill.CenterVirtualScreen:
+                    var virtualFrame = CalculateVirtualFrame();
+                    return hint.HasValue
+                         ? Center(virtualFrame, hint.Value.Size)
+                         : virtualFrame;
                 case ScreenFill.SplitLeft:
                     return new Rectangle(frame.Left, frame.Top, frame.Width / 2, frame.Height);
                 case ScreenFill.SplitRight:
@@ -63,10 +79,17 @@
             }
         }
 
-        private static Rectangle CalculateVirtualScreen()
+        private static Rectangle CalculateVirtualFrame()
         {
             var rect = new Rectangle(int.MaxValue, int.MaxValue, int.MinValue, int.MinValue);
             return Screen.AllScreens.Aggregate(rect, (cur, scr) => Rectangle.Union(cur, scr.Bounds));
+        }
+
+        private static Rectangle Center(Rectangle owner, Size size)
+        {
+            var location = new Point((owner.Width  - size.Width)  / 2,
+                                     (owner.Height - size.Height) / 2);
+            return new Rectangle(location, size);
         }
     }
 
@@ -79,6 +102,18 @@
                 Window = new WindowOptions
                 {
                     NewWindow = true, Screen = screen
+                }
+            }.Decorate(handler);
+        }
+
+        public static IHandler NewWindow(this IHandler handler, Rectangle frame)
+        {
+            return new RegionOptions
+            {
+                Window = new WindowOptions
+                {
+                    NewWindow = true,
+                    Frame = frame
                 }
             }.Decorate(handler);
         }
@@ -101,6 +136,19 @@
                 Window = new WindowOptions
                 {
                     NewWindow = true, Modal = true, Screen = screen
+                }
+            }.Decorate(handler);
+        }
+
+        public static IHandler Modal(this IHandler handler, Rectangle frame)
+        {
+            return new RegionOptions
+            {
+                Window = new WindowOptions
+                {
+                    NewWindow = true,
+                    Modal     = true,
+                    Frame     = frame
                 }
             }.Decorate(handler);
         }
