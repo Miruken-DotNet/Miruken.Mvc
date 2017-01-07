@@ -7,8 +7,6 @@ namespace Miruken.Mvc.Views
     {
         object ViewModel { get; set; }
 
-        IViewLayer Layer { get; }
-
         IViewLayer Display(IViewRegion region);
     }
 
