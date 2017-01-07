@@ -12,6 +12,7 @@
         VirtualScreen,
         CenterScreen,
         CenterVirtualScreen,
+        CenterOwner,
         SplitLeft,
         SplitRight,
         SplitTop,
