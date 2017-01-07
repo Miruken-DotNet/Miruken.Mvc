@@ -73,13 +73,25 @@
         protected IViewLayer Show<V>(Action<V> init = null)
             where V : IView
         {
-            return Region(IO).Show(init);
+            return Show(IO, init);
+        }
+
+        protected IViewLayer Show<V>(IHandler handler, Action<V> init = null)
+            where V : IView
+        {
+            return Region(handler).Show(init);
         }
 
         protected IViewLayer Overlay<V>(Action<V> init = null)
             where V : IView
         {
-            return Region(IO.PushLayer()).Show(init);
+            return Overlay(IO, init);
+        }
+
+        protected IViewLayer Overlay<V>(IHandler handler, Action<V> init = null)
+             where V : IView
+        {
+            return Region(handler.PushLayer()).Show(init);
         }
 
         protected IViewRegion Region(IHandler handler)
