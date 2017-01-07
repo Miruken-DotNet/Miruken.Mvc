@@ -21,7 +21,6 @@
 
     public class WindowOptions : CallbackOptions<WindowOptions>
     {
-        public bool?       NewWindow  { get; set; }
         public bool?       Modal      { get; set; }
         public bool?       Standalone { get; set; }
         public Screen      Screen     { get; set; }
@@ -30,9 +29,6 @@
 
         public override void MergeInto(WindowOptions other)
         {
-            if (NewWindow.HasValue && !other.NewWindow.HasValue)
-                other.NewWindow = NewWindow;
-
             if (Modal.HasValue && !other.Modal.HasValue)
                 other.Modal = Modal;
 
@@ -104,10 +100,7 @@
         {
             return new RegionOptions
             {
-                Window = new WindowOptions
-                {
-                    NewWindow = true, Screen = screen
-                }
+                Window = new WindowOptions()
             }.Decorate(handler);
         }
 
@@ -115,17 +108,13 @@
         {
             return new RegionOptions
             {
-                Window = new WindowOptions
-                {
-                    NewWindow = true,
-                    Frame = frame
-                }
+                Window = new WindowOptions { Frame = frame }
             }.Decorate(handler);
         }
 
         public static IHandler NewWindow(this IHandler handler, Action<ScreenBuilder> build)
         {
-            var window = new WindowOptions {NewWindow = true};
+            var window = new WindowOptions();
             if (build != null)
             {
                 var builder = new ScreenBuilder(window);
@@ -140,7 +129,7 @@
             {
                 Window = new WindowOptions
                 {
-                    NewWindow = true, Modal = true, Screen = screen
+                    Modal = true, Screen = screen
                 }
             }.Decorate(handler);
         }
@@ -151,16 +140,15 @@
             {
                 Window = new WindowOptions
                 {
-                    NewWindow = true,
-                    Modal     = true,
-                    Frame     = frame
+                    Modal = true,
+                    Frame = frame
                 }
             }.Decorate(handler);
         }
 
         public static IHandler Modal(this IHandler handler, Action<ScreenBuilder> build)
         {
-            var window = new WindowOptions {NewWindow = true, Modal = true};
+            var window = new WindowOptions { Modal = true };
             if (build != null)
             {
                 var builder = new ScreenBuilder(window);
@@ -173,10 +161,7 @@
         {
             return new RegionOptions
             {
-                Window = new WindowOptions
-                {
-                    Standalone = true
-                }
+                Window = new WindowOptions { Standalone = true }
             }.Decorate(handler);
         }
     }
