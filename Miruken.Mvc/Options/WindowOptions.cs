@@ -22,6 +22,7 @@
     {
         public bool?       NewWindow  { get; set; }
         public bool?       Modal      { get; set; }
+        public bool?       Standalone { get; set; }
         public Screen      Screen     { get; set; }
         public ScreenFill? FillScreen { get; set; }
         public Rectangle?  Frame      { get; set; }
@@ -33,6 +34,9 @@
 
             if (Modal.HasValue && !other.Modal.HasValue)
                 other.Modal = Modal;
+
+            if (Standalone.HasValue && !other.Standalone.HasValue)
+                other.Standalone = Standalone;
 
             if (Screen != null && other.Screen == null)
                 other.Screen = Screen;
