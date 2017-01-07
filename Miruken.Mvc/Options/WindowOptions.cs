@@ -167,5 +167,16 @@
             }
             return new RegionOptions {Window = window}.Decorate(handler);
         }
+
+        public static IHandler Standalone(this IHandler handler)
+        {
+            return new RegionOptions
+            {
+                Window = new WindowOptions
+                {
+                    Standalone = true
+                }
+            }.Decorate(handler);
+        }
     }
 }
