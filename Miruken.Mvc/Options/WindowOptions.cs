@@ -61,7 +61,7 @@
                 case ScreenFill.CenterScreen:
                     return hint.HasValue
                          ? Center(frame, hint.Value.Size)
-                         : frame;
+                         : (Rectangle?)null;
                 case ScreenFill.CenterVirtualScreen:
                     var virtualFrame = CalculateVirtualFrame();
                     return hint.HasValue
