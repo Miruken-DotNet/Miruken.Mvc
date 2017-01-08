@@ -35,11 +35,21 @@
             context?.End();
         }
 
+        protected void EndContext(object sender, EventArgs e)
+        {
+            EndContext();
+        }
+
         protected void EndCallingContext()
         {
             var context = Composer.Resolve<IContext>();
             if ((context != null) && (context != Context))
                 context.End();
+        }
+
+        protected void EndCallingContext(object sender, EventArgs e)
+        {
+            EndCallingContext();
         }
 
         #endregion
