@@ -79,6 +79,8 @@
                     }
                 }
 
+                var oldIo = ctrl?._io;
+
                 if (ctrl != null)
                 {
                     // Propogate composer options
@@ -99,6 +101,7 @@
                 }
                 finally
                 {
+                    if (ctrl != null) ctrl._io = oldIo;
                     if (initiator != null && initiator.Context == ctx &&
                         initiator != controller)
                     {
