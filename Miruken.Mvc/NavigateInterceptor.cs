@@ -1,14 +1,29 @@
-﻿using System;
-using System.Reflection;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Messaging;
-using System.Runtime.Remoting.Proxies;
-using Miruken.Callback;
-using static Miruken.Protocol;
-
-namespace Miruken.Mvc
+﻿namespace Miruken.Mvc
 {
+    using System;
+    using System.Reflection;
+    using System.Runtime.Remoting;
+    using System.Runtime.Remoting.Messaging;
+    using System.Runtime.Remoting.Proxies;
+    using Callback;
     using Infrastructure;
+    using static Protocol;
+
+    public class NavigationRequest
+    {
+        public NavigationRequest(Type controllerType, MethodInfo action,
+                                 object[] args, NavigationStyle style)
+        {
+            ControllerType = controllerType;
+            Action         = action;
+            Args           = args;
+            Style          = style;
+        }
+        public Type            ControllerType { get; }
+        public MethodInfo      Action         { get; }
+        public object[]        Args           { get; }
+        public NavigationStyle Style          { get; }
+    }
 
     public class NavigateInterceptor<C> : RealProxy, IRemotingTypeInfo
         where C : class, IController
@@ -38,7 +53,7 @@ namespace Miruken.Mvc
                 EnsureValidAction(msg);
 
             var methodCall = (IMethodCallMessage)msg;
-            var method     = methodCall.MethodBase;
+            var method     = (MethodInfo)methodCall.MethodBase;
             var args       = methodCall.Args;
 
             Func<C, object> action = controller =>
@@ -47,7 +62,7 @@ namespace Miruken.Mvc
                 if (_controller == null)
                     _controller = controller;
                 else if (controller != _controller)
-                    m = RuntimeHelper.SelectMethod((MethodInfo) method, controller.GetType());
+                    m = RuntimeHelper.SelectMethod(method, controller.GetType());
                 return m.Invoke(controller,
                     BindingFlags.Instance | BindingFlags.Public,
                     null, args, null);
@@ -55,9 +70,15 @@ namespace Miruken.Mvc
 
             try
             {
-                var result = _controller == null
-                           ? P<INavigate>(_handler).Navigate(action, _style)
-                           : action(_controller);
+                object result;
+                if (_controller == null)
+                {
+                    var request = new NavigationRequest(typeof(C), method, args, _style);
+                    result = P<INavigate>(_handler.Provide(request))
+                        .Navigate(action, _style);
+                }
+                else
+                    result = action(_controller);
 
                 return new ReturnMessage(result, args, methodCall.ArgCount,
                     methodCall.LogicalCallContext, methodCall);
