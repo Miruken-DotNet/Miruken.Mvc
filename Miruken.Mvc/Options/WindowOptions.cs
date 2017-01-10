@@ -27,7 +27,7 @@
         public Screen      Screen     { get; set; }
         public ScreenFill? FillScreen { get; set; }
         public Rectangle?  Frame      { get; set; }
-        public object      WindowType { get; set; }
+        public Type        WindowType { get; set; }
 
         public override void MergeInto(WindowOptions other)
         {
