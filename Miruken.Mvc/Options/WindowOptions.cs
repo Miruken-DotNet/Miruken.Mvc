@@ -23,9 +23,11 @@
     {
         public bool?       Modal      { get; set; }
         public bool?       Standalone { get; set; }
+        public bool?       Readonly   { get; set; }
         public Screen      Screen     { get; set; }
         public ScreenFill? FillScreen { get; set; }
         public Rectangle?  Frame      { get; set; }
+        public object      WindowType { get; set; }
 
         public override void MergeInto(WindowOptions other)
         {
@@ -35,6 +37,9 @@
             if (Standalone.HasValue && !other.Standalone.HasValue)
                 other.Standalone = Standalone;
 
+            if (Readonly.HasValue && !other.Readonly.HasValue)
+                other.Readonly = Readonly;
+
             if (Screen != null && other.Screen == null)
                 other.Screen = Screen;
 
@@ -43,6 +48,9 @@
 
             if (Frame.HasValue && !other.Frame.HasValue)
                 other.Frame = Frame;
+
+            if (WindowType != null && other.WindowType == null)
+                other.WindowType = WindowType;
         }
 
         public Rectangle? GetFrame(Rectangle? hint = null)
@@ -96,19 +104,11 @@
 
     public static class WindowOptionsExtensions
     {
-        public static IHandler NewWindow(this IHandler handler, Screen screen = null)
+        public static IHandler NewWindow(this IHandler handler, WindowOptions options = null)
         {
             return new RegionOptions
             {
-                Window = new WindowOptions()
-            }.Decorate(handler);
-        }
-
-        public static IHandler NewWindow(this IHandler handler, Rectangle frame)
-        {
-            return new RegionOptions
-            {
-                Window = new WindowOptions { Frame = frame }
+                Window = options ?? new WindowOptions()
             }.Decorate(handler);
         }
 
@@ -120,30 +120,14 @@
                 var builder = new ScreenBuilder(window);
                 build(builder);
             }
-            return new RegionOptions {Window = window}.Decorate(handler);
+            return new RegionOptions { Window = window }.Decorate(handler);
         }
 
-        public static IHandler Modal(this IHandler handler, Screen screen = null)
+        public static IHandler Modal(this IHandler handler, WindowOptions window = null)
         {
-            return new RegionOptions
-            {
-                Window = new WindowOptions
-                {
-                    Modal = true, Screen = screen
-                }
-            }.Decorate(handler);
-        }
-
-        public static IHandler Modal(this IHandler handler, Rectangle frame)
-        {
-            return new RegionOptions
-            {
-                Window = new WindowOptions
-                {
-                    Modal = true,
-                    Frame = frame
-                }
-            }.Decorate(handler);
+            window = window ?? new WindowOptions();
+            window.Modal = true;
+            return new RegionOptions { Window = window }.Decorate(handler);
         }
 
         public static IHandler Modal(this IHandler handler, Action<ScreenBuilder> build)
@@ -154,15 +138,42 @@
                 var builder = new ScreenBuilder(window);
                 build(builder);
             }
-            return new RegionOptions {Window = window}.Decorate(handler);
+            return new RegionOptions { Window = window }.Decorate(handler);
         }
 
-        public static IHandler Standalone(this IHandler handler)
+        public static IHandler Standalone(this IHandler handler, WindowOptions window = null)
         {
-            return new RegionOptions
+            window = window ?? new WindowOptions();
+            window.Standalone = true;
+            return new RegionOptions { Window = window }.Decorate(handler);
+        }
+
+        public static IHandler Standalone(this IHandler handler, Action<ScreenBuilder> build)
+        {
+            var window = new WindowOptions { Standalone = true };
+            if (build != null)
             {
-                Window = new WindowOptions { Standalone = true }
-            }.Decorate(handler);
+                var builder = new ScreenBuilder(window);
+                build(builder);
+            }
+            return new RegionOptions { Window = window }.Decorate(handler);
+        }
+
+        public static IHandler SuppressWindows(this IHandler handler)
+        {
+            return handler.Filter((cb, compposer, proceed) =>
+            {
+                var handled = proceed();
+                if (handled)
+                {
+                    var composition   = cb as Composition;
+                    cb = composition?.Callback ?? cb;
+                    var regionOptions = cb as RegionOptions;
+                    if (regionOptions != null)
+                        regionOptions.Window = null;
+                }
+                return handled;
+            }, true);
         }
     }
 }
