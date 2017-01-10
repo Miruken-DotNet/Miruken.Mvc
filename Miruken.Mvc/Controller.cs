@@ -109,9 +109,11 @@
             return P<IViewRegion>(handler);
         }
 
-        protected IContext AddRegion(IViewRegion region)
+        protected IContext AddRegion(IViewRegion region, Action<IViewRegion> init = null)
         {
-            return Context.AddRegion(region);
+            var context = Context.AddRegion(region);
+            init?.Invoke(Region(context));
+            return context;
         }
 
         #endregion
