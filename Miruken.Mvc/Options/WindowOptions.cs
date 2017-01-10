@@ -112,12 +112,12 @@
             }.Decorate(handler);
         }
 
-        public static IHandler NewWindow(this IHandler handler, Action<ScreenBuilder> build)
+        public static IHandler NewWindow(this IHandler handler, Action<WindowBuilder> build)
         {
             var window = new WindowOptions();
             if (build != null)
             {
-                var builder = new ScreenBuilder(window);
+                var builder = new WindowBuilder(window);
                 build(builder);
             }
             return new RegionOptions { Window = window }.Decorate(handler);
@@ -130,12 +130,12 @@
             return new RegionOptions { Window = window }.Decorate(handler);
         }
 
-        public static IHandler Modal(this IHandler handler, Action<ScreenBuilder> build)
+        public static IHandler Modal(this IHandler handler, Action<WindowBuilder> build)
         {
             var window = new WindowOptions { Modal = true };
             if (build != null)
             {
-                var builder = new ScreenBuilder(window);
+                var builder = new WindowBuilder(window);
                 build(builder);
             }
             return new RegionOptions { Window = window }.Decorate(handler);
@@ -148,12 +148,12 @@
             return new RegionOptions { Window = window }.Decorate(handler);
         }
 
-        public static IHandler Standalone(this IHandler handler, Action<ScreenBuilder> build)
+        public static IHandler Standalone(this IHandler handler, Action<WindowBuilder> build)
         {
             var window = new WindowOptions { Standalone = true };
             if (build != null)
             {
-                var builder = new ScreenBuilder(window);
+                var builder = new WindowBuilder(window);
                 build(builder);
             }
             return new RegionOptions { Window = window }.Decorate(handler);

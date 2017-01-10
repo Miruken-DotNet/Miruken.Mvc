@@ -59,7 +59,7 @@
     <Compile Include="Options\AnimationOptions.cs" />
     <Compile Include="Options\LayerOptions.cs" />
     <Compile Include="Options\RegionOptions.cs" />
-    <Compile Include="Options\ScreenBuilder.cs" />
+    <Compile Include="Options\WindowBuilder.cs" />
     <Compile Include="Options\WindowOptions.cs" />
     <Compile Include="Policy\DefaultPolicy.cs" />
     <Compile Include="Policy\IPolicy.cs" />

@@ -3,66 +3,72 @@
     using System.Linq;
     using System.Windows.Forms;
 
-    public class ScreenBuilder
+    public class WindowBuilder
     {
-        public ScreenBuilder(WindowOptions options)
+        public WindowBuilder(WindowOptions options)
         {
             WindowOptions = options;
         }
 
         public WindowOptions WindowOptions { get; }
 
-        public ScreenBuilder Primary()
+        public WindowBuilder PrimaryScreen()
         {
             WindowOptions.Screen = Screen.PrimaryScreen;
             return this;
         }
 
-        public ScreenBuilder Secondary()
+        public WindowBuilder SecondaryScreen()
         {
             WindowOptions.Screen = Screen.AllScreens.FirstOrDefault(s => !s.Primary);
             return this;
         }
 
-        public ScreenBuilder FullScreen()
+        public WindowBuilder FullScreen()
         {
             WindowOptions.FillScreen = ScreenFill.FullScreen;
             return this;
         }
 
-        public ScreenBuilder VirtualScreen()
+        public WindowBuilder VirtualScreen()
         {
             WindowOptions.FillScreen = ScreenFill.VirtualScreen;
             return this;
         }
 
-        public ScreenBuilder SplitLeft()
+        public WindowBuilder SplitLeft()
         {
             WindowOptions.FillScreen = ScreenFill.SplitLeft;
             return this;
         }
 
-        public ScreenBuilder SplitRight()
+        public WindowBuilder SplitRight()
         {
             WindowOptions.FillScreen = ScreenFill.SplitRight;
             return this;
         }
 
-        public ScreenBuilder SplitTop()
+        public WindowBuilder SplitTop()
         {
             WindowOptions.FillScreen = ScreenFill.SplitTop;
             return this;
         }
 
-        public ScreenBuilder SplitBottom()
+        public WindowBuilder SplitBottom()
         {
             WindowOptions.FillScreen = ScreenFill.SplitBottom;
             return this;
         }
 
-        public ScreenBuilder FillScreen(ScreenFill fillScreen)
+        public WindowBuilder FillScreen(ScreenFill fillScreen)
         {
             WindowOptions.FillScreen = fillScreen;
+            return this;
+        }
+
+        public WindowBuilder Readonly()
+        {
+            WindowOptions.Readonly = true;
             return this;
         }
     }
