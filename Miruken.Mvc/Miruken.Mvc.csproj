@@ -71,6 +71,7 @@
     <Compile Include="Views\RegionExtensions.cs" />
     <Compile Include="Views\ViewAdapter.cs" />
     <Compile Include="Views\ViewExtensions.cs" />
+    <Compile Include="ViewModel.cs" />
     <Compile Include="Views\ViewPolicy.cs" />
   </ItemGroup>
   <ItemGroup>
