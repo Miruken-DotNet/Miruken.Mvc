@@ -24,6 +24,7 @@
         public bool?       Modal      { get; set; }
         public bool?       Standalone { get; set; }
         public bool?       Readonly   { get; set; }
+        public bool?       HideCursor { get; set; }
         public Screen      Screen     { get; set; }
         public ScreenFill? FillScreen { get; set; }
         public Rectangle?  Frame      { get; set; }
@@ -39,6 +40,9 @@
 
             if (Readonly.HasValue && !other.Readonly.HasValue)
                 other.Readonly = Readonly;
+
+            if (HideCursor.HasValue && !other.HideCursor.HasValue)
+                other.HideCursor = HideCursor;
 
             if (Screen != null && other.Screen == null)
                 other.Screen = Screen;

@@ -71,5 +71,11 @@
             WindowOptions.Readonly = true;
             return this;
         }
+
+        public WindowBuilder HideCursor()
+        {
+            WindowOptions.HideCursor = true;
+            return this;
+        }
     }
 }
