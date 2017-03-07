@@ -21,6 +21,8 @@
 
     public class WindowOptions : CallbackOptions<WindowOptions>
     {
+        public string      Name       { get; set; }
+        public string      Title      { get; set; }
         public bool?       Modal      { get; set; }
         public bool?       Standalone { get; set; }
         public bool?       Readonly   { get; set; }

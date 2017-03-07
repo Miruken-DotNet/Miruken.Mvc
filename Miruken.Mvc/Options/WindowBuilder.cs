@@ -12,6 +12,18 @@
 
         public WindowOptions WindowOptions { get; }
 
+        public WindowBuilder Name(string name)
+        {
+            WindowOptions.Name = name;
+            return this;
+        }
+
+        public WindowBuilder Title(string title)
+        {
+            WindowOptions.Title = title;
+            return this;
+        }
+
         public WindowBuilder PrimaryScreen()
         {
             WindowOptions.Screen = Screen.PrimaryScreen;
