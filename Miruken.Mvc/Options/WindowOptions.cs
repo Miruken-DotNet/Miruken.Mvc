@@ -34,6 +34,12 @@
 
         public override void MergeInto(WindowOptions other)
         {
+            if (Name != null && other.Name != null)
+                other.Name = Name;
+
+            if (Title != null && other.Title != null)
+                other.Title = Title;
+
             if (Modal.HasValue && !other.Modal.HasValue)
                 other.Modal = Modal;
 
