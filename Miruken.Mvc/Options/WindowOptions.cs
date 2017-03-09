@@ -34,10 +34,10 @@
 
         public override void MergeInto(WindowOptions other)
         {
-            if (Name != null && other.Name == null)
+            if (!string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(other.Name))
                 other.Name = Name;
 
-            if (Title != null && other.Title == null)
+            if (!string.IsNullOrEmpty(Title) && string.IsNullOrEmpty(other.Title))
                 other.Title = Title;
 
             if (Modal.HasValue && !other.Modal.HasValue)
