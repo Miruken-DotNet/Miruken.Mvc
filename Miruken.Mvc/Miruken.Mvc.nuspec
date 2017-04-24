@@ -15,7 +15,7 @@
     <copyright>Copyright 2016</copyright>
     <tags>Miruken miruken Mvc MVC mvc</tags>
     <dependencies>
-      <dependency id="Miruken" />
+      <dependency id="Miruken" version="(1.0,)"/>
     </dependencies>
   </metadata>
 </package>
