@@ -2,7 +2,7 @@
 
 namespace Miruken.Mvc.Options
 {
-    public class RegionOptions : CallbackOptions<RegionOptions>
+    public class RegionOptions : Options<RegionOptions>
     {
         public object           Tag       { get; set; }
         public LayerOptions     Layer     { get; set; }

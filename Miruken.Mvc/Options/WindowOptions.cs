@@ -19,7 +19,7 @@
         SplitBottom
     }
 
-    public class WindowOptions : CallbackOptions<WindowOptions>
+    public class WindowOptions : Options<WindowOptions>
     {
         public string      Name       { get; set; }
         public string      Title      { get; set; }

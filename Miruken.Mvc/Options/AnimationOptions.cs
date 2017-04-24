@@ -25,7 +25,7 @@ namespace Miruken.Mvc.Options
         AlphaBlend
     }
 
-    public class AnimationOptions : CallbackOptions<AnimationOptions>
+    public class AnimationOptions : Options<AnimationOptions>
     {
         public AnimationEffect? Effect   { get; set; }
         public double?          Duration { get; set; }

@@ -5,7 +5,7 @@ using Miruken.Mvc.Views;
 
 namespace Miruken.Mvc.Options
 {
-    public class LayerOptions : CallbackOptions<LayerOptions>
+    public class LayerOptions : Options<LayerOptions>
     {
         public bool? Push      { get; set; }
 
