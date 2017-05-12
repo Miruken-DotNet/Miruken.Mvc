@@ -4,6 +4,8 @@ using Miruken.Container;
 
 namespace Miruken.Mvc.Tests
 {
+    using Concurrency;
+
     class TestContainer : Handler, IContainer
     {
         T IContainer.Resolve<T>()
@@ -19,14 +21,38 @@ namespace Miruken.Mvc.Tests
                  : Unhandled<object>();
         }
 
+        Promise<T> IContainer.ResolveAsync<T>()
+        {
+            var container = (IContainer)this;
+            return Promise.Resolved(container.Resolve<T>());
+        }
+
+        Promise IContainer.ResolveAsync(object key)
+        {
+            var container = (IContainer)this;
+            return Promise.Resolved(container.Resolve(key));
+        }
+
         T[] IContainer.ResolveAll<T>()
         {
-            return Unhandled<T[]>();
+            return Array.Empty<T>();
         }
 
         object[] IContainer.ResolveAll(object key)
         {
-            return Unhandled<object[]>();
+            return Array.Empty<object>();
+        }
+
+        Promise<T[]> IContainer.ResolveAllAsync<T>()
+        {
+            var container = (IContainer)this;
+            return Promise.Resolved(container.ResolveAll<T>());
+        }
+
+        Promise IContainer.ResolveAllAsync(object key)
+        {
+            var container = (IContainer)this;
+            return Promise.Resolved(container.ResolveAll(key));
         }
 
         void IContainer.Release(object component)
