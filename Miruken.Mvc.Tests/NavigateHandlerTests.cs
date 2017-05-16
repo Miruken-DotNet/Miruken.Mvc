@@ -17,7 +17,7 @@
             {
                 Console.WriteLine("Hello");
                 var options = new RegionOptions();
-                return IO.Handle(options) ? options : null;
+                return IO.Handle(options, true) ? options : null;
             }
         }
 
