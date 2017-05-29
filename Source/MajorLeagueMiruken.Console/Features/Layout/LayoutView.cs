@@ -1,6 +1,8 @@
 ﻿namespace MajorLeagueMiruken.Console.Features.Layout
 {
     using Miruken.Mvc.Console;
+    using View = Miruken.Mvc.Console.View;
+    using ViewRegion = Miruken.Mvc.Console.ViewRegion;
 
     public class LayoutView : View
     {
@@ -10,7 +12,7 @@
         public LayoutView()
         {
             var dock = new DockPanel();
-            Content = dock;
+            Content  = dock;
 
             Header = new ViewRegion
             {

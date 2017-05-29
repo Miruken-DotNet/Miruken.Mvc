@@ -1,6 +1,7 @@
 ﻿namespace MajorLeagueMiruken.Console.Features.Team
 {
     using System;
+    using Miruken.Mvc;
     using Miruken.Mvc.Console;
     using Buffer = Miruken.Mvc.Console.Buffer;
 

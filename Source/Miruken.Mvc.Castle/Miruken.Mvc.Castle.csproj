@@ -39,16 +39,12 @@
       <HintPath>..\..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken, Version=1.1.0.56, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.1.1.0.56\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=1.2.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.1.2.0.10\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken.Castle, Version=1.1.0.27, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Castle.1.1.0.27\lib\net461\Miruken.Castle.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Miruken.Mvc, Version=1.1.0.21, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Mvc.1.1.0.21\lib\net461\Miruken.Mvc.dll</HintPath>
+    <Reference Include="Miruken.Castle, Version=1.1.0.30, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Castle.1.1.0.30\lib\net461\Miruken.Castle.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -72,6 +68,12 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Miruken.Mvc\Miruken.Mvc.csproj">
+      <Project>{531ce161-7133-449d-86f6-60b72cb3047a}</Project>
+      <Name>Miruken.Mvc</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

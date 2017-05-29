@@ -31,16 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentValidation, Version=6.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FluentValidation.6.2.1.0\lib\Net45\FluentValidation.dll</HintPath>
+    <Reference Include="FluentValidation, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentValidation.7.0.2\lib\net45\FluentValidation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.1.1.0.2\lib\net461\Miruken.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Miruken.Mvc, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Mvc.1.1.0.2\lib\net461\Miruken.Mvc.dll</HintPath>
+    <Reference Include="Miruken, Version=1.2.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.1.2.0.10\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -91,11 +87,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Miruken.Mvc.Console.nuspec" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Miruken.Mvc\Miruken.Mvc.csproj">
+      <Project>{531ce161-7133-449d-86f6-60b72cb3047a}</Project>
+      <Name>Miruken.Mvc</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

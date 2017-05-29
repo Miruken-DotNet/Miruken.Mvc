@@ -36,8 +36,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Miruken, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Miruken.1.1.0.2\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=1.2.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.1.2.0.10\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -60,9 +60,6 @@
     <Compile Include="TeamHanderMocksTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Source\MajorLeagueMiruken.Api\MajorLeagueMiruken.Api.csproj">
       <Project>{d7e7a3a9-a33a-4a7f-bfa3-b2ca31ae99a8}</Project>
       <Name>MajorLeagueMiruken.Api</Name>
@@ -71,6 +68,9 @@
       <Project>{c718d4ff-8e1f-4bba-9de6-2d33a272971b}</Project>
       <Name>MajorLeagueMiruken.Console</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
