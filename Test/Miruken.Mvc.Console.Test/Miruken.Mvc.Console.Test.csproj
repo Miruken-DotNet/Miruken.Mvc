@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A9BE81A0-34CD-46F3-AF78-B4EF6D2D7F30}</ProjectGuid>
+    <ProjectGuid>{3E97F0D6-2477-4B26-8333-D226444292D2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Miruken.Mvc.Wpf.Tests</RootNamespace>
-    <AssemblyName>Miruken.Mvc.Wpf.Tests</AssemblyName>
+    <RootNamespace>Miruken.Mvc.Console.Test</RootNamespace>
+    <AssemblyName>Miruken.Mvc.Console.Test</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -36,23 +36,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Miruken, Version=1.1.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Miruken.1.1.0.2\lib\net461\Miruken.dll</HintPath>
     </Reference>
-    <Reference Include="ExpressionEvaluator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=90d9f15d622e2348, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ExpressionEvaluator.2.0.4.0\lib\net40\ExpressionEvaluator.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Miruken, Version=1.1.0.56, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.1.1.0.56\lib\net461\Miruken.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -67,18 +55,27 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ActionsExtensionTests.cs" />
+    <Compile Include="BufferReadLineTest.cs" />
+    <Compile Include="KeyInfo.cs" />
+    <Compile Include="InputListTests.cs" />
+    <Compile Include="MockConsole.cs" />
+    <Compile Include="SelectListTest.cs" />
+    <Compile Include="StackPanelTests.cs" />
+    <Compile Include="ElementTests.cs" />
+    <Compile Include="BufferWriteTests.cs" />
+    <Compile Include="DockPanelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestBase.cs" />
+    <Compile Include="UpdateInputTest.cs" />
+    <Compile Include="ViewTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Source\Miruken.Mvc.Wpf\Miruken.Mvc.Wpf.csproj">
-      <Project>{657afca9-9eb0-48fd-9648-fd9d96d1ef14}</Project>
-      <Name>Miruken.Mvc.Wpf</Name>
+    <ProjectReference Include="..\..\Source\Miruken.Mvc.Console\Miruken.Mvc.Console.csproj">
+      <Project>{96930b8d-3ca9-4506-853c-87e974dc546d}</Project>
+      <Name>Miruken.Mvc.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Source\Miruken.Mvc\Miruken.Mvc.csproj">
       <Project>{531ce161-7133-449d-86f6-60b72cb3047a}</Project>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Miruken.Mvc.Castle</id>
+    <version>$version$</version>
+    <title>Miruken Mvc Castle</title>
+    <authors>cneuwirt</authors>
+    <owners>cneuwirt</owners>
+    <licenseUrl>https://github.com/Miruken-DotNet/Miruken.Mvc.Castle/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Miruken-DotNet/Miruken.Mvc.Castle</projectUrl>
+    <iconUrl>https://avatars0.githubusercontent.com/u/20844317</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Miruken Mvc Castle</description>
+    <copyright>Copyright 2016</copyright>
+    <tags>Miruken miruken MVC Mvc mvc Castle castle</tags>
+    <dependencies>
+      <dependency id="Castle.Core" version="[3.3.3]"/>
+      <dependency id="Castle.Windsor" version="[3.3.0]"/>
+      <dependency id="Miruken" version="(1.0,)"/>
+      <dependency id="Miruken.Mvc" version="(1.0,)"/>
+      <dependency id="Miruken.Castle" version="(1.0,)"/>
+    </dependencies>
+  </metadata>
+</package>
