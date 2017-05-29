@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Miruken, Version=1.1.0.65, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Miruken.1.1.0.65\lib\net461\Miruken.dll</HintPath>
+      <HintPath>..\..\packages\Miruken.1.1.0.65\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -44,7 +44,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\GlobalAssemblyInfo.cs">
+    <Compile Include="..\..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Controller.cs" />
