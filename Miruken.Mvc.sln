@@ -14,6 +14,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miruken.Mvc.Tests", "Test\M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miruken.Mvc", "Source\Miruken.Mvc\Miruken.Mvc.csproj", "{531CE161-7133-449D-86F6-60B72CB3047A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miruken.Mvc.Wpf", "Source\Miruken.Mvc.Wpf\Miruken.Mvc.Wpf.csproj", "{657AFCA9-9EB0-48FD-9648-FD9D96D1EF14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miruken.Mvc.Wpf.Tests", "Test\Miruken.Mvc.Wpf.Tests\Miruken.Mvc.Wpf.Tests.csproj", "{A9BE81A0-34CD-46F3-AF78-B4EF6D2D7F30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miruken.Mvc.Wpf.TestApp", "Test\Miruken.Mvc.Wpf.TestApp\Miruken.Mvc.Wpf.TestApp.csproj", "{B1DC30AB-C1A4-4C24-A99A-9F9504EE9FDF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,11 +34,25 @@ Global
 		{531CE161-7133-449D-86F6-60B72CB3047A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{531CE161-7133-449D-86F6-60B72CB3047A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{531CE161-7133-449D-86F6-60B72CB3047A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{657AFCA9-9EB0-48FD-9648-FD9D96D1EF14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{657AFCA9-9EB0-48FD-9648-FD9D96D1EF14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{657AFCA9-9EB0-48FD-9648-FD9D96D1EF14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{657AFCA9-9EB0-48FD-9648-FD9D96D1EF14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9BE81A0-34CD-46F3-AF78-B4EF6D2D7F30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9BE81A0-34CD-46F3-AF78-B4EF6D2D7F30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9BE81A0-34CD-46F3-AF78-B4EF6D2D7F30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9BE81A0-34CD-46F3-AF78-B4EF6D2D7F30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1DC30AB-C1A4-4C24-A99A-9F9504EE9FDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1DC30AB-C1A4-4C24-A99A-9F9504EE9FDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1DC30AB-C1A4-4C24-A99A-9F9504EE9FDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1DC30AB-C1A4-4C24-A99A-9F9504EE9FDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1831B129-C7C1-4CB5-83F2-05E8039D40D3} = {2667B0E1-912C-47E6-84F0-FD2834D2190C}
+		{A9BE81A0-34CD-46F3-AF78-B4EF6D2D7F30} = {2667B0E1-912C-47E6-84F0-FD2834D2190C}
+		{B1DC30AB-C1A4-4C24-A99A-9F9504EE9FDF} = {2667B0E1-912C-47E6-84F0-FD2834D2190C}
 	EndGlobalSection
 EndGlobal
