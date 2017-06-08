@@ -1,17 +1,13 @@
-﻿using System;
-using Miruken.Container;
-using Miruken.Mvc.Views;
-using static Miruken.Protocol;
-
-namespace MIruken.Mvc.Castle.Tests
+﻿namespace MIruken.Mvc.Castle.Tests
 {
+    using System;
+    using Miruken.Mvc.Views;
+
     public class TestViewRegion : IViewRegion
     {
         V IViewRegion.View<V>(Action<V> init)
         {
-            var view = P<IContainer>(Composer).Resolve<V>();
-            init?.Invoke(view);
-            return view;
+            throw new NotImplementedException();
         }
 
         IViewLayer IViewRegion.Show<V>(Action<V> init)

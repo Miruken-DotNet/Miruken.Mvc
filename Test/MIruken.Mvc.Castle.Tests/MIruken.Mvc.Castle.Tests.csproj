@@ -44,17 +44,13 @@
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken, Version=1.1.0.56, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Miruken.1.1.0.56\lib\net461\Miruken.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Miruken, Version=0.0.1.68, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Miruken.1.2.0.10\lib\net461\Miruken.dll</HintPath>
     </Reference>
-    <Reference Include="Miruken.Castle, Version=1.1.0.27, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Miruken.Castle.1.1.0.27\lib\net461\Miruken.Castle.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Miruken.Mvc, Version=1.1.0.21, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Miruken.Mvc.1.1.0.21\lib\net461\Miruken.Mvc.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Miruken.Castle, Version=0.0.1.31, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Miruken.Castle.1.1.0.30\lib\net461\Miruken.Castle.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -74,17 +70,21 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="..\GlobalAssemblyInfo.cs">
-      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    <Compile Include="..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="MvcInstallerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestViewRegion.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Miruken.Mvc.Castle\Miruken.Mvc.Castle.csproj">
+    <ProjectReference Include="..\..\Source\Miruken.Mvc.Castle\Miruken.Mvc.Castle.csproj">
       <Project>{f9f72245-b193-40ba-a07f-ed3f57aa20f2}</Project>
       <Name>Miruken.Mvc.Castle</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Source\Miruken.Mvc\Miruken.Mvc.csproj">
+      <Project>{531ce161-7133-449d-86f6-60b72cb3047a}</Project>
+      <Name>Miruken.Mvc</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,19 @@
+﻿<miruken:View x:Class="WpfTestApp.Features.About.About"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:WpfTestApp.Features.About"
+             xmlns:miruken="clr-namespace:Miruken.Mvc.Wpf;assembly=Miruken.Mvc.Wpf"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="500">
+    <Grid Background="White">
+        <Label x:Name="label" Content="What is Miruken?" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Foreground="#FF666666" />
+        <TextBlock x:Name="label1" Text="Miruken is an application framework that embraces composition, convention, decoration, intention, and aspect-oriented programming. Miru and ken are Japanese words that both mean 'view'. Put them together and you have Miruken. It means 'a view of a view' and alludes to composition."
+               TextWrapping="Wrap" HorizontalAlignment="Center" Margin="0,0,0,-100" Width="400" Foreground="#FF666666" VerticalAlignment="Center"/>
+        <Button x:Name="button" Content="Back" Command="{miruken:Action Back}" HorizontalAlignment="center"  VerticalAlignment="Center" Width="75" Margin="0,0,0,-250"/>
+    </Grid>
+</miruken:View>
+
+
+
