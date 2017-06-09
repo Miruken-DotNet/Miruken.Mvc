@@ -45,10 +45,10 @@
 
         private IViewLayer TransitionTo(View element, IHandler composer)
         {
-            var options       = GetRegionOptions(composer);
+            var options = GetRegionOptions(composer);
 
-            var          push    = false;
-            var          overlay = false;
+            var       push    = false;
+            var       overlay = false;
             ViewLayer layer   = null;
 
             var layerOptions = options?.Layer;
