@@ -1,8 +1,7 @@
 ﻿namespace ConsoleTestApp
 {
     using System;
-    using Castle.MicroKernel.Registration;
-    using Castle.Windsor.Installer;
+    using System.Reflection;
     using Features.A;
     using Features.Errors;
     using Miruken.Castle;
@@ -19,11 +18,11 @@
             var windsorHandler = new WindsorHandler(container =>
             {
                 container.Install(
-                    FromAssembly.This(),
-                    new MvcInstaller(Classes.FromThisAssembly()),
-                    new ConfigurationFactoryInstaller(Types.FromThisAssembly()),
-                    new ResolvingInstaller(Classes.FromThisAssembly())
-                );
+                    new Plugins(Plugin.FromAssembly(
+                        Assembly.GetExecutingAssembly())),
+                    new MvcInstaller(),
+                    new ConfigurationFactoryInstaller(),
+                    new ResolvingInstaller());
             });
 
             Console.Title = "Console Test App";

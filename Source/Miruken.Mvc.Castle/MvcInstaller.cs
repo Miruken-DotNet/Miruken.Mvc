@@ -1,28 +1,28 @@
-﻿using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.SubSystems.Configuration;
-using Castle.Windsor;
-using Miruken.Castle;
-
-namespace Miruken.Mvc.Castle
+﻿namespace Miruken.Mvc.Castle
 {
-    public class MvcInstaller : IWindsorInstaller
-    {
-        private readonly FromAssemblyDescriptor[] _fromAssemblies;
+    using System;
+    using Miruken.Castle;
+    using global::Castle.MicroKernel.Registration;
 
-        public MvcInstaller(params FromAssemblyDescriptor[] fromAssemblies)
+    public class MvcInstaller : PluginInstaller
+    {
+        private Action<ComponentRegistration> _configure;
+
+        public MvcInstaller ConfigureControllers(Action<ComponentRegistration> configure)
         {
-            _fromAssemblies = fromAssemblies;
+            _configure += configure;
+            return this;
         }
 
-        public void Install(IWindsorContainer container, IConfigurationStore store)
+        protected override void InstallPlugin(Plugin plugin)
         {
-            foreach (var assemebly in _fromAssemblies)
-            {
-                container.Register(assemebly
-                    .BasedOn(typeof(IController))
-                    .LifestyleCustom<ContextualLifestyleManager>()
-                    .WithServiceSelf());
-            }
+            var controllers = Classes.FromAssembly(plugin.Assembly)
+                .BasedOn(typeof(IController))
+                .LifestyleCustom<ContextualLifestyleManager>()
+                .WithServiceSelf();
+            if (_configure != null)
+                controllers.Configure(_configure);
+            Container.Register(controllers);
         }
     }
 }
