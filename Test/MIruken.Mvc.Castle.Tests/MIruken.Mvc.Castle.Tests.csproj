@@ -44,16 +44,24 @@
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken, Version=1.3.0.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.1.3.0.3\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="FluentValidation, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentValidation.7.0.3\lib\net45\FluentValidation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken.Castle, Version=1.3.0.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Castle.1.3.0.4\lib\net461\Miruken.Castle.dll</HintPath>
+    <Reference Include="Miruken, Version=1.3.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.1.3.1.6-prerelease\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken.Mvc, Version=1.1.0.25, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Mvc.1.1.0.25\lib\net461\Miruken.Mvc.dll</HintPath>
+    <Reference Include="Miruken.Castle, Version=1.3.1.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Castle.1.3.1.5-prerelease\lib\net461\Miruken.Castle.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Miruken.Mvc, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Mvc.1.2.0.1\lib\net461\Miruken.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Miruken.Validate, Version=1.0.1.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Validate.1.0.1.5-prerelease\lib\net461\Miruken.Validate.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
