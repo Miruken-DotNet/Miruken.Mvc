@@ -18,8 +18,7 @@
             var windsorHandler = new WindsorHandler(container =>
             {
                 container.Install(
-                    new Plugins(Plugin.FromAssembly(
-                        Assembly.GetExecutingAssembly())),
+                    Plugin.FromAssembly(Assembly.GetExecutingAssembly()),
                     new MvcInstaller(),
                     new ConfigurationFactoryInstaller(),
                     new ResolvingInstaller());
