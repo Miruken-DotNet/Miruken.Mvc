@@ -44,7 +44,7 @@ namespace MIruken.Mvc.Castle.Tests
             _rootContext = new Context();
             _container   = new WindsorHandler(container =>
                 container.Install(
-                    Plugin.FromAssembly(Assembly.GetExecutingAssembly()),
+                    Features.FromAssembly(Assembly.GetExecutingAssembly()),
                     new MvcInstaller()));
             _rootContext.AddHandlers(_container, new NavigateHandler(new TestViewRegion()));
         }

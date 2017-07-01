@@ -4,7 +4,7 @@
     using Miruken.Castle;
     using global::Castle.MicroKernel.Registration;
 
-    public class MvcInstaller : PluginInstaller
+    public class MvcInstaller : FeatureInstaller
     {
         private Action<ComponentRegistration> _configure;
 
@@ -14,9 +14,9 @@
             return this;
         }
 
-        protected override void InstallPlugin(Plugin plugin)
+        protected override void InstallFeature(FeatureAssembly feature)
         {
-            var controllers = Classes.FromAssembly(plugin.Assembly)
+            var controllers = Classes.FromAssembly(feature.Assembly)
                 .BasedOn(typeof(IController))
                 .LifestyleCustom<ContextualLifestyleManager>()
                 .WithServiceSelf();

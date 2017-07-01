@@ -18,7 +18,8 @@
             var windsorHandler = new WindsorHandler(container =>
             {
                 container.Install(
-                    Plugin.FromAssembly(Assembly.GetExecutingAssembly()),
+                    Miruken.Castle.Features.FromAssembly(
+                        Assembly.GetExecutingAssembly()),
                     new MvcInstaller(),
                     new ConfigurationFactoryInstaller(),
                     new ResolvingInstaller());
