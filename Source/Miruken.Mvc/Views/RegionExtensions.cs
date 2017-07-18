@@ -72,7 +72,7 @@ namespace Miruken.Mvc.Views
             var stack = P<IViewRegion>(_composer).View<IViewStackView>();
             var stackAdapter = new ViewStackAdapter(region, stack);
             // Temporarily install the stack region adapter.
-            var controller = new Handler(stackAdapter).Chain(_composer).Push<C>();
+            var controller = new HandlerAdapter(stackAdapter).Chain(_composer).Push<C>();
             var context    = controller.Context;
             context.AddHandlers(stack);
             _action(controller);

@@ -115,7 +115,7 @@
                 handler = composer;
             }
             if (handler == null)
-                handler = region.ToHandler().Chain(composer);
+                handler = new HandlerAdapter(region).Chain(composer);
             var layer = handler.SuppressWindows().P<IViewRegion>().Show(content);
             layer.Disposed += (s, e) => window.Close();
             window.Closed += (s, e) => layer.Dispose();
