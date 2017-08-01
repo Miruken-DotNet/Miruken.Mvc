@@ -38,8 +38,8 @@
       <HintPath>..\..\packages\Miruken.1.4.1.12-prerelease\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken.Validate, Version=1.1.1.8, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Validate.1.1.1.8-prerelease\lib\net461\Miruken.Validate.dll</HintPath>
+    <Reference Include="Miruken.Validate, Version=1.1.1.9, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Validate.1.1.1.9-prerelease\lib\net461\Miruken.Validate.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
