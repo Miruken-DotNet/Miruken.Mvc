@@ -49,7 +49,7 @@ namespace Miruken.Mvc.Tests
             return Promise.Resolved(container.ResolveAll<T>());
         }
 
-        Promise IContainer.ResolveAllAsync(object key)
+        Promise<object[]> IContainer.ResolveAllAsync(object key)
         {
             var container = (IContainer)this;
             return Promise.Resolved(container.ResolveAll(key));

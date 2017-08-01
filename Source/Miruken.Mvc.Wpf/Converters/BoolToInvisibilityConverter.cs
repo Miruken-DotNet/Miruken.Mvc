@@ -10,7 +10,7 @@
         public object Convert(
             object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (bool)value ? Visibility.Hidden : Visibility.Visible;
+            return Equals(value, true) ? Visibility.Hidden : Visibility.Visible;
         }
 
         public object ConvertBack(
