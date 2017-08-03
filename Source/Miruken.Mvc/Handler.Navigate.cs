@@ -29,7 +29,7 @@
 
         public static object GoBack(this IHandler handler)
         {
-            return P<INavigate>(handler).GoBack();
+            return id<INavigate>(handler).GoBack();
         }
     }
 }

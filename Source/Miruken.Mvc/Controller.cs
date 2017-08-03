@@ -66,14 +66,14 @@
 
         #region Protocol
 
-        protected TProto P<TProto>() where TProto : class
+        protected TProto id<TProto>() where TProto : class
         {
-            return Protocol.P<TProto>(IO);
+            return Protocol.id<TProto>(IO);
         }
 
-        protected TProto P<TProto>(IHandler handler) where TProto : class
+        protected TProto id<TProto>(IHandler handler) where TProto : class
         {
-            return Protocol.P<TProto>(handler);
+            return Protocol.id<TProto>(handler);
         }
 
         #endregion
@@ -106,7 +106,7 @@
 
         protected IViewRegion Region(IHandler handler)
         {
-            return P<IViewRegion>(handler);
+            return id<IViewRegion>(handler);
         }
 
         protected IContext AddRegion(IViewRegion region, Action<IViewRegion> init = null)

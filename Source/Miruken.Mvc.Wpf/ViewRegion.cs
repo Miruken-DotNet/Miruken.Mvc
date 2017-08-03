@@ -116,7 +116,7 @@
             }
             if (handler == null)
                 handler = new HandlerAdapter(region).Chain(composer);
-            var layer = handler.SuppressWindows().P<IViewRegion>().Show(content);
+            var layer = handler.SuppressWindows().id<IViewRegion>().Show(content);
             layer.Disposed += (s, e) => window.Close();
             window.Closed += (s, e) => layer.Dispose();
             switch (options.FillScreen)

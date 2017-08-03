@@ -27,7 +27,7 @@ namespace Miruken.Mvc
                 if (controller == null) return;
                 var context = controller.Context;
                 if (context != null)
-                    P<IContainer>(context).Release(controller);
+                   id<IContainer>(context).Release(controller);
             });
             return this;
         }

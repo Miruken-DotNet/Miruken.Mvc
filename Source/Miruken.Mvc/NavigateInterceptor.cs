@@ -74,7 +74,7 @@
                 if (_controller == null)
                 {
                     var request = new NavigationRequest(typeof(C), method, args, _style);
-                    result = P<INavigate>(_handler.Provide(request))
+                    result =id<INavigate>(_handler.Provide(request))
                         .Navigate(action, _style);
                 }
                 else

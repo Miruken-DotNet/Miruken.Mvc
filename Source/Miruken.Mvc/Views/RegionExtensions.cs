@@ -69,7 +69,7 @@ namespace Miruken.Mvc.Views
         /// <returns>The layer representing the new controller</returns>
         public override IViewLayer Display(IViewRegion region)
         {
-            var stack = P<IViewRegion>(_composer).View<IViewStackView>();
+            var stack =id<IViewRegion>(_composer).View<IViewStackView>();
             var stackAdapter = new ViewStackAdapter(region, stack);
             // Temporarily install the stack region adapter.
             var controller = new HandlerAdapter(stackAdapter).Chain(_composer).Push<C>();
