@@ -35,8 +35,8 @@
       <HintPath>..\..\packages\FluentValidation.7.1.1\lib\net45\FluentValidation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken, Version=1.4.1.14, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.1.4.1.14-prerelease\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=1.4.1.15, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.1.4.1.15-prerelease\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
