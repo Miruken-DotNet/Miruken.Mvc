@@ -25,7 +25,7 @@ namespace Miruken.Mvc
                 var controller = Controller;
                 if (controller == null) return;
                 var context = controller.Context;
-                context?.Cast<IContainer>().Release(controller);
+                context?.Proxy<IContainer>().Release(controller);
             });
             return this;
         }

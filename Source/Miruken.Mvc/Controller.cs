@@ -68,12 +68,12 @@
 
         protected TProto id<TProto>() where TProto : class
         {
-            return IO.Cast<TProto>();
+            return IO.Proxy<TProto>();
         }
 
         protected TProto id<TProto>(IHandler handler) where TProto : class
         {
-            return handler.Cast<TProto>();
+            return handler.Proxy<TProto>();
         }
 
         #endregion

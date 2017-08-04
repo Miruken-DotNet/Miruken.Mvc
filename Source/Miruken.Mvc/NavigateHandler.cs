@@ -73,7 +73,7 @@
                     var init = initiator as Controller;
                     if (ctrl != null && init != null)
                     {
-                        ctrl._lastAction  = h => h.Cast<INavigate>().Next(action);
+                        ctrl._lastAction  = h => h.Proxy<INavigate>().Next(action);
                         ctrl._retryAction = init._lastAction;
                     }
                 }
@@ -128,7 +128,7 @@
 
         private static IController ResolveController(IContext context, Type type)
         {
-            var controller = (IController)context.Cast<IContainer>().Resolve(type);
+            var controller = (IController)context.Proxy<IContainer>().Resolve(type);
             if (controller == null)
                 throw new NotSupportedException($"Controller {type.FullName} could not be resolved");
             context.ContextEnded += _ => controller.Release();

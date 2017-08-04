@@ -32,7 +32,7 @@
                 .AddHandlers(windsorHandler, new NavigateHandler(Window.Region))
                 .AddHandler<IError>();
 
-            appContext.Cast<INavigate>().Next<AController>(x =>
+            appContext.Proxy<INavigate>().Next<AController>(x =>
             {
                 x.ShowAView();
                 return true;

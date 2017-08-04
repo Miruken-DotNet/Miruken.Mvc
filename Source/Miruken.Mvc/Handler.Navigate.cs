@@ -28,7 +28,7 @@
 
         public static object GoBack(this IHandler handler)
         {
-            return handler.Cast<INavigate>().GoBack();
+            return handler.Proxy<INavigate>().GoBack();
         }
     }
 }

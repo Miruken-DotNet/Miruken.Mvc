@@ -73,7 +73,7 @@
                 if (_controller == null)
                 {
                     var request = new NavigationRequest(typeof(C), method, args, _style);
-                    result = _handler.Provide(request).Cast<INavigate>()
+                    result = _handler.Provide(request).Proxy<INavigate>()
                         .Navigate(action, _style);
                 }
                 else
