@@ -4,12 +4,12 @@
     using System.Reflection;
     using Features.A;
     using Features.Errors;
+    using Miruken;
     using Miruken.Castle;
     using Miruken.Context;
     using Miruken.Mvc;
     using Miruken.Mvc.Castle;
     using Miruken.Mvc.Console;
-    using static Miruken.Protocol;
 
     internal class Program
     {
@@ -22,7 +22,7 @@
                         Assembly.GetExecutingAssembly()),
                     new MvcInstaller(),
                     new ConfigurationFactoryInstaller(),
-                    new ResolvingInstaller());
+                    new HandlerInstaller());
             });
 
             Console.Title = "Console Test App";
@@ -32,7 +32,7 @@
                 .AddHandlers(windsorHandler, new NavigateHandler(Window.Region))
                 .AddHandler<IError>();
 
-           id<INavigate>(appContext).Next<AController>(x =>
+            appContext.Cast<INavigate>().Next<AController>(x =>
             {
                 x.ShowAView();
                 return true;

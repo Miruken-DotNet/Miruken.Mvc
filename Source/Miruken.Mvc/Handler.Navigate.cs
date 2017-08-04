@@ -2,7 +2,6 @@
 {
     using System;
     using Callback;
-    using static Protocol;
 
     public static class HandlerNavigateExtensions
     {
@@ -29,7 +28,7 @@
 
         public static object GoBack(this IHandler handler)
         {
-            return id<INavigate>(handler).GoBack();
+            return handler.Cast<INavigate>().GoBack();
         }
     }
 }

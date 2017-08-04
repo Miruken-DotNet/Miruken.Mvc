@@ -19,7 +19,7 @@
                 container
                     .Install(WithFeatures.FromAssembly(
                         Assembly.GetExecutingAssembly()),
-                    new MvcInstaller(), new ResolvingInstaller());
+                    new MvcInstaller(), new HandlerInstaller());
             });
             appContext.ContextEnded += _ => windsorHandler.Dispose();
 

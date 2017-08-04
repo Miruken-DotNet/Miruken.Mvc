@@ -7,7 +7,6 @@
     using System.Runtime.Remoting.Proxies;
     using Callback;
     using Infrastructure;
-    using static Protocol;
 
     public class NavigationRequest
     {
@@ -74,7 +73,7 @@
                 if (_controller == null)
                 {
                     var request = new NavigationRequest(typeof(C), method, args, _style);
-                    result =id<INavigate>(_handler.Provide(request))
+                    result = _handler.Provide(request).Cast<INavigate>()
                         .Navigate(action, _style);
                 }
                 else
