@@ -1,7 +1,6 @@
 ﻿namespace Miruken.Mvc.Castle
 {
     using System;
-    using System.Reflection;
     using Miruken.Castle;
     using global::Castle.MicroKernel.Registration;
 
@@ -15,9 +14,9 @@
             return this;
         }
 
-        protected override void InstallFeature(Assembly assembly)
+        protected override void InstallFeature(FeatureAssembly feature)
         {
-            var controllers = Classes.FromAssembly(assembly)
+            var controllers = Classes.FromAssembly(feature.Assembly)
                 .BasedOn(typeof(IController))
                 .LifestyleCustom<ContextualLifestyleManager>()
                 .WithServiceSelf();
