@@ -2,6 +2,7 @@
 {
     using System;
     using System.Reflection;
+    using Castle.MicroKernel.Registration;
     using Features.A;
     using Features.Errors;
     using Miruken;
@@ -18,11 +19,10 @@
             var windsorHandler = new WindsorHandler(container =>
             {
                 container.Install(
-                    WithFeatures.FromAssembly(
-                        Assembly.GetExecutingAssembly()),
                     new MvcInstaller(),
                     new ConfigurationFactoryInstaller(),
-                    new HandlerInstaller());
+                    new HandlerInstaller(),
+                        WithFeatures.From(Types.FromThisAssembly()));
             });
 
             Console.Title = "Console Test App";

@@ -14,15 +14,14 @@
             return this;
         }
 
-        protected override void InstallFeature(FeatureAssembly feature)
+        public override void InstallFeatures(FromDescriptor from)
         {
-            var controllers = Classes.FromAssembly(feature.Assembly)
+            var controllers = from
                 .BasedOn(typeof(IController))
                 .LifestyleCustom<ContextualLifestyleManager>()
                 .WithServiceSelf();
             if (_configure != null)
                 controllers.Configure(_configure);
-            Container.Register(controllers);
         }
     }
 }

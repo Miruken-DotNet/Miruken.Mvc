@@ -1,6 +1,6 @@
 ﻿namespace WpfTestApp
 {
-    using System.Reflection;
+    using Castle.MicroKernel.Registration;
     using Features.HelloWorld;
     using Miruken.Castle;
     using Miruken.Context;
@@ -16,10 +16,8 @@
             var appContext = new Context();
             var windsorHandler = new WindsorHandler(container =>
             {
-                container
-                    .Install(WithFeatures.FromAssembly(
-                        Assembly.GetExecutingAssembly()),
-                    new MvcInstaller(), new HandlerInstaller());
+                container.Install( new MvcInstaller(), new HandlerInstaller(),
+                    WithFeatures.From(Classes.FromThisAssembly()));
             });
             appContext.ContextEnded += _ => windsorHandler.Dispose();
 

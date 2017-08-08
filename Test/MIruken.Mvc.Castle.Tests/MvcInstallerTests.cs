@@ -1,15 +1,14 @@
-﻿using Castle.Core;
-using Miruken.Castle;
-using Miruken.Mvc;
-using Miruken.Mvc.Castle;
-using Miruken.Mvc.Views;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Miruken.Callback;
-using Miruken.Context;
-
-namespace MIruken.Mvc.Castle.Tests
+﻿namespace MIruken.Mvc.Castle.Tests
 {
-    using System.Reflection;
+    using global::Castle.Core;
+    using global::Castle.MicroKernel.Registration;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Miruken.Callback;
+    using Miruken.Castle;
+    using Miruken.Context;
+    using Miruken.Mvc;
+    using Miruken.Mvc.Castle;
+    using Miruken.Mvc.Views;
 
     [TestClass]
     public class MvcInstallerTests
@@ -44,8 +43,8 @@ namespace MIruken.Mvc.Castle.Tests
             _rootContext = new Context();
             _container   = new WindsorHandler(container =>
                 container.Install(
-                    WithFeatures.FromAssembly(Assembly.GetExecutingAssembly()),
-                    new MvcInstaller()));
+                    new MvcInstaller(),
+                    WithFeatures.From(Classes.FromThisAssembly())));
             _rootContext.AddHandlers(_container, new NavigateHandler(new TestViewRegion()));
         }
 
