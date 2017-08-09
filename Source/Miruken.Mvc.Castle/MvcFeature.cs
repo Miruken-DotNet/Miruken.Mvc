@@ -4,11 +4,11 @@
     using Miruken.Castle;
     using global::Castle.MicroKernel.Registration;
 
-    public class MvcInstaller : FeatureInstaller
+    public class MvcFeature : FeatureInstaller
     {
         private Action<ComponentRegistration> _configure;
 
-        public MvcInstaller ConfigureControllers(Action<ComponentRegistration> configure)
+        public MvcFeature ConfigureControllers(Action<ComponentRegistration> configure)
         {
             _configure += configure;
             return this;

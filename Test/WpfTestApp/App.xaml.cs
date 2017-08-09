@@ -17,8 +17,8 @@
             var windsorHandler = new WindsorHandler(container =>
             {
                 container.Install(new FeaturesInstaller(
-                    new MvcInstaller(), new HandlerInstaller()).Use(
-                    Classes.FromThisAssembly()));
+                    new MvcFeature(), new HandlerFeature())
+                        .Use(Classes.FromThisAssembly()));
             });
             appContext.ContextEnded += _ => windsorHandler.Dispose();
 

@@ -19,9 +19,8 @@
             {
                 container.Install(
                     new FeaturesInstaller(
-                        new MvcInstaller(),
-                        new ConfigurationFactoryInstaller(),
-                        new HandlerInstaller()).Use(
+                        new MvcFeature(), new ConfigurationFeature(),
+                        new HandlerFeature()).Use(
                             Types.FromThisAssembly()));
             });
 

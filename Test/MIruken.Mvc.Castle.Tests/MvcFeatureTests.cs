@@ -11,7 +11,7 @@
     using Miruken.Mvc.Views;
 
     [TestClass]
-    public class MvcInstallerTests
+    public class MvcFeatureTests
     {
         protected IContext _rootContext;
         protected WindsorHandler _container;
@@ -44,7 +44,7 @@
             _container   = new WindsorHandler(container =>
                 container.Install(
                     new FeaturesInstaller(
-                        new MvcInstaller()).Use(Classes.FromThisAssembly())));
+                        new MvcFeature()).Use(Classes.FromThisAssembly())));
             _rootContext.AddHandlers(_container, new NavigateHandler(new TestViewRegion()));
         }
 
