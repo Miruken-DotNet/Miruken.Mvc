@@ -43,8 +43,8 @@
             _rootContext = new Context();
             _container   = new WindsorHandler(container =>
                 container.Install(
-                    new MvcInstaller(),
-                    WithFeatures.From(Classes.FromThisAssembly())));
+                    new FeaturesInstaller(
+                        new MvcInstaller()).Use(Classes.FromThisAssembly())));
             _rootContext.AddHandlers(_container, new NavigateHandler(new TestViewRegion()));
         }
 
