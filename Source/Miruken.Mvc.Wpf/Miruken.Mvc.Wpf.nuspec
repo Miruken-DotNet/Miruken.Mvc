@@ -14,9 +14,8 @@
     <copyright>Copyright 2016</copyright>
     <tags>Miruken miruken MVC Mvc mvc WPF Wpf wpf</tags>
     <dependencies>
-      <dependency id="Miruken" version="(1.0,)"/>
-      <dependency id="Miruken.Mvc" version="(1.0,)"/>
-      <dependency id="ExpressionEvaluator" version="(2.0,)"/>
+      <dependency id="Miruken.Mvc" version="1.0"/>
+      <dependency id="ExpressionEvaluator" version="2.0"/>
     </dependencies>
   </metadata>
 </package>
