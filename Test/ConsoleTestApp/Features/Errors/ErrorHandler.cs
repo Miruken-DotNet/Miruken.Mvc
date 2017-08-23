@@ -1,12 +1,14 @@
 ﻿namespace ConsoleTestApp.Features.Errors
 {
     using System;
+    using Miruken.Concurrency;
 
     public class ErrorHandler : IError
     {
-        public bool HandleException(Exception exception, object context = null)
+        public Promise HandleException(
+            Exception exception, object callback, object context)
         {
-            throw new NotImplementedException();
+            return Promise.Rejected(new NotImplementedException());
         }
     }
 }
