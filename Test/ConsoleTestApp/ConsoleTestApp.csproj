@@ -46,12 +46,12 @@
       <HintPath>..\..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken, Version=1.4.1.32, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.1.4.1.32-prerelease\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=1.4.1.35, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.1.4.1.35-prerelease\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken.Castle, Version=1.4.1.23, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Castle.1.4.1.23-prerelease\lib\net461\Miruken.Castle.dll</HintPath>
+    <Reference Include="Miruken.Castle, Version=1.4.1.24, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Castle.1.4.1.24-prerelease\lib\net461\Miruken.Castle.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
