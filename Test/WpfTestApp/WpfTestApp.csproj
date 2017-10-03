@@ -44,12 +44,12 @@
       <HintPath>..\..\packages\Castle.Windsor.4.0.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken, Version=1.8.1.35, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.1.8.1.35-prerelease\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=1.8.1.37, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.1.8.1.37-prerelease\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken.Castle, Version=1.8.1.11, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Castle.1.8.1.11-prerelease\lib\net461\Miruken.Castle.dll</HintPath>
+    <Reference Include="Miruken.Castle, Version=1.8.1.12, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Castle.1.8.1.12-prerelease\lib\net461\Miruken.Castle.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -90,10 +90,19 @@
     <Compile Include="Features\Documentation\Documentation.xaml.cs">
       <DependentUpon>Documentation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Features\Error\CtorErrorController.cs" />
+    <Compile Include="Features\Error\Faulty.xaml.cs">
+      <DependentUpon>Faulty.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Error\FaultyController.cs" />
     <Compile Include="Features\HelloWorld\HelloWorldController.cs" />
     <Compile Include="Features\HelloWorld\HelloWorld.xaml.cs">
       <DependentUpon>HelloWorld.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Features\Settings\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Settings\SettingsController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -130,7 +139,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Features\Error\Faulty.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Features\HelloWorld\HelloWorld.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Features\Settings\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

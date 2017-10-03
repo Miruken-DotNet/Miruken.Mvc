@@ -56,11 +56,8 @@
 
         #region Policy
 
-        public ControllerPolicy Policy
-        {
-            get { return _policy ?? (_policy = new ControllerPolicy(this)); }
-            set { _policy = value; }
-        }
+        public ControllerPolicy Policy => 
+            _policy ?? (_policy = new ControllerPolicy(this));
 
         #endregion
 
@@ -221,7 +218,8 @@
 
         protected virtual void Dispose(bool disposing)
         {
-            Policy      = null;
+            _policy?.Release();
+            _policy     = null;
             Context     = null;
             _io         = null;
             _lastAction = _retryAction = null;

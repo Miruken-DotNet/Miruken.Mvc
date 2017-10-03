@@ -7,9 +7,20 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid Background="White">
-        <Label x:Name="label" Content="Hello Miruken!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF666666" FontSize="24"/>
-        <Button x:Name="button" Content="About" Command="{miruken:Action About}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Margin="0,0,0,-100"/>
-        <Button x:Name="button_Copy" Content="Documentation" Command="{miruken:Action Documentation}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="102" Margin="10,10,188,270"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="14*"/>
+            <ColumnDefinition Width="11*"/>
+        </Grid.ColumnDefinitions>
+        <Label x:Name="label" Content="Hello Miruken!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FF666666" FontSize="24" Grid.ColumnSpan="2" Margin="67,129"/>
+        <Button x:Name="button" Content="About" Command="{miruken:Action About}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="76" Margin="112,190,112,90" Grid.ColumnSpan="2"/>
+        <Button x:Name="button_Doc" Content="Documentation" Command="{miruken:Action Documentation}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="102" Margin="10,10,55.826,270"/>
+        <Button x:Name="button_ErrorCtor" Content="Ctor Error" Command="{miruken:Action CtorError}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="75" Margin="47,10,10,270" Grid.Column="1"/>
+        <Button x:Name="button_ErrorBeforeView" Content="Error Before View" Command="{miruken:Action ErrorBeforeView}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="105" Margin="17,43,10,237" Grid.Column="1"/>
+        <Button x:Name="button_ErrorAfterView" Content="Error After View" Command="{miruken:Action ErrorAfterView}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="105" Margin="17,75,10,205" Grid.Column="1"/>
+        <Button x:Name="button_PushErrorBeforeView" Content="Push Error Before View" Command="{miruken:Action PushErrorBeforeView}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="129" Margin="10,43,29,237" RenderTransformOrigin="-1.149,0.543"/>
+        <Button x:Name="button_PushErrorAfterView" Content="Push Error After View" Command="{miruken:Action PushErrorAfterView}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="129" Margin="10,75,29,205" RenderTransformOrigin="-1.149,0.543"/>
+        <Button x:Name="button_Delay" Content="Delay" Command="{miruken:Action Delay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="105" Margin="10,251,53,29" RenderTransformOrigin="-1.149,0.543"/>
+        <Button x:Name="button_Settings" Content="Settings" Command="{miruken:Action Settings}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="105" Margin="17,251,10,29" RenderTransformOrigin="-1.149,0.543" Grid.Column="1"/>
     </Grid>
 </miruken:View>
 

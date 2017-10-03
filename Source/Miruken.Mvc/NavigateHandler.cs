@@ -71,10 +71,11 @@
                 else
                 {
                     var init = initiator as Controller;
-                    if (ctrl != null && init != null)
+                    if (ctrl != null)
                     {
                         ctrl._lastAction  = h => h.Proxy<INavigate>().Next(action);
-                        ctrl._retryAction = init._lastAction;
+                        if (init != null)
+                            ctrl._retryAction = init._lastAction;
                     }
                 }
 
@@ -89,7 +90,7 @@
                     if (prepare != null)
                     {
                         io = prepare.GetInvocationList().Cast<FilterBuilder>()
-                            .Aggregate(io, (current, builder) => builder(current) ?? current);
+                            .Aggregate(io, (cur, b) => b(cur) ?? cur);
                     }
                     ctrl._io = io;
                 }

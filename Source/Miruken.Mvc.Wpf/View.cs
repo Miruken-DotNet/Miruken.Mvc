@@ -10,11 +10,8 @@ namespace Miruken.Mvc.Wpf
 
         [EditorBrowsable(EditorBrowsableState.Never),
          DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ViewPolicy Policy
-        {
-            get { return _policy ?? (_policy = new ViewPolicy(this)); }
-            set { _policy = value; }
-        }
+        public ViewPolicy Policy => 
+            _policy ?? (_policy = new ViewPolicy(this));
 
         [EditorBrowsable(EditorBrowsableState.Never),
          DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

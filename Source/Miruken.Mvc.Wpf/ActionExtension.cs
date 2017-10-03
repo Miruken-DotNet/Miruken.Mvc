@@ -124,8 +124,7 @@
             public bool CanExecute(object parameter)
             {
                 _scope.p = parameter;
-                var canExecute = _action.CanExecute;
-                return canExecute == null || canExecute(_scope);
+                return _action.CanExecute?.Invoke(_scope) != false;
             }
 
             public void Execute(object parameter)

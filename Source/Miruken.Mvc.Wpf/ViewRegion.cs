@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
+    using System.Threading;
     using System.Windows;
     using System.Windows.Input;
     using System.Windows.Threading;
@@ -117,7 +118,13 @@
             if (handler == null)
                 handler = new HandlerAdapter(region).Chain(composer);
             var layer = handler.SuppressWindows().Proxy<IViewRegion>().Show(content);
-            layer.Disposed += (s, e) => window.Close();
+            layer.Disposed += (s, e) =>
+            {
+                if (window.Dispatcher.CheckAccess())
+                    window.Close();
+                else
+                    window.Dispatcher.Invoke(new ThreadStart(window.Close));
+            };
             window.Closed += (s, e) => layer.Dispose();
             switch (options.FillScreen)
             {
