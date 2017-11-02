@@ -5,6 +5,7 @@
     using Documentation;
     using Error;
     using Miruken.Mvc;
+    using Miruken.Mvc.Animation;
     using Miruken.Mvc.Options;
     using Settings;
 
@@ -57,7 +58,9 @@
 
         public void Settings()
         {
-            Next<SettingsController>().Configure();
+            Next<SettingsController>(
+                IO.Translate(t => t.Push.Left()))
+                .Configure();
         }
 
         public void Delay()

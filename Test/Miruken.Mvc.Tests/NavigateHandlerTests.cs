@@ -1,6 +1,7 @@
 ﻿namespace Miruken.Mvc.Tests
 {
     using System;
+    using Animation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Callback;
     using Context;
@@ -64,26 +65,26 @@
         public void Should_Propogate_Next_Options()
         {
             var controller = 
-                _rootContext.Animate(a => a.Push.Left())
+                _rootContext.Translate(a => a.Push.Left())
                 .Next<HelloController>();
             var options = controller.SayHello();
             Assert.IsNotNull(options);
-            var animation = options.Animation;
-            Assert.IsNotNull(animation);
-            Assert.AreEqual(animation.Effect, AnimationEffect.PushLeft);
+            var translation = options.Animation as Translation;
+            Assert.IsNotNull(translation);
+            Assert.AreEqual(translation.Effect, TranslationEffect.PushLeft);
         }
 
         [TestMethod]
         public void Should_Propogate_Push_Options()
         {
             var controller =
-                _rootContext.Animate(a => a.Push.Left())
+                _rootContext.Translate(a => a.Push.Left())
                 .Push<HelloController>();
             var options = controller.SayHello();
             Assert.IsNotNull(options);
-            var animation = options.Animation;
-            Assert.IsNotNull(animation);
-            Assert.AreEqual(animation.Effect, AnimationEffect.PushLeft);
+            var translation = options.Animation as Translation;
+            Assert.IsNotNull(translation);
+            Assert.AreEqual(translation.Effect, TranslationEffect.PushLeft);
         }
 
         [TestMethod, 

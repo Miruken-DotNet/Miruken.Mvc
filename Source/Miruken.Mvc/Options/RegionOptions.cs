@@ -4,10 +4,10 @@ namespace Miruken.Mvc.Options
 {
     public class RegionOptions : Options<RegionOptions>
     {
-        public object           Tag       { get; set; }
-        public LayerOptions     Layer     { get; set; }
-        public AnimationOptions Animation { get; set; }
-        public WindowOptions    Window    { get; set; }
+        public object        Tag       { get; set; }
+        public LayerOptions  Layer     { get; set; }
+        public WindowOptions Window    { get; set; }
+        public object        Animation { get; set; }
 
         public override void MergeInto(RegionOptions other)
         {
@@ -21,10 +21,8 @@ namespace Miruken.Mvc.Options
 
             if (Animation != null)
             {
-                var a = other.Animation ?? new AnimationOptions();
-                Animation.MergeInto(a);
                 if (other.Animation == null)
-                    other.Animation = a;
+                    other.Animation = Animation;
             }
 
             if (Window != null)

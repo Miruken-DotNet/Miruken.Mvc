@@ -88,7 +88,7 @@
             }
 
             if (layer == null) layer = ActiveLayer;
-            return layer.TransitionTo(element, options);
+            return layer.TransitionTo(element, options, composer);
         }
 
         protected virtual IViewLayer CreateWindow(
@@ -270,20 +270,22 @@
 
         #region Helper Methods
 
-        private void AddElement(
-            FrameworkElement fromElement, FrameworkElement element, RegionOptions options)
+        private void AddElement(FrameworkElement fromElement,
+            FrameworkElement element, RegionOptions options,
+            IHandler composer)
         {
             if (!Dispatcher.CheckAccess())
             {
                 Dispatcher.Invoke(
-                    new Action<FrameworkElement, FrameworkElement, RegionOptions>(AddElement),
-                    fromElement, element, options);
+                    new Action<FrameworkElement, FrameworkElement,
+                    RegionOptions, IHandler>(AddElement),
+                    fromElement, element, options, composer);
                 return;
             }
 
             if (_unwinding || Children.Contains(element)) return;
 
-            var activeelement = ActiveElement;
+            var activeElement = ActiveElement;
             var fromIndex     = Children.IndexOf(fromElement);
 
             element.Visibility = Visibility.Hidden;
@@ -295,17 +297,19 @@
 
             element.Visibility = Visibility.Visible;
 
-            if (fromIndex >= 0 && !ReferenceEquals(fromElement, activeelement))
+            if (fromIndex >= 0 && !ReferenceEquals(fromElement, activeElement))
                 return;
 
             element.Focus();
         }
 
-        private void RemoveElement(FrameworkElement element)
+        private void RemoveElement(FrameworkElement element,
+            object animation, IHandler composer)
         {
             if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.Invoke(new Action<FrameworkElement>(RemoveElement), element);
+                Dispatcher.Invoke(new Action<FrameworkElement, 
+                    object, IHandler>(RemoveElement), element, composer);
                 return;
             }
 
@@ -328,6 +332,8 @@
         {
             private readonly bool _overlay;
             private FrameworkElement _element;
+            private object _animation;
+            private IHandler _composer;
             protected bool _disposed;
 
             public ElementLayer(ViewRegion region, bool overlay)
@@ -380,13 +386,19 @@
                 remove { Events.RemoveHandler(DisposedEvent, value); }
             } protected static readonly object DisposedEvent = new object();
 
-            public IViewLayer TransitionTo(FrameworkElement element, RegionOptions options)
+            public IViewLayer TransitionTo(FrameworkElement element,
+                RegionOptions options, IHandler composer)
             {
-                if (ReferenceEquals(Element, element))
+                _composer = composer;
+
+                if (ReferenceEquals(Element, element)) 
                     return this;
 
                 // The initial animation will be captured
                 // and used when the layer is transitioned from
+
+                if (_animation == null)
+                    _animation = options?.Animation;
 
                 var oldElement = Element;
                 if (_overlay && oldElement != null)
@@ -394,16 +406,16 @@
                     var layer = Region.DropLayer(this);
                     if (layer != null)
                     {
-                        var actual = layer.TransitionTo(element, options);
-                        Region.RemoveElement(oldElement);
+                        var actual = layer.TransitionTo(element, options, composer);
+                        Region.RemoveElement(oldElement, null, composer);
                         return actual;
                     }
                 }
 
-                Region.AddElement(Element, element, options);
+                Region.AddElement(oldElement, element, options, composer);
                 Element = element;
                 if (oldElement != null)
-                    Region.RemoveElement(oldElement);
+                    Region.RemoveElement(oldElement, _animation, composer);
 
                 Events.Raise(this, TransitionedEvent);
                 return this;
@@ -412,8 +424,9 @@
             public void TransitionFrom()
             {
                 var oldElement = Element;
-                if ((oldElement != null) && !ReferenceEquals(oldElement, Region.ActiveElement))
-                    Region.RemoveElement(oldElement);
+                if (oldElement != null && 
+                    !ReferenceEquals(oldElement, Region.ActiveElement))
+                    Region.RemoveElement(oldElement, _animation, _composer);
                 Element = null;
             }
 
