@@ -8,9 +8,12 @@
     using System.Windows;
     using System.Windows.Input;
     using System.Windows.Threading;
+    using Animation;
     using Callback;
     using Context;
     using Infrastructure;
+    using Map;
+    using Mvc.Animation;
     using Options;
     using Views;
 
@@ -287,29 +290,40 @@
 
             var activeElement = ActiveElement;
             var fromIndex     = Children.IndexOf(fromElement);
+            var animation     = options?.Animation;
 
-            element.Visibility = Visibility.Hidden;
+            /*
+            if (animation != null)
+            {
+                var animator = composer.BestEffort().Resolve()
+                    .Proxy<IMapping>().Map<IAnimator>(animation);
+                if (animator != null)
+                {
+                    animator.Animate(this, fromElement, element);
+                    return;
+                }
+            }
+            */
 
             if (fromIndex >= 0)
                 Children.Insert(fromIndex + 1, element);
             else
                 Children.Add(element);
 
-            element.Visibility = Visibility.Visible;
+            if (fromIndex < 0 || ReferenceEquals(fromElement, activeElement))
+                element.Focus();
 
-            if (fromIndex >= 0 && !ReferenceEquals(fromElement, activeElement))
-                return;
-
-            element.Focus();
+            if (fromElement != null)
+                RemoveElement(fromElement, null, composer);
         }
 
         private void RemoveElement(FrameworkElement element,
-            object animation, IHandler composer)
+            IAnimation animation, IHandler composer)
         {
             if (!Dispatcher.CheckAccess())
             {
                 Dispatcher.Invoke(new Action<FrameworkElement, 
-                    object, IHandler>(RemoveElement), element, composer);
+                    IAnimation, IHandler>(RemoveElement), element, composer);
                 return;
             }
 
@@ -332,7 +346,7 @@
         {
             private readonly bool _overlay;
             private FrameworkElement _element;
-            private object _animation;
+            private IAnimation _animation;
             private IHandler _composer;
             protected bool _disposed;
 
@@ -349,7 +363,7 @@
             public FrameworkElement Element
             {
                 get { return _element; }
-                set
+                private set
                 {
                     if (ReferenceEquals(_element, value))
                         return;
@@ -414,8 +428,6 @@
 
                 Region.AddElement(oldElement, element, options, composer);
                 Element = element;
-                if (oldElement != null)
-                    Region.RemoveElement(oldElement, _animation, composer);
 
                 Events.Raise(this, TransitionedEvent);
                 return this;
@@ -426,7 +438,7 @@
                 var oldElement = Element;
                 if (oldElement != null && 
                     !ReferenceEquals(oldElement, Region.ActiveElement))
-                    Region.RemoveElement(oldElement, _animation, _composer);
+                    Region.RemoveElement(oldElement, _animation?.CreateInverse(), _composer);
                 Element = null;
             }
 

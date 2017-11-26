@@ -1,6 +1,5 @@
 ﻿namespace WpfTestApp.Features.HelloWorld
 {
-    using System.Threading.Tasks;
     using About;
     using Documentation;
     using Error;
@@ -58,9 +57,7 @@
 
         public void Settings()
         {
-            Next<SettingsController>(
-                IO.Translate(t => t.Push.Left()))
-                .Configure();
+            Next<SettingsController>(IO.SlideLeft()).Configure();
         }
 
         public void Delay()

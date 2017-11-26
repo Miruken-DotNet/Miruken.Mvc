@@ -2,12 +2,14 @@
 
 namespace Miruken.Mvc.Options
 {
+    using Animation;
+
     public class RegionOptions : Options<RegionOptions>
     {
         public object        Tag       { get; set; }
         public LayerOptions  Layer     { get; set; }
         public WindowOptions Window    { get; set; }
-        public object        Animation { get; set; }
+        public IAnimation    Animation { get; set; }
 
         public override void MergeInto(RegionOptions other)
         {

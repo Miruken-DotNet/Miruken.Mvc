@@ -6,84 +6,69 @@
 
     public enum TranslationEffect
     {
-        MoveLeft,
-        MoveRight,
-        MoveUp,
-        MoveDown,
+        SlideLeft,
+        SlideRight,
+        SlideUp,
+        SlideDown,
         PushLeft,
         PushRight,
         PushUp,
-        PushDown,
-        CoverLeft,
-        CoverRight,
-        CoverUp,
-        CoverDown,
-        UncoverLeft,
-        UncoverRight,
-        UncoverUp,
-        UncoverDown
+        PushDown
     }
 
-    public class Translation
+    public class Translation : IAnimation
     {
-        public TranslationEffect Effect   { get; set; }
+        public TranslationEffect Effect   { get; }
         public double?           Duration { get; set; }
 
-        public TranslationEffect InverseEffect
+        public Translation(TranslationEffect effect)
         {
-            get
+            Effect = effect;
+        }
+
+        public IAnimation CreateInverse()
+        {
+            return new Translation(GetInverseEffect())
             {
-                switch (Effect)
-                {
-                    case TranslationEffect.MoveLeft:
-                        return TranslationEffect.MoveRight;
-                    case TranslationEffect.MoveRight:
-                        return TranslationEffect.MoveLeft;
-                    case TranslationEffect.MoveUp:
-                        return TranslationEffect.MoveDown;
-                    case TranslationEffect.MoveDown:
-                        return TranslationEffect.MoveUp;
-                    case TranslationEffect.PushLeft:
-                        return TranslationEffect.PushRight;
-                    case TranslationEffect.PushRight:
-                        return TranslationEffect.PushLeft;
-                    case TranslationEffect.PushUp:
-                        return TranslationEffect.PushDown;
-                    case TranslationEffect.PushDown:
-                        return TranslationEffect.PushUp;
-                    case TranslationEffect.CoverLeft:
-                        return TranslationEffect.UncoverRight;
-                    case TranslationEffect.CoverRight:
-                        return TranslationEffect.UncoverLeft;
-                    case TranslationEffect.CoverUp:
-                        return TranslationEffect.UncoverDown;
-                    case TranslationEffect.CoverDown:
-                        return TranslationEffect.UncoverUp;
-                    case TranslationEffect.UncoverLeft:
-                        return TranslationEffect.CoverRight;
-                    case TranslationEffect.UncoverRight:
-                        return TranslationEffect.CoverLeft;
-                    case TranslationEffect.UncoverUp:
-                        return TranslationEffect.CoverDown;
-                    case TranslationEffect.UncoverDown:
-                        return TranslationEffect.CoverUp;
-                }
-                return Effect;
+                Duration = Duration
+            };
+        }
+
+        private TranslationEffect GetInverseEffect()
+        {
+            switch (Effect)
+            {
+                case TranslationEffect.SlideLeft:
+                    return TranslationEffect.SlideRight;
+                case TranslationEffect.SlideRight:
+                    return TranslationEffect.SlideLeft;
+                case TranslationEffect.SlideUp:
+                    return TranslationEffect.SlideDown;
+                case TranslationEffect.SlideDown:
+                    return TranslationEffect.SlideUp;
+                case TranslationEffect.PushLeft:
+                    return TranslationEffect.PushRight;
+                case TranslationEffect.PushRight:
+                    return TranslationEffect.PushLeft;
+                case TranslationEffect.PushUp:
+                    return TranslationEffect.PushDown;
+                case TranslationEffect.PushDown:
+                    return TranslationEffect.PushUp;
             }
+            return Effect;
         }
     }
 
-    public static class AnimationOptionsExtensions
+    #region TranslationExtensions
+
+    public static class TranslationExtensions
     {
         public static IHandler Translate(
             this IHandler handler, TranslationEffect effect)
         {
             return new RegionOptions
             {
-                Animation = new Translation
-                {
-                    Effect = effect
-                }
+                Animation = new Translation(effect)
             }.Decorate(handler);
         }
 
@@ -92,9 +77,8 @@
         {
             return new RegionOptions
             {
-                Animation = new Translation
+                Animation = new Translation(effect)
                 {
-                    Effect   = effect,
                     Duration = duration
                 }
             }.Decorate(handler);
@@ -112,5 +96,71 @@
                 Animation = builder.Translation
             }.Decorate(handler);
         }
+
+        public static IHandler SlideLeft(this IHandler handler)
+        {
+            return new RegionOptions
+            {
+                Animation = new Translation(TranslationEffect.SlideLeft)
+            }.Decorate(handler);
+        }
+
+        public static IHandler SlideRight(this IHandler handler)
+        {
+            return new RegionOptions
+            {
+                Animation = new Translation(TranslationEffect.SlideRight)
+            }.Decorate(handler);
+        }
+
+        public static IHandler SlideDown(this IHandler handler)
+        {
+            return new RegionOptions
+            {
+                Animation = new Translation(TranslationEffect.SlideDown)
+            }.Decorate(handler);
+        }
+
+        public static IHandler SlideUp(this IHandler handler)
+        {
+            return new RegionOptions
+            {
+                Animation = new Translation(TranslationEffect.SlideUp)
+            }.Decorate(handler);
+        }
+
+        public static IHandler PushLeft(this IHandler handler)
+        {
+            return new RegionOptions
+            {
+                Animation = new Translation(TranslationEffect.PushLeft)
+            }.Decorate(handler);
+        }
+
+        public static IHandler PushRight(this IHandler handler)
+        {
+            return new RegionOptions
+            {
+                Animation = new Translation(TranslationEffect.PushRight)
+            }.Decorate(handler);
+        }
+
+        public static IHandler PushDown(this IHandler handler)
+        {
+            return new RegionOptions
+            {
+                Animation = new Translation(TranslationEffect.PushDown)
+            }.Decorate(handler);
+        }
+
+        public static IHandler PushUp(this IHandler handler)
+        {
+            return new RegionOptions
+            {
+                Animation = new Translation(TranslationEffect.PushUp)
+            }.Decorate(handler);
+        }
     }
+
+    #endregion
 }

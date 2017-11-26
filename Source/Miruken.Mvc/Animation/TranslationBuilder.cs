@@ -2,29 +2,28 @@
 {
     public class TranslationBuilder
     {
-        public TranslationBuilder()
-        {
-            Translation = new Translation();
-        }
+        private TranslationEffect _effect;
+        private double? _duration;
 
-        public Translation Translation { get; }
+        public Translation Translation => new Translation(_effect)
+        {
+            Duration = _duration
+        };
 
         public TranslationBuilder Duration(double duration)
         {
-            Translation.Duration = duration;
+            _duration = duration;
             return this;
         }
 
         public TranslationBuilder Effect(TranslationEffect effect)
         {
-            Translation.Effect = effect;
+            _effect = effect;
             return this;
         }
 
-        public DirectionBuilder Push    => new PushMoveBuilder(true, this);
-        public DirectionBuilder Move    => new PushMoveBuilder(false, this);
-        public DirectionBuilder Cover   => new CoverUncoverBuilder(true, this);
-        public DirectionBuilder Uncover => new CoverUncoverBuilder(false, this);
+        public DirectionBuilder Push => new PushSlideBuilder(true, this);
+        public DirectionBuilder Slide => new PushSlideBuilder(false, this);
     }
 
     #region Direction
@@ -76,13 +75,13 @@
 
     #endregion
 
-    #region Push or Move
+    #region Push or Slide
 
-    public class PushMoveBuilder : DirectionBuilder
+    public class PushSlideBuilder : DirectionBuilder
     {
         private readonly bool _push;
 
-        public PushMoveBuilder(bool push, TranslationBuilder animation)
+        public PushSlideBuilder(bool push, TranslationBuilder animation)
             : base(animation)
         {
             _push  = push;
@@ -95,52 +94,16 @@
             {
                 case Direction.Left:
                     return animation.Effect(
-                        _push ? TranslationEffect.PushLeft : TranslationEffect.MoveLeft);
+                        _push ? TranslationEffect.PushLeft : TranslationEffect.SlideLeft);
                 case Direction.Right:
                     return animation.Effect(
-                        _push ? TranslationEffect.PushRight : TranslationEffect.MoveRight);
+                        _push ? TranslationEffect.PushRight : TranslationEffect.SlideRight);
                 case Direction.Up:
                     return animation.Effect(
-                        _push ? TranslationEffect.PushUp : TranslationEffect.MoveUp);
+                        _push ? TranslationEffect.PushUp : TranslationEffect.SlideUp);
                 case Direction.Down:
                     return animation.Effect(
-                        _push ? TranslationEffect.PushDown : TranslationEffect.MoveDown);
-            }
-            return animation;
-        }
-    }
-
-    #endregion
-
-    #region Cover or Uncover
-
-    public class CoverUncoverBuilder : DirectionBuilder
-    {
-        private readonly bool _cover;
-
-        public CoverUncoverBuilder(bool cover, TranslationBuilder animation)
-            : base(animation)
-        {
-            _cover  = cover;
-        }
-
-        protected override TranslationBuilder Apply(
-            Direction direction, TranslationBuilder animation)
-        {
-            switch (direction)
-            {
-                case Direction.Left:
-                    return animation.Effect(
-                        _cover ? TranslationEffect.CoverLeft : TranslationEffect.UncoverLeft);
-                case Direction.Right:
-                    return animation.Effect(
-                        _cover ? TranslationEffect.CoverRight : TranslationEffect.UncoverRight);
-                case Direction.Up:
-                    return animation.Effect(
-                        _cover ? TranslationEffect.CoverUp : TranslationEffect.UncoverUp);
-                case Direction.Down:
-                    return animation.Effect(
-                        _cover ? TranslationEffect.CoverDown : TranslationEffect.UncoverDown);
+                        _push ? TranslationEffect.PushDown : TranslationEffect.SlideDown);
             }
             return animation;
         }

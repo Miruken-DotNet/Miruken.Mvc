@@ -11,6 +11,7 @@
     using Miruken.Mvc.Castle;
     using Miruken.Mvc.Options;
     using Miruken.Mvc.Wpf;
+    using Miruken.Mvc.Wpf.Animation;
 
     public partial class App
     {
@@ -24,7 +25,8 @@
             {
                 container.Install(new FeaturesInstaller(
                     new MvcFeature(), new HandleFeature())
-                        .Use(Classes.FromThisAssembly()));
+                        .Use(Classes.FromThisAssembly(),
+                             Classes.FromAssemblyContaining<StandardAnimations>()));
             });
             appContext.ContextEnded += _ => windsorHandler.Dispose();
 
