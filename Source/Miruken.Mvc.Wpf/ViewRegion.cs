@@ -23,18 +23,18 @@
 
         public ViewRegion()
         {
-            Layers = new List<ElementLayer>();
+            Layers = new List<ViewLayer>();
             Policy.OnRelease(UnwindLayers);
         }
 
-        private List<ElementLayer> Layers { get; }
+        private List<ViewLayer> Layers { get; }
 
-        private FrameworkElement ActiveElement
+        private ViewController ActiveView
         {
             get
             {
                 var activeLayer = ActiveLayer;
-                return activeLayer?.Element;
+                return activeLayer?.View;
             }
         }
 
@@ -58,7 +58,7 @@
 
             var          push    = false;
             var          overlay = false;
-            ElementLayer layer   = null;
+            ViewLayer layer   = null;
 
             var layerOptions = options?.Layer;
 
@@ -78,7 +78,7 @@
                     push = true;
                 }
                 else
-                    layer = (ElementLayer) layerOptions.Choose(
+                    layer = (ViewLayer) layerOptions.Choose(
                         Layers.Cast<IViewLayer>().ToArray());
             }
 
@@ -216,13 +216,13 @@
 
         protected override Size ArrangeOverride(Size finalsize)
         {
-            ActiveElement?.Arrange(new Rect(new Point(0,0), finalsize));
+            ActiveView?.Arrange(new Rect(new Point(0,0), finalsize));
             return finalsize;
         }
 
         #region Layer Methods
 
-        private ElementLayer ActiveLayer => 
+        private ViewLayer ActiveLayer => 
             Layers.Count > 0 ? Layers[Layers.Count - 1]  : null;
 
         public IDisposable PushLayer()
@@ -243,7 +243,7 @@
             _unwinding = false;
         }
 
-        private ElementLayer DropLayer(ElementLayer layer)
+        private ViewLayer DropLayer(ViewLayer layer)
         {
             var index = Layers.IndexOf(layer);
             if (index <= 0) return null;
@@ -251,20 +251,20 @@
             return Layers[index - 1];
         }
 
-        private void RemoveLayer(ElementLayer layer)
+        private void RemoveLayer(ViewLayer layer)
         {
             Layers.Remove(layer);
             layer.TransitionFrom();
         }
 
-        private ElementLayer CreateLayer(bool overlay)
+        private ViewLayer CreateLayer(bool overlay)
         {
-            var layer = new ElementLayer(this, overlay);
+            var layer = new ViewLayer(this, overlay);
             Layers.Add(layer);
             return layer;
         }
 
-        private int GetLayerIndex(ElementLayer layer)
+        private int GetLayerIndex(ViewLayer layer)
         {
             return Layers.IndexOf(layer);
         }
@@ -273,62 +273,60 @@
 
         #region Helper Methods
 
-        private void AddElement(FrameworkElement fromElement,
-            FrameworkElement element, RegionOptions options,
+        private void AddView(ViewController fromView,
+            ViewController view, RegionOptions options,
             IHandler composer)
         {
             if (!Dispatcher.CheckAccess())
             {
                 Dispatcher.Invoke(
-                    new Action<FrameworkElement, FrameworkElement,
-                    RegionOptions, IHandler>(AddElement),
-                    fromElement, element, options, composer);
+                    new Action<ViewController, ViewController,
+                    RegionOptions, IHandler>(AddView),
+                    fromView, view, options, composer);
                 return;
             }
 
-            if (_unwinding || Children.Contains(element)) return;
+            if (_unwinding || Children.Contains(view)) return;
 
-            var activeElement = ActiveElement;
-            var fromIndex     = Children.IndexOf(fromElement);
-            var animation     = options?.Animation;
+            var activeView = ActiveView;
+            var animation  = options?.Animation;
 
-            /*
             if (animation != null)
             {
                 var animator = composer.BestEffort().Resolve()
                     .Proxy<IMapping>().Map<IAnimator>(animation);
                 if (animator != null)
                 {
-                    animator.Animate(this, fromElement, element);
+                    animator.Animate(fromView, view);
                     return;
                 }
             }
-            */
+
+            var fromIndex = Children.IndexOf(fromView);
 
             if (fromIndex >= 0)
-                Children.Insert(fromIndex + 1, element);
+                Children.Insert(fromIndex + 1, view);
             else
-                Children.Add(element);
+                Children.Add(view);
 
-            if (fromIndex < 0 || ReferenceEquals(fromElement, activeElement))
-                element.Focus();
+            if (fromIndex < 0 || ReferenceEquals(fromView, activeView))
+                view.Focus();
 
-            if (fromElement != null)
-                RemoveElement(fromElement, null, composer);
+            if (fromView != null)
+                RemoveView(fromView, null, composer);
         }
 
-        private void RemoveElement(FrameworkElement element,
+        private void RemoveView(ViewController view,
             IAnimation animation, IHandler composer)
         {
             if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.Invoke(new Action<FrameworkElement, 
-                    IAnimation, IHandler>(RemoveElement), element, composer);
+                Dispatcher.Invoke(new Action<ViewController, 
+                    IAnimation, IHandler>(RemoveView), view, composer);
                 return;
             }
 
-            if (Children.Contains(element))
-                Children.Remove(element);
+            view.RemoveFromParent();
         }
 
         private static RegionOptions GetRegionOptions(IHandler composer)
@@ -342,15 +340,15 @@
 
         #region ElementLayer
 
-        public class ElementLayer : IViewLayer
+        public class ViewLayer : IViewLayer
         {
             private readonly bool _overlay;
-            private FrameworkElement _element;
+            private ViewController _view;
             private IAnimation _animation;
             private IHandler _composer;
             protected bool _disposed;
 
-            public ElementLayer(ViewRegion region, bool overlay)
+            public ViewLayer(ViewRegion region, bool overlay)
             {
                 _overlay = overlay;
                 Events   = new EventHandlerList();
@@ -360,22 +358,20 @@
             protected ViewRegion       Region { get; }
             protected EventHandlerList Events { get; }
 
-            public FrameworkElement Element
+            public ViewController View
             {
-                get { return _element; }
+                get { return _view; }
                 private set
                 {
-                    if (ReferenceEquals(_element, value))
-                        return;
-                    var view = (IView)_element;
+                    var view = (IView)_view?.Content;
                     if (Region.DoesDependOn(view))
                         view.Release();
-                    _element = value;
-                    if (_element != null)
+                    _view = value;
+                    if (_view != null)
                     {
-                        var elementView = (IView)_element;
-                        if (elementView.Policy.Parent == null)
-                            Region.DependsOn(elementView);
+                        view = (IView)_view.Content;
+                        if (view.Policy.Parent == null)
+                            Region.DependsOn(view);
                     }
                 }
             }
@@ -405,7 +401,7 @@
             {
                 _composer = composer;
 
-                if (ReferenceEquals(Element, element)) 
+                if (ReferenceEquals(View?.Content, element)) 
                     return this;
 
                 // The initial animation will be captured
@@ -414,20 +410,21 @@
                 if (_animation == null)
                     _animation = options?.Animation;
 
-                var oldElement = Element;
-                if (_overlay && oldElement != null)
+                var oldView = View;
+                if (_overlay && oldView != null)
                 {
                     var layer = Region.DropLayer(this);
                     if (layer != null)
                     {
                         var actual = layer.TransitionTo(element, options, composer);
-                        Region.RemoveElement(oldElement, null, composer);
+                        Region.RemoveView(oldView, null, composer);
                         return actual;
                     }
                 }
 
-                Region.AddElement(oldElement, element, options, composer);
-                Element = element;
+                var view = new ViewController(Region, element);
+                Region.AddView(oldView, view, options, composer);
+                View = view;
 
                 Events.Raise(this, TransitionedEvent);
                 return this;
@@ -435,11 +432,11 @@
 
             public void TransitionFrom()
             {
-                var oldElement = Element;
-                if (oldElement != null && 
-                    !ReferenceEquals(oldElement, Region.ActiveElement))
-                    Region.RemoveElement(oldElement, _animation?.CreateInverse(), _composer);
-                Element = null;
+                var oldView = View;
+                if (oldView != null && 
+                    !ReferenceEquals(oldView, Region.ActiveView))
+                    Region.RemoveView(oldView, _animation?.CreateInverse(), _composer);
+                View = null;
             }
 
             public IDisposable Duration(TimeSpan duration, Action<bool> complete)
@@ -507,7 +504,7 @@
                 }
             }
 
-            ~ElementLayer()
+            ~ViewLayer()
             {
                 Dispose(false);
             }

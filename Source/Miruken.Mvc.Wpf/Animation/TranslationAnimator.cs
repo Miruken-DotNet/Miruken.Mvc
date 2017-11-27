@@ -1,14 +1,18 @@
 ﻿namespace Miruken.Mvc.Wpf.Animation
 {
+    using System;
     using System.Windows;
-    using System.Windows.Controls;
     using System.Windows.Media;
-    using System.Windows.Media.Imaging;
+    using System.Windows.Media.Animation;
     using Concurrency;
     using Mvc.Animation;
 
     public class TranslationAnimator : IAnimator
     {
+        private const double DefaultDuration = 600;
+        private static readonly PropertyPath TransformX =
+            new PropertyPath("(RenderTransform).(TranslateTransform.X)");
+        
         public TranslationAnimator(Translation translation)
         {
             Translation = translation;
@@ -16,45 +20,51 @@
 
         public Translation Translation { get; }
 
-        public Promise Animate(
-            ViewRegion region, 
-            FrameworkElement oldView, 
-            FrameworkElement newView)
+        public Promise Animate(ViewController oldView, ViewController newView)
         {
-            var children  = region.Children;
-            var fromIndex = children.IndexOf(oldView);
-            if (fromIndex >= 0)
+            var storyboard = new Storyboard();
+            var duration = Translation.Duration.GetValueOrDefault(DefaultDuration);
+            if (oldView != null)
             {
-                var from = CreateWrapper(region, fromIndex);
+                var doubleAnimation = new DoubleAnimation
+                {
+                    To             = oldView.ActualWidth,
+                    Duration       = TimeSpan.FromMilliseconds(duration),
+                    EasingFunction = new CubicEase()
+                };
+                storyboard.Children.Add(doubleAnimation);
+                Storyboard.SetTarget(doubleAnimation, oldView);
+                Storyboard.SetTargetProperty(doubleAnimation, TransformX);
+                oldView.RenderTransform = new TranslateTransform();
             }
-            var to = CreateWrapper(region, fromIndex);
-            to.Content = newView;
-            return Promise.Empty;
-        }
-
-        private Brush GetVisualBrush(Visual visual)
-        {
-            var brush = new VisualBrush(visual)
+            if (newView != null)
             {
-                ViewportUnits = BrushMappingMode.Absolute
-            };
-            RenderOptions.SetCachingHint(brush, CachingHint.Cache);
-            RenderOptions.SetCacheInvalidationThresholdMinimum(brush, 40);
-            return brush;
-        }
+                var doubleAnimation = new DoubleAnimation
+                {
+                    To             = 0,
+                    From           = -newView.ExpectedWidth,
+                    Duration       = TimeSpan.FromMilliseconds(duration),
+                    EasingFunction = new CubicEase()
 
-        private static ContentControl CreateWrapper(
-            Panel container, int index)
-        {
-            var control = new ContentControl
+                };
+                storyboard.Children.Add(doubleAnimation);
+                Storyboard.SetTarget(doubleAnimation, newView);
+                Storyboard.SetTargetProperty(doubleAnimation, TransformX);
+                newView.RenderTransform = new TranslateTransform();
+                newView.AddToParentAfter(oldView);
+            }
+            return new Promise<object>((resolve, reject) =>
             {
-                RenderTransform = new TranslateTransform(0, 0)
-            };
-            if (index >= 0)
-                container.Children.Insert(index + 1, control);
-            else
-                container.Children.Add(control);
-            return control;
+                storyboard.Completed += (s, e) =>
+                {
+                    oldView?.RemoveFromParent();
+                    if (newView != null)
+                        newView.RenderTransform = null;
+                    storyboard.Remove();
+                    resolve(null, true);
+                };
+                storyboard.Begin();
+            });
         }
     }
 }

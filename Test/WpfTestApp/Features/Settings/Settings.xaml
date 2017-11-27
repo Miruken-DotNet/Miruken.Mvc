@@ -6,7 +6,7 @@
              xmlns:miruken="clr-namespace:Miruken.Mvc.Wpf;assembly=Miruken.Mvc.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Background="White" ClipToBounds="True">
+    <Grid Background="BurlyWood" ClipToBounds="True">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
