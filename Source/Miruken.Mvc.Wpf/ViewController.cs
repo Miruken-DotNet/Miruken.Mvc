@@ -7,7 +7,7 @@
     {
         private readonly ViewRegion _region;
 
-        public ViewController(ViewRegion region, FrameworkElement view)
+        public ViewController(ViewRegion region, object view)
         {
             _region = region;
             Content = view;
@@ -15,6 +15,21 @@
 
         public double RegionWidth => _region.ActualWidth;
         public double RegionHeight => _region.ActualHeight;
+
+        public void ShowView()
+        {
+            Visibility = Visibility.Visible;
+        }
+
+        public void CollapseView()
+        {
+            Visibility = Visibility.Collapsed;
+        }
+
+        public void HideView()
+        {
+            Visibility = Visibility.Hidden;
+        }
 
         public void AddView()
         {
@@ -34,7 +49,7 @@
                 return true;
             }
             var children = _region.Children;
-            var index    = children.IndexOf(view);
+            var index = children.IndexOf(view);
             if (index < 0) return false;
             children.Insert(index + 1, this);
             return true;
@@ -48,7 +63,7 @@
                 return true;
             }
             var children = _region.Children;
-            var index    = children.IndexOf(view);
+            var index = children.IndexOf(view);
             if (index < 0) return false;
             children.Insert(index, this);
             return true;

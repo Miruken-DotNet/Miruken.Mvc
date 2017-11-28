@@ -9,11 +9,14 @@
 
     public class TranslationAnimator : IAnimator
     {
+        private readonly TimeSpan DefaultDuration =
+            TimeSpan.FromMilliseconds(400);
+
         private static readonly PropertyPath TransformX =
-            new PropertyPath("(RenderTransform).(TranslateTransform.X)");
+            new PropertyPath("RenderTransform.X");
+
         private static readonly PropertyPath TransformY =
-            new PropertyPath("(RenderTransform).(TranslateTransform.Y)");
-        private readonly TimeSpan DefaultDuration = TimeSpan.FromMilliseconds(600);
+            new PropertyPath("RenderTransform.Y");
 
         public TranslationAnimator(Translation translation)
         {
@@ -59,6 +62,8 @@
             double from , to;
             PropertyPath path;
 
+            view.RenderTransform = new TranslateTransform();
+
             switch (Translation.Effect)
             {
                 case TranslationEffect.PushLeft:
@@ -100,7 +105,6 @@
             storyboard.Children.Add(animation);
             Storyboard.SetTarget(animation, view);
             Storyboard.SetTargetProperty(animation, path);
-            view.RenderTransform = new TranslateTransform();
         }
     }
 }

@@ -57,8 +57,8 @@
             if (windowOptions != null)
                 return CreateWindow(windowOptions, (IView)element, composer);
 
-            var          push    = false;
-            var          overlay = false;
+            var       push    = false;
+            var       overlay = false;
             ViewLayer layer   = null;
 
             var layerOptions = options?.Layer;
@@ -273,12 +273,10 @@
             IHandler composer)
         {
             if (!Dispatcher.CheckAccess())
-            {
                 return (Promise)Dispatcher.Invoke(
                     new Func<ViewController, ViewController,
                     RegionOptions, IHandler, Promise>(AddView),
                     fromView, view, options, composer);
-            }
 
             if (_unwinding || Children.Contains(view))
                 return Promise.Empty;
@@ -310,17 +308,23 @@
             return Promise.Empty;
         }
 
-        private void RemoveView(ViewController view,
+        private Promise RemoveView(ViewController view,
             IAnimation animation, IHandler composer)
         {
             if (!Dispatcher.CheckAccess())
+                return (Promise)Dispatcher.Invoke(new Func<ViewController, 
+                    IAnimation, IHandler, Promise>(RemoveView), view, composer);
+
+            if (animation != null)
             {
-                Dispatcher.Invoke(new Action<ViewController, 
-                    IAnimation, IHandler>(RemoveView), view, composer);
-                return;
+                var animator = composer.BestEffort().Resolve()
+                    .Proxy<IMapping>().Map<IAnimator>(animation);
+                if (animator != null)
+                    return animator.Animate(view, null);
             }
 
             view.RemoveView();
+            return Promise.Empty;
         }
 
         private static RegionOptions GetRegionOptions(IHandler composer)
