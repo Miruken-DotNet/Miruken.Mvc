@@ -9,10 +9,12 @@
 
     public class TranslationAnimator : IAnimator
     {
-        private const double DefaultDuration = 600;
         private static readonly PropertyPath TransformX =
             new PropertyPath("(RenderTransform).(TranslateTransform.X)");
-        
+        private static readonly PropertyPath TransformY =
+            new PropertyPath("(RenderTransform).(TranslateTransform.Y)");
+        private readonly TimeSpan DefaultDuration = TimeSpan.FromMilliseconds(600);
+
         public TranslationAnimator(Translation translation)
         {
             Translation = translation;
@@ -23,48 +25,82 @@
         public Promise Animate(ViewController oldView, ViewController newView)
         {
             var storyboard = new Storyboard();
-            var duration = Translation.Duration.GetValueOrDefault(DefaultDuration);
-            if (oldView != null)
-            {
-                var doubleAnimation = new DoubleAnimation
-                {
-                    To             = oldView.ActualWidth,
-                    Duration       = TimeSpan.FromMilliseconds(duration),
-                    EasingFunction = new CubicEase()
-                };
-                storyboard.Children.Add(doubleAnimation);
-                Storyboard.SetTarget(doubleAnimation, oldView);
-                Storyboard.SetTargetProperty(doubleAnimation, TransformX);
-                oldView.RenderTransform = new TranslateTransform();
-            }
+            var duration   = Translation.Duration.GetValueOrDefault(DefaultDuration);
+
+            if (oldView != null && !Translation.IsSlide)
+                CreateAnimation(storyboard, oldView, true, duration);
+
             if (newView != null)
             {
-                var doubleAnimation = new DoubleAnimation
-                {
-                    To             = 0,
-                    From           = -newView.ExpectedWidth,
-                    Duration       = TimeSpan.FromMilliseconds(duration),
-                    EasingFunction = new CubicEase()
-
-                };
-                storyboard.Children.Add(doubleAnimation);
-                Storyboard.SetTarget(doubleAnimation, newView);
-                Storyboard.SetTargetProperty(doubleAnimation, TransformX);
-                newView.RenderTransform = new TranslateTransform();
-                newView.AddToParentAfter(oldView);
+                CreateAnimation(storyboard, newView, false, duration);
+                newView.AddViewAfter(oldView);
             }
+
             return new Promise<object>((resolve, reject) =>
             {
-                storyboard.Completed += (s, e) =>
+                EventHandler completed = null;
+                completed = (s, e) =>
                 {
-                    oldView?.RemoveFromParent();
+                    storyboard.Completed -= completed;
+                    oldView?.RemoveView();
                     if (newView != null)
                         newView.RenderTransform = null;
                     storyboard.Remove();
                     resolve(null, true);
                 };
+                storyboard.Completed += completed;
                 storyboard.Begin();
             });
+        }
+
+        private void CreateAnimation(TimelineGroup storyboard,
+            ViewController view, bool old, TimeSpan duration)
+        {
+            double from , to;
+            PropertyPath path;
+
+            switch (Translation.Effect)
+            {
+                case TranslationEffect.PushLeft:
+                case TranslationEffect.SlideLeft:
+                    from = old ? 0 : view.RegionWidth;
+                    to   = old ? -view.ActualWidth : 0;
+                    path = TransformX;
+                    break;
+                case TranslationEffect.PushRight:
+                case TranslationEffect.SlideRight:
+                    from = old ? 0 : -view.RegionWidth;
+                    to   = old ? view.ActualWidth : 0;
+                    path = TransformX;
+                    break;
+                case TranslationEffect.PushDown:
+                case TranslationEffect.SlideDown:
+                    from = old ? 0 : -view.RegionHeight;
+                    to   = old ? view.ActualHeight : 0;
+                    path = TransformY;
+                    break;
+                case TranslationEffect.PushUp:
+                case TranslationEffect.SlideUp:
+                    from = old ? 0 : view.RegionHeight;
+                    to   = old ? -view.ActualHeight : 0;
+                    path = TransformY;
+                    break;
+                default:
+                    throw new InvalidOperationException("Invalid translation");
+            }
+
+            var animation = new DoubleAnimation
+            {
+                To             = to,
+                From           = from,
+                Duration       = duration,
+                EasingFunction = new CubicEase()
+            };
+
+            storyboard.Children.Add(animation);
+            Storyboard.SetTarget(animation, view);
+            Storyboard.SetTargetProperty(animation, path);
+            view.RenderTransform = new TranslateTransform();
         }
     }
 }

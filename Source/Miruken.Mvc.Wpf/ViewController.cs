@@ -13,19 +13,20 @@
             Content = view;
         }
 
-        public double ExpectedWidth => _region.ActualWidth;
+        public double RegionWidth => _region.ActualWidth;
+        public double RegionHeight => _region.ActualHeight;
 
-        public void AddToParent()
+        public void AddView()
         {
             _region.Children.Add(this);
         }
 
-        public void AddToParentAtIndex(int index)
+        public void AddViewAtIndex(int index)
         {
             _region.Children.Insert(index, this);
         }
 
-        public bool AddToParentAfter(ViewController view)
+        public bool AddViewAfter(ViewController view)
         {
             if (view == null)
             {
@@ -35,15 +36,43 @@
             var children = _region.Children;
             var index    = children.IndexOf(view);
             if (index < 0) return false;
-            _region.Children.Insert(index + 1, this);
+            children.Insert(index + 1, this);
             return true;
         }
 
-        public void RemoveFromParent()
+        public bool AddViewBefore(ViewController view)
+        {
+            if (view == null)
+            {
+                _region.Children.Add(this);
+                return true;
+            }
+            var children = _region.Children;
+            var index    = children.IndexOf(view);
+            if (index < 0) return false;
+            children.Insert(index, this);
+            return true;
+        }
+
+        public bool ReplaceView(ViewController view)
+        {
+            var children = _region.Children;
+            var index = children.IndexOf(view);
+            if (index < 0) return false;
+            children.RemoveAt(index);
+            children.Insert(index, this);
+            return true;
+        }
+
+        public bool RemoveView()
         {
             var children = _region.Children;
             if (children.Contains(this))
+            {
                 children.Remove(this);
+                return true;
+            }
+            return false;
         }
     }
 }

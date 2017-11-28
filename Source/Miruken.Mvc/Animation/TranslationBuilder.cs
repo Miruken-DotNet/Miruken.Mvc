@@ -1,16 +1,18 @@
 ﻿namespace Miruken.Mvc.Animation
 {
+    using System;
+
     public class TranslationBuilder
     {
         private TranslationEffect _effect;
-        private double? _duration;
+        private TimeSpan? _duration;
 
         public Translation Translation => new Translation(_effect)
         {
             Duration = _duration
         };
 
-        public TranslationBuilder Duration(double duration)
+        public TranslationBuilder Duration(TimeSpan duration)
         {
             _duration = duration;
             return this;

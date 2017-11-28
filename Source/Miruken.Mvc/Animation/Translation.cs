@@ -19,11 +19,28 @@
     public class Translation : IAnimation
     {
         public TranslationEffect Effect   { get; }
-        public double?           Duration { get; set; }
+        public TimeSpan?         Duration { get; set; }
 
         public Translation(TranslationEffect effect)
         {
             Effect = effect;
+        }
+
+        public bool IsSlide
+        {
+            get
+            {
+                switch (Effect)
+                {
+                    case TranslationEffect.SlideLeft:
+                    case TranslationEffect.SlideRight:
+                    case TranslationEffect.SlideDown:
+                    case TranslationEffect.SlideUp:
+                        return true;
+                    default:
+                        return false;
+                }
+            }    
         }
 
         public IAnimation CreateInverse()
@@ -63,17 +80,8 @@
 
     public static class TranslationExtensions
     {
-        public static IHandler Translate(
-            this IHandler handler, TranslationEffect effect)
-        {
-            return new RegionOptions
-            {
-                Animation = new Translation(effect)
-            }.Decorate(handler);
-        }
-
         public static IHandler Translate(this IHandler handler,
-            TranslationEffect effect, double duration)
+            TranslationEffect effect, TimeSpan? duration = null)
         {
             return new RegionOptions
             {
@@ -97,68 +105,52 @@
             }.Decorate(handler);
         }
 
-        public static IHandler SlideLeft(this IHandler handler)
+        public static IHandler SlideLeft(
+            this IHandler handler, TimeSpan? duration = null)
         {
-            return new RegionOptions
-            {
-                Animation = new Translation(TranslationEffect.SlideLeft)
-            }.Decorate(handler);
+            return handler.Translate(TranslationEffect.SlideLeft, duration);
         }
 
-        public static IHandler SlideRight(this IHandler handler)
+        public static IHandler SlideRight(
+            this IHandler handler, TimeSpan? duration = null)
         {
-            return new RegionOptions
-            {
-                Animation = new Translation(TranslationEffect.SlideRight)
-            }.Decorate(handler);
+            return handler.Translate(TranslationEffect.SlideRight, duration);
         }
 
-        public static IHandler SlideDown(this IHandler handler)
+        public static IHandler SlideDown(
+            this IHandler handler, TimeSpan? duration = null)
         {
-            return new RegionOptions
-            {
-                Animation = new Translation(TranslationEffect.SlideDown)
-            }.Decorate(handler);
+            return handler.Translate(TranslationEffect.SlideDown, duration);
         }
 
-        public static IHandler SlideUp(this IHandler handler)
+        public static IHandler SlideUp(
+            this IHandler handler, TimeSpan? duration = null)
         {
-            return new RegionOptions
-            {
-                Animation = new Translation(TranslationEffect.SlideUp)
-            }.Decorate(handler);
+            return handler.Translate(TranslationEffect.SlideUp, duration);
         }
 
-        public static IHandler PushLeft(this IHandler handler)
+        public static IHandler PushLeft(
+            this IHandler handler, TimeSpan? duration = null)
         {
-            return new RegionOptions
-            {
-                Animation = new Translation(TranslationEffect.PushLeft)
-            }.Decorate(handler);
+            return handler.Translate(TranslationEffect.PushLeft, duration);
         }
 
-        public static IHandler PushRight(this IHandler handler)
+        public static IHandler PushRight(
+            this IHandler handler, TimeSpan? duration = null)
         {
-            return new RegionOptions
-            {
-                Animation = new Translation(TranslationEffect.PushRight)
-            }.Decorate(handler);
+            return handler.Translate(TranslationEffect.PushRight, duration);
         }
 
-        public static IHandler PushDown(this IHandler handler)
+        public static IHandler PushDown(
+            this IHandler handler, TimeSpan? duration = null)
         {
-            return new RegionOptions
-            {
-                Animation = new Translation(TranslationEffect.PushDown)
-            }.Decorate(handler);
+            return handler.Translate(TranslationEffect.PushDown, duration);
         }
 
-        public static IHandler PushUp(this IHandler handler)
+        public static IHandler PushUp(
+            this IHandler handler, TimeSpan? duration = null)
         {
-            return new RegionOptions
-            {
-                Animation = new Translation(TranslationEffect.PushUp)
-            }.Decorate(handler);
+            return handler.Translate(TranslationEffect.PushUp, duration);
         }
     }
 

@@ -10,6 +10,7 @@
     using System.Windows.Threading;
     using Animation;
     using Callback;
+    using Concurrency;
     using Context;
     using Infrastructure;
     using Map;
@@ -214,12 +215,6 @@
             return navigation;
         }
 
-        protected override Size ArrangeOverride(Size finalsize)
-        {
-            ActiveView?.Arrange(new Rect(new Point(0,0), finalsize));
-            return finalsize;
-        }
-
         #region Layer Methods
 
         private ViewLayer ActiveLayer => 
@@ -273,20 +268,20 @@
 
         #region Helper Methods
 
-        private void AddView(ViewController fromView,
+        private Promise AddView(ViewController fromView,
             ViewController view, RegionOptions options,
             IHandler composer)
         {
             if (!Dispatcher.CheckAccess())
             {
-                Dispatcher.Invoke(
-                    new Action<ViewController, ViewController,
-                    RegionOptions, IHandler>(AddView),
+                return (Promise)Dispatcher.Invoke(
+                    new Func<ViewController, ViewController,
+                    RegionOptions, IHandler, Promise>(AddView),
                     fromView, view, options, composer);
-                return;
             }
 
-            if (_unwinding || Children.Contains(view)) return;
+            if (_unwinding || Children.Contains(view))
+                return Promise.Empty;
 
             var activeView = ActiveView;
             var animation  = options?.Animation;
@@ -296,10 +291,7 @@
                 var animator = composer.BestEffort().Resolve()
                     .Proxy<IMapping>().Map<IAnimator>(animation);
                 if (animator != null)
-                {
-                    animator.Animate(fromView, view);
-                    return;
-                }
+                    return animator.Animate(fromView, view);
             }
 
             var fromIndex = Children.IndexOf(fromView);
@@ -314,6 +306,8 @@
 
             if (fromView != null)
                 RemoveView(fromView, null, composer);
+
+            return Promise.Empty;
         }
 
         private void RemoveView(ViewController view,
@@ -326,7 +320,7 @@
                 return;
             }
 
-            view.RemoveFromParent();
+            view.RemoveView();
         }
 
         private static RegionOptions GetRegionOptions(IHandler composer)
