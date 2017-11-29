@@ -23,7 +23,7 @@
         {
             var storyboard = new Storyboard();
             var duration   = Roll.Duration.GetValueOrDefault(DefaultDuration);
-            var clockwise  = Roll.Clockwise ?? false;
+            var clockwise  = Roll.Clockwise;
             var origin     = newView?.RenderTransformOrigin;
 
             if (oldView == null)
@@ -55,9 +55,10 @@
 
             var animation = new DoubleAnimation
             {
-                From     = 0,
-                To       = clockwise ? 90 : -90,
-                Duration = duration
+                From           = 0,
+                To             = clockwise ? 90 : -90,
+                Duration       = duration,
+                EasingFunction = Roll.Behaviors.Find<IEasingFunction>()
             };
 
             storyboard.Children.Add(animation);

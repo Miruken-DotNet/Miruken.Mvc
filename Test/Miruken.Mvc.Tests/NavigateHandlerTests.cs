@@ -65,7 +65,7 @@
         public void Should_Propogate_Next_Options()
         {
             var controller = 
-                _rootContext.Translate(a => a.Push.Left())
+                _rootContext.PushLeft()
                 .Next<HelloController>();
             var options = controller.SayHello();
             Assert.IsNotNull(options);
@@ -78,7 +78,7 @@
         public void Should_Propogate_Push_Options()
         {
             var controller =
-                _rootContext.Translate(a => a.Push.Left())
+                _rootContext.PushLeft()
                 .Push<HelloController>();
             var options = controller.SayHello();
             Assert.IsNotNull(options);

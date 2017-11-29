@@ -12,7 +12,7 @@
 
         public void Back()
         {
-            GoBack(IO.RollBottomRight(true));
+            GoBack(IO.PushLeft());
         }
     }
 }

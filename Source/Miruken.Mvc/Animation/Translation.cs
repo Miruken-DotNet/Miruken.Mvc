@@ -91,19 +91,6 @@
             }.Decorate(handler);
         }
 
-        public static IHandler Translate(
-             this IHandler handler, Action<TranslationBuilder> build)
-        {
-            if (handler == null || build == null)
-                return handler;
-            var builder = new TranslationBuilder();
-            build(builder);
-            return new RegionOptions
-            {
-                Animation = builder.Translation
-            }.Decorate(handler);
-        }
-
         public static IHandler SlideLeft(
             this IHandler handler, TimeSpan? duration = null)
         {

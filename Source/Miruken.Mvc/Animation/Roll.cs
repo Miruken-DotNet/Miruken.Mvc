@@ -14,7 +14,7 @@
 
     public class Roll : Animation
     {
-        public bool? Clockwise { get; set; }
+        public bool Clockwise { get; set; }
 
         public Roll(RollAnchor anchor)
         {
@@ -27,7 +27,7 @@
         {
             return new Roll(Anchor)
             {
-                Clockwise = !(Clockwise ?? false)
+                Clockwise = !Clockwise
             };
         }
     }
@@ -38,49 +38,49 @@
     {
         public static IHandler Roll(
             this IHandler handler,
-            RollAnchor anchor, bool? clockwise = null,
+            RollAnchor anchor, bool clockwise = false,
             TimeSpan? duration = null)
         {
             return new RegionOptions
             {
                 Animation = new Roll(anchor)
                 {
-                    Duration = duration,
+                    Duration  = duration,
                     Clockwise = clockwise
                 }
             }.Decorate(handler);
         }
 
         public static IHandler Roll(
-            this IHandler handler, bool? clockwise = null,
+            this IHandler handler, bool clockwise = false,
             TimeSpan? duration = null)
         {
             return handler.Roll(RollAnchor.BottomLeft, clockwise, duration);
         }
 
         public static IHandler RollTopLeft(
-            this IHandler handler, bool? clockwise = null,
+            this IHandler handler, bool clockwise = false,
             TimeSpan? duration = null)
         {
             return handler.Roll(RollAnchor.TopLeft, clockwise, duration);
         }
 
         public static IHandler RollTopRight(
-            this IHandler handler, bool? clockwise = null,
+            this IHandler handler, bool clockwise = false,
             TimeSpan? duration = null)
         {
             return handler.Roll(RollAnchor.TopRight, clockwise, duration);
         }
 
         public static IHandler RollBottomLeft(
-            this IHandler handler, bool? clockwise = null,
+            this IHandler handler, bool clockwise = false,
             TimeSpan? duration = null)
         {
             return handler.Roll(RollAnchor.BottomLeft, clockwise, duration);
         }
 
         public static IHandler RollBottomRight(
-            this IHandler handler, bool? clockwise = null,
+            this IHandler handler, bool clockwise = false,
             TimeSpan? duration = null)
         {
             return handler.Roll(RollAnchor.BottomRight, clockwise, duration);

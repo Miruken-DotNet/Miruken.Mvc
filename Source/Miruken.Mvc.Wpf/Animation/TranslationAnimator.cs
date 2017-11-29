@@ -79,7 +79,8 @@
                 To             = to,
                 From           = from,
                 Duration       = duration,
-                EasingFunction = new CubicEase()
+                EasingFunction = Translation.Behaviors.Find<IEasingFunction>()
+                               ?? new CubicEase()
             };
 
             storyboard.Children.Add(animation);

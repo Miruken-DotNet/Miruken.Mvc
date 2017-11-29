@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
     using HelloWorld;
     using Miruken.Mvc;
+    using Miruken.Mvc.Animation;
 
     public class DocumentationController: Controller
     {
@@ -19,7 +20,7 @@
 
         public void Done()
         {
-            Next<HelloWorldController>().Greet();
+            Next<HelloWorldController>(IO.RollBottomRight(true)).Greet();
         }
     }
 }

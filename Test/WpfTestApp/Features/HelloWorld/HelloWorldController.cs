@@ -22,7 +22,7 @@
 
         public void Documentation()
         {
-            Next<DocumentationController>().Index();
+            Next<DocumentationController>(IO.Roll()).Index();
         }
 
         public void About()
@@ -57,7 +57,7 @@
 
         public void Settings()
         {
-            Next<SettingsController>(IO.Roll()).Configure();
+            Next<SettingsController>(IO.PushRight()).Configure();
         }
 
         public void Delay()

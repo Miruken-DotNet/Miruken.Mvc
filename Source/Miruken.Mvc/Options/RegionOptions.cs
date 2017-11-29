@@ -23,8 +23,8 @@ namespace Miruken.Mvc.Options
 
             if (Animation != null)
             {
-                if (other.Animation == null)
-                    other.Animation = Animation;
+                other.Animation = other.Animation?.Merge(Animation)
+                               ?? Animation;
             }
 
             if (Window != null)
