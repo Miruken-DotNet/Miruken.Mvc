@@ -61,6 +61,7 @@
     <Compile Include="Animation\Animator.cs" />
     <Compile Include="Animation\Behavior.cs" />
     <Compile Include="Animation\IAnimator.cs" />
+    <Compile Include="Animation\FadeAnimator.cs" />
     <Compile Include="Animation\RollAnimator.cs" />
     <Compile Include="Animation\StandardAnimations.cs" />
     <Compile Include="Animation\TranslationAnimator.cs" />

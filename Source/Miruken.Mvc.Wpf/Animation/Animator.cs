@@ -4,10 +4,11 @@
     using System.Windows;
     using System.Windows.Media.Animation;
     using Concurrency;
+    using Mvc.Animation;
 
     public abstract class Animator : IAnimator
     {
-        protected readonly TimeSpan DefaultDuration =
+        protected static readonly TimeSpan DefaultDuration =
             TimeSpan.FromMilliseconds(400);
 
         protected static readonly PropertyPath TranslateX =
@@ -41,6 +42,31 @@
                 };
                 storyboard.Completed += completed;
                 storyboard.Begin();
+            });
+        }
+
+        protected static TimeSpan GetDuration(IAnimation animation)
+        {
+            return animation.Duration.GetValueOrDefault(DefaultDuration);
+        }
+
+        protected static Promise StartAnimation(AnimationTimeline animation,
+            ViewController view, DependencyProperty property, bool remove = true,
+            Action cleanup = null)
+        {
+            return new Promise<object>((resolve, reject) =>
+            {
+                EventHandler completed = null;
+                completed = (s, e) =>
+                {
+                    animation.Completed -= completed;
+                    view.BeginAnimation(property, null);
+                    if (remove) view.RemoveView();
+                    cleanup?.Invoke();
+                    resolve(null, true);
+                };
+                animation.Completed += completed;
+                view.BeginAnimation(property, animation);
             });
         }
     }

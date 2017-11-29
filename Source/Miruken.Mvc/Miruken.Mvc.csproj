@@ -57,6 +57,7 @@
     </Compile>
     <Compile Include="Animation\Animation.cs" />
     <Compile Include="Animation\IAnimation.cs" />
+    <Compile Include="Animation\Fade.cs" />
     <Compile Include="Animation\Roll.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="ControllerExtensions.cs" />

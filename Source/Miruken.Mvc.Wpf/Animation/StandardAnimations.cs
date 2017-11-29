@@ -7,6 +7,12 @@
     public class StandardAnimations : Handler
     {
         [Maps]
+        public FadeAnimator Create(Fade fade)
+        {
+            return new FadeAnimator(fade);
+        }
+
+        [Maps]
         public TranslationAnimator Create(Translation translation)
         {
             return new TranslationAnimator(translation);

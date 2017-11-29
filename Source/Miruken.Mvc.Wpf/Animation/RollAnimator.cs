@@ -22,7 +22,7 @@
             ViewController oldView, ViewController newView)
         {
             var storyboard = new Storyboard();
-            var duration   = Roll.Duration.GetValueOrDefault(DefaultDuration);
+            var duration   = GetDuration(Roll);
             var clockwise  = Roll.Clockwise;
             var origin     = newView?.RenderTransformOrigin;
 

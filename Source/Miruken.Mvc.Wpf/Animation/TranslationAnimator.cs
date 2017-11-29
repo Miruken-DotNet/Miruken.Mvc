@@ -22,7 +22,7 @@
             ViewController oldView, ViewController newView)
         {
             var storyboard = new Storyboard();
-            var duration   = Translation.Duration.GetValueOrDefault(DefaultDuration);
+            var duration   = GetDuration(Translation);
 
             if (oldView != null && !Translation.IsSlide)
                 CreateAnimation(storyboard, oldView, true, duration);
