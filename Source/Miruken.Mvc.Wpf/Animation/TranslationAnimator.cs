@@ -9,12 +9,6 @@
 
     public class TranslationAnimator : Animator
     {
-        private static readonly PropertyPath TransformX =
-            new PropertyPath("RenderTransform.X");
-
-        private static readonly PropertyPath TransformY =
-            new PropertyPath("RenderTransform.Y");
-
         public TranslationAnimator(Translation translation)
         {
             if (translation == null)
@@ -56,25 +50,25 @@
                 case TranslationEffect.SlideLeft:
                     from = old ? 0 : view.RegionWidth;
                     to   = old ? -view.ActualWidth : 0;
-                    path = TransformX;
+                    path = TranslateX;
                     break;
                 case TranslationEffect.PushRight:
                 case TranslationEffect.SlideRight:
                     from = old ? 0 : -view.RegionWidth;
                     to   = old ? view.ActualWidth : 0;
-                    path = TransformX;
+                    path = TranslateX;
                     break;
                 case TranslationEffect.PushDown:
                 case TranslationEffect.SlideDown:
                     from = old ? 0 : -view.RegionHeight;
                     to   = old ? view.ActualHeight : 0;
-                    path = TransformY;
+                    path = TranslateY;
                     break;
                 case TranslationEffect.PushUp:
                 case TranslationEffect.SlideUp:
                     from = old ? 0 : view.RegionHeight;
                     to   = old ? -view.ActualHeight : 0;
-                    path = TransformY;
+                    path = TranslateY;
                     break;
                 default:
                     throw new InvalidOperationException("Invalid translation");

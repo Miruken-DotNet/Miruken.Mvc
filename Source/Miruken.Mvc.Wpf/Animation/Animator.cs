@@ -1,6 +1,7 @@
 ﻿namespace Miruken.Mvc.Wpf.Animation
 {
     using System;
+    using System.Windows;
     using System.Windows.Media.Animation;
     using Concurrency;
 
@@ -8,6 +9,15 @@
     {
         protected readonly TimeSpan DefaultDuration =
             TimeSpan.FromMilliseconds(400);
+
+        protected static readonly PropertyPath TranslateX =
+            new PropertyPath("RenderTransform.X");
+
+        protected static readonly PropertyPath TranslateY =
+            new PropertyPath("RenderTransform.Y");
+
+        protected static readonly PropertyPath RotateAngle =
+            new PropertyPath("RenderTransform.Angle");
 
         public abstract Promise Animate(
             ViewController oldView, ViewController newView);

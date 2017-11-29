@@ -9,9 +9,6 @@
 
     public class RollAnimator : Animator
     {
-        private static readonly PropertyPath Angle =
-            new PropertyPath("RenderTransform.Angle");
-
         public RollAnimator(Roll roll)
         {
             if (roll == null)
@@ -65,7 +62,7 @@
 
             storyboard.Children.Add(animation);
             Storyboard.SetTarget(animation, view);
-            Storyboard.SetTargetProperty(animation, Angle);
+            Storyboard.SetTargetProperty(animation, RotateAngle);
         }
 
         private Point CreateOrigin()
