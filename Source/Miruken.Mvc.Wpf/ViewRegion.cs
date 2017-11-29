@@ -43,19 +43,15 @@
         {
             if (view == null)
                 throw new ArgumentNullException(nameof(view));
-
-            var element = view as FrameworkElement;
-            return element == null
-                 ? Handler.Unhandled<IViewLayer>()
-                 : TransitionTo(element, composer);
+            return TransitionTo(view, composer);
         }
 
-        private IViewLayer TransitionTo(FrameworkElement element, IHandler composer)
+        private IViewLayer TransitionTo(IView view, IHandler composer)
         {
             var options       = GetRegionOptions(composer);
             var windowOptions = options?.Window;
             if (windowOptions != null)
-                return CreateWindow(windowOptions, (IView)element, composer);
+                return CreateWindow(windowOptions, view, composer);
 
             var       push    = false;
             var       overlay = false;
@@ -92,7 +88,7 @@
             }
 
             if (layer == null) layer = ActiveLayer;
-            return layer.TransitionTo(element, options, composer);
+            return layer.TransitionTo(view, options, composer);
         }
 
         protected virtual IViewLayer CreateWindow(
@@ -336,7 +332,7 @@
 
         #endregion
 
-        #region ElementLayer
+        #region ViewLayer
 
         public class ViewLayer : IViewLayer
         {
@@ -394,12 +390,12 @@
                 remove { Events.RemoveHandler(DisposedEvent, value); }
             } protected static readonly object DisposedEvent = new object();
 
-            public IViewLayer TransitionTo(FrameworkElement element,
+            public IViewLayer TransitionTo(IView view,
                 RegionOptions options, IHandler composer)
             {
                 _composer = composer;
 
-                if (ReferenceEquals(View?.Content, element)) 
+                if (ReferenceEquals(View?.Content, view)) 
                     return this;
 
                 // The initial animation will be captured
@@ -414,17 +410,16 @@
                     var layer = Region.DropLayer(this);
                     if (layer != null)
                     {
-                        var actual = layer.TransitionTo(element, options, composer);
+                        var actual = layer.TransitionTo(view, options, composer);
                         Region.RemoveView(oldView, null, composer);
                         return actual;
                     }
                 }
 
-                var view = new ViewController(Region, element);
-                Region.AddView(oldView, view, options, composer);
-                View = view;
-
+                View = new ViewController(Region, view);
+                Region.AddView(oldView, View, options, composer);
                 Events.Raise(this, TransitionedEvent);
+
                 return this;
             }
 

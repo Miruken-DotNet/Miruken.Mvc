@@ -11,5 +11,11 @@
         {
             return new TranslationAnimator(translation);
         }
+
+        [Maps]
+        public RollAnimator Create(Roll roll)
+        {
+            return new RollAnimator(roll);
+        }
     }
 }

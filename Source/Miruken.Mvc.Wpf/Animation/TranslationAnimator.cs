@@ -7,11 +7,8 @@
     using Concurrency;
     using Mvc.Animation;
 
-    public class TranslationAnimator : IAnimator
+    public class TranslationAnimator : Animator
     {
-        private readonly TimeSpan DefaultDuration =
-            TimeSpan.FromMilliseconds(400);
-
         private static readonly PropertyPath TransformX =
             new PropertyPath("RenderTransform.X");
 
@@ -20,12 +17,15 @@
 
         public TranslationAnimator(Translation translation)
         {
+            if (translation == null)
+                throw new ArgumentNullException(nameof(translation));
             Translation = translation;
         }
 
         public Translation Translation { get; }
 
-        public Promise Animate(ViewController oldView, ViewController newView)
+        public override Promise Animate(
+            ViewController oldView, ViewController newView)
         {
             var storyboard = new Storyboard();
             var duration   = Translation.Duration.GetValueOrDefault(DefaultDuration);
@@ -39,21 +39,7 @@
                 newView.AddViewAfter(oldView);
             }
 
-            return new Promise<object>((resolve, reject) =>
-            {
-                EventHandler completed = null;
-                completed = (s, e) =>
-                {
-                    storyboard.Completed -= completed;
-                    oldView?.RemoveView();
-                    if (newView != null)
-                        newView.RenderTransform = null;
-                    storyboard.Remove();
-                    resolve(null, true);
-                };
-                storyboard.Completed += completed;
-                storyboard.Begin();
-            });
+            return StartAnimation(storyboard, oldView, newView);
         }
 
         private void CreateAnimation(TimelineGroup storyboard,

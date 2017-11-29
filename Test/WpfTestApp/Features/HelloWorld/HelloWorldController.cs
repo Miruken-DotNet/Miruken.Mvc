@@ -57,7 +57,7 @@
 
         public void Settings()
         {
-            Next<SettingsController>(IO.PushRight()).Configure();
+            Next<SettingsController>(IO.Roll()).Configure();
         }
 
         public void Delay()

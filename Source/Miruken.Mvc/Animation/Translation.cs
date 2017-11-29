@@ -16,15 +16,14 @@
         PushDown
     }
 
-    public class Translation : IAnimation
+    public class Translation : Animation
     {
-        public TranslationEffect Effect   { get; }
-        public TimeSpan?         Duration { get; set; }
-
         public Translation(TranslationEffect effect)
         {
             Effect = effect;
         }
+
+        public TranslationEffect Effect { get; }
 
         public bool IsSlide
         {
@@ -43,7 +42,7 @@
             }    
         }
 
-        public IAnimation CreateInverse()
+        public override IAnimation CreateInverse()
         {
             return new Translation(GetInverseEffect())
             {

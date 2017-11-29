@@ -58,7 +58,9 @@
     <Compile Include="..\..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Animation\Animator.cs" />
     <Compile Include="Animation\IAnimator.cs" />
+    <Compile Include="Animation\RollAnimator.cs" />
     <Compile Include="Animation\StandardAnimations.cs" />
     <Compile Include="Animation\TranslationAnimator.cs" />
     <Compile Include="ConcurencyExtensions.cs" />
