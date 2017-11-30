@@ -8,8 +8,7 @@
 
     public abstract class Animator : IAnimator
     {
-        protected static readonly TimeSpan DefaultDuration =
-            TimeSpan.FromMilliseconds(400);
+        #region Property Paths
 
         protected static readonly PropertyPath Opacity =
             new PropertyPath(UIElement.OpacityProperty);
@@ -20,8 +19,19 @@
         protected static readonly PropertyPath TranslateY =
             new PropertyPath("RenderTransform.Y");
 
+        protected static readonly PropertyPath ScaleX =
+            new PropertyPath("RenderTransform.ScaleX");
+
+        protected static readonly PropertyPath ScaleY =
+            new PropertyPath("RenderTransform.ScaleY");
+
         protected static readonly PropertyPath RotateAngle =
             new PropertyPath("RenderTransform.Angle");
+
+        #endregion
+
+        protected static readonly TimeSpan DefaultDuration =
+            TimeSpan.FromMilliseconds(400);
 
         public abstract Promise Animate(
             ViewController oldView, ViewController newView);

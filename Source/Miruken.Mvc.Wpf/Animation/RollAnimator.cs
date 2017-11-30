@@ -24,7 +24,7 @@
             var storyboard = new Storyboard();
             var duration   = GetDuration(Roll);
             var clockwise  = Roll.Clockwise;
-            var origin     = newView?.RenderTransformOrigin;
+            var newOrigin  = newView?.RenderTransformOrigin;
 
             ApplyFade(storyboard, Roll, oldView, newView, duration);
 
@@ -44,8 +44,8 @@
 
             return Animate(storyboard, oldView, newView, () =>
             {
-                if (newView != null && origin.HasValue)
-                    newView.RenderTransformOrigin = origin.Value;
+                if (newView != null && newOrigin.HasValue)
+                    newView.RenderTransformOrigin = newOrigin.Value;
             });
         }
 

@@ -4,22 +4,18 @@
     using Callback;
     using Options;
 
-    public class Fade : Animation
+    public class Zoom : Animation
     {
-        public override IAnimation Merge(IAnimation other)
-        {
-            return other?.Merge(this) ?? base.Merge(other);
-        }
     }
 
-    public static class FadeExtensions
+    public static class ZomeExtensions
     {
-        public static IHandler Fade(
+        public static IHandler Zoom(
             this IHandler handler, TimeSpan? duration = null)
         {
             return new RegionOptions
             {
-                Animation = new Fade
+                Animation = new Zoom
                 {
                     Duration = duration
                 }

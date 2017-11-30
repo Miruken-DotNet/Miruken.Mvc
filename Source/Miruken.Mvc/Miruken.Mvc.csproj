@@ -56,6 +56,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Animation\Animation.cs" />
+    <Compile Include="Animation\Zoom.cs" />
     <Compile Include="Animation\IAnimation.cs" />
     <Compile Include="Animation\Fade.cs" />
     <Compile Include="Animation\Roll.cs" />

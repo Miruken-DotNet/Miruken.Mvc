@@ -23,13 +23,17 @@
             if (oldView != null)
             {
                 newView.AddViewBefore(oldView);
-                return AddAnimation(oldView, null, 0);
+                return CreateAnimation(oldView, null, 0);
             }
-            newView.AddView();
-            return AddAnimation(newView, 0, 1, false);
+            if (newView != null)
+            {
+                newView.AddView();
+                return CreateAnimation(newView, 0, 1, false);
+            }
+            return Promise.Empty;
         }
 
-        private Promise AddAnimation(
+        private Promise CreateAnimation(
             ViewController view, double? from, double? to,
             bool remove = true)
         {

@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="Animation\Animator.cs" />
     <Compile Include="Animation\Behavior.cs" />
+    <Compile Include="Animation\ZoomAnimator.cs" />
     <Compile Include="Animation\IAnimator.cs" />
     <Compile Include="Animation\FadeAnimator.cs" />
     <Compile Include="Animation\RollAnimator.cs" />

@@ -23,5 +23,11 @@
         {
             return new RollAnimator(roll);
         }
+
+        [Maps]
+        public ZoomAnimator Create(Zoom zoom)
+        {
+            return new ZoomAnimator(zoom);
+        }
     }
 }
