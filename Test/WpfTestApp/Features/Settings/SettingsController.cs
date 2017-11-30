@@ -12,7 +12,7 @@
 
         public void Back()
         {
-            GoBack(IO.PushLeft());
+            GoBack(IO.Fade().PushLeft());
         }
     }
 }

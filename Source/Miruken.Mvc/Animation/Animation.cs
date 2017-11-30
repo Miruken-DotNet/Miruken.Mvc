@@ -5,6 +5,7 @@
 
     public abstract class Animation : IAnimation
     {
+        public Fade      Fade     { get; set; }
         public TimeSpan? Duration { get; set; }
 
         public TypeKeyedCollection<object> Behaviors { get; }
@@ -12,6 +13,7 @@
 
         public virtual IAnimation Merge(IAnimation other)
         {
+            Fade = other as Fade;
             foreach (var behavior in other.Behaviors)
             {
                 if (!Behaviors.Contains(behavior.GetType()))

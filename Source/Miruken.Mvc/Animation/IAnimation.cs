@@ -5,8 +5,8 @@
 
     public interface IAnimation
     {
-        TimeSpan? Duration { get; set; }
-
+        Fade                        Fade      { get; set; }
+        TimeSpan?                   Duration  { get; set; }
         TypeKeyedCollection<object> Behaviors { get; }
 
         IAnimation CreateInverse();

@@ -23,13 +23,13 @@
             if (oldView != null)
             {
                 newView.AddViewBefore(oldView);
-                return CreateAnimation(oldView, null, 0);
+                return AddAnimation(oldView, null, 0);
             }
             newView.AddView();
-            return CreateAnimation(newView, 0, 1, false);
+            return AddAnimation(newView, 0, 1, false);
         }
 
-        private Promise CreateAnimation(
+        private Promise AddAnimation(
             ViewController view, double? from, double? to,
             bool remove = true)
         {
@@ -40,7 +40,7 @@
             };
             if (from.HasValue) animation.From = from.Value;
             if (to.HasValue) animation.To = to.Value;
-            return StartAnimation(animation, view, UIElement.OpacityProperty, remove);
+            return Animate(animation, view, UIElement.OpacityProperty, remove);
         }
     }
 }

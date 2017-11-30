@@ -24,22 +24,24 @@
             var storyboard = new Storyboard();
             var duration   = GetDuration(Translation);
 
+            ApplyFade(storyboard, Translation, oldView, newView, duration);
+
             if (oldView != null && !Translation.IsSlide)
-                CreateAnimation(storyboard, oldView, true, duration);
+                AddAnimation(storyboard, oldView, true, duration);
 
             if (newView != null)
             {
-                CreateAnimation(storyboard, newView, false, duration);
+                AddAnimation(storyboard, newView, false, duration);
                 newView.AddViewAfter(oldView);
             }
 
-            return StartAnimation(storyboard, oldView, newView);
+            return Animate(storyboard, oldView, newView);
         }
 
-        private void CreateAnimation(TimelineGroup storyboard,
+        private void AddAnimation(TimelineGroup storyboard,
             ViewController view, bool old, TimeSpan duration)
         {
-            double from , to;
+            double from, to;
             PropertyPath path;
 
             view.RenderTransform = new TranslateTransform();
@@ -80,7 +82,7 @@
                 From           = from,
                 Duration       = duration,
                 EasingFunction = Translation.Behaviors.Find<IEasingFunction>()
-                               ?? new CubicEase()
+                                 ?? new CubicEase()
             };
 
             storyboard.Children.Add(animation);

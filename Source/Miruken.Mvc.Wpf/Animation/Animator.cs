@@ -11,6 +11,9 @@
         protected static readonly TimeSpan DefaultDuration =
             TimeSpan.FromMilliseconds(400);
 
+        protected static readonly PropertyPath Opacity =
+            new PropertyPath(UIElement.OpacityProperty);
+
         protected static readonly PropertyPath TranslateX =
             new PropertyPath("RenderTransform.X");
 
@@ -23,7 +26,46 @@
         public abstract Promise Animate(
             ViewController oldView, ViewController newView);
 
-        protected static Promise StartAnimation(Storyboard storyboard, 
+        protected static TimeSpan GetDuration(IAnimation animation)
+        {
+            return animation.Duration.GetValueOrDefault(DefaultDuration);
+        }
+
+        protected static void ApplyFade(TimelineGroup storyboard,
+            IAnimation transition, DependencyObject oldView,
+            DependencyObject newView, TimeSpan duration)
+        {
+            var fade = transition.Fade;
+            if (fade == null) return;
+            var ease = fade.Behaviors.Find<IEasingFunction>();
+            if (oldView != null)
+            {
+                var animation = new DoubleAnimation
+                {
+                    To             = 0,
+                    Duration       = duration,
+                    EasingFunction = ease
+                };
+                storyboard.Children.Add(animation);
+                Storyboard.SetTarget(animation, oldView);
+                Storyboard.SetTargetProperty(animation, Opacity);
+            }
+            if (newView != null)
+            {
+                var animation = new DoubleAnimation
+                {
+                    From           = 0,
+                    To             = 1,
+                    Duration       = duration,
+                    EasingFunction = ease
+                };
+                storyboard.Children.Add(animation);
+                Storyboard.SetTarget(animation, newView);
+                Storyboard.SetTargetProperty(animation, Opacity);
+            }
+        }
+
+        protected static Promise Animate(Storyboard storyboard, 
             ViewController oldView, ViewController newView,
             Action cleanup = null)
         {
@@ -45,12 +87,7 @@
             });
         }
 
-        protected static TimeSpan GetDuration(IAnimation animation)
-        {
-            return animation.Duration.GetValueOrDefault(DefaultDuration);
-        }
-
-        protected static Promise StartAnimation(AnimationTimeline animation,
+        protected static Promise Animate(AnimationTimeline animation,
             ViewController view, DependencyProperty property, bool remove = true,
             Action cleanup = null)
         {

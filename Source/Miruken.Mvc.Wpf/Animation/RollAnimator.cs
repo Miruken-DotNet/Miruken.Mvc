@@ -26,28 +26,30 @@
             var clockwise  = Roll.Clockwise;
             var origin     = newView?.RenderTransformOrigin;
 
+            ApplyFade(storyboard, Roll, oldView, newView, duration);
+
             if (oldView == null)
             {
                 if (newView != null)
                 {
-                    CreateAnimation(storyboard, newView, duration, !clockwise);
+                    AddAnimation(storyboard, newView, duration, !clockwise);
                     newView.AddView();
                 }
             }
             else
             {
-                CreateAnimation(storyboard, oldView, duration, clockwise);
+                AddAnimation(storyboard, oldView, duration, clockwise);
                 newView?.AddViewBefore(oldView);
             }
 
-            return StartAnimation(storyboard, oldView, newView, () =>
+            return Animate(storyboard, oldView, newView, () =>
             {
                 if (newView != null && origin.HasValue)
                     newView.RenderTransformOrigin = origin.Value;
             });
         }
 
-        private void CreateAnimation(TimelineGroup storyboard,
+        private void AddAnimation(TimelineGroup storyboard,
             UIElement view, TimeSpan duration, bool clockwise)
         {
             view.RenderTransformOrigin = CreateOrigin();
