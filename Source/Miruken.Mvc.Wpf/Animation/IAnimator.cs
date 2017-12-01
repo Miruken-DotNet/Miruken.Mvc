@@ -4,6 +4,6 @@
 
     public interface IAnimator 
     {
-        Promise Animate(ViewController oldView, ViewController newView);
+        Promise Animate(ViewController fromView, ViewController toView);
     }
 }

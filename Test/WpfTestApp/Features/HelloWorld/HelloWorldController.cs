@@ -22,7 +22,11 @@
 
         public void Documentation()
         {
-            Next<DocumentationController>(IO.Fade().Roll()).Index();
+            Next<DocumentationController>(IO
+                .Zoom()
+                .Fade()
+                .RollOut(Position.MiddleCenter))
+                .Index();
         }
 
         public void About()
@@ -57,7 +61,7 @@
 
         public void Settings()
         {
-            Next<SettingsController>(IO.Zoom().Fade()).Configure();
+            Next<SettingsController>(IO.Fade().SlideRight()).Configure();
         }
 
         public void Delay()

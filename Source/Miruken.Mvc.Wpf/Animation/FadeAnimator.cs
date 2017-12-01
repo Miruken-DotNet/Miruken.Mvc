@@ -1,7 +1,6 @@
 ﻿namespace Miruken.Mvc.Wpf.Animation
 {
     using System;
-    using System.Windows;
     using System.Windows.Media.Animation;
     using Concurrency;
     using Mvc.Animation;
@@ -18,33 +17,51 @@
         public Fade Fade { get; }
 
         public override Promise Animate(
-            ViewController oldView, ViewController newView)
+            ViewController fromView, ViewController toView)
         {
-            if (oldView != null)
-            {
-                newView.AddViewBefore(oldView);
-                return CreateAnimation(oldView, null, 0);
-            }
-            if (newView != null)
-            {
-                newView.AddView();
-                return CreateAnimation(newView, 0, 1, false);
-            }
-            return Promise.Empty;
+            return Animate(Fade, fromView, toView,
+                (storyboard, duration) =>
+                    Apply(storyboard, Fade, fromView, toView, duration));
         }
 
-        private Promise CreateAnimation(
-            ViewController view, double? from, double? to,
-            bool remove = true)
+        public static void Apply(TimelineGroup storyboard,
+            Fade fade, ViewController fromView, ViewController toView,
+            TimeSpan duration, Mode? defaultMmode = null)
         {
+            if (fade == null) return;
+            switch (fade.Mode ?? defaultMmode ?? Mode.In)
+            {
+                case Mode.In:
+                    toView.AddViewAbove(fromView);
+                    Apply(storyboard, fade, toView, false, duration);
+                    break;
+                case Mode.Out:
+                    toView?.AddViewBelow(fromView);
+                    Apply(storyboard, fade, fromView, true, duration);
+                    break;
+                case Mode.InOut:
+                    toView.AddViewAbove(fromView);
+                    Apply(storyboard, fade, toView, false, duration);
+                    Apply(storyboard, fade, fromView, true, duration);
+                    break;
+            }
+        }
+
+        public static void Apply(TimelineGroup storyboard,
+            Fade fade, ViewController view, bool fadeOut,
+            TimeSpan duration)
+        {
+            if (fade == null || view == null) return;
             var animation = new DoubleAnimation
             {
-                Duration       = GetDuration(Fade),
-                EasingFunction = Fade.Behaviors.Find<IEasingFunction>()
+                To             = fadeOut ? 0 : 1,
+                Duration       = duration,
+                EasingFunction = fade.Behaviors.Find<IEasingFunction>()
             };
-            if (from.HasValue) animation.From = from.Value;
-            if (to.HasValue) animation.To = to.Value;
-            return Animate(animation, view, UIElement.OpacityProperty, remove);
+            if (!fadeOut) animation.From = 0;
+            storyboard.Children.Add(animation);
+            Storyboard.SetTarget(animation, view);
+            Storyboard.SetTargetProperty(animation, Opacity);
         }
     }
 }

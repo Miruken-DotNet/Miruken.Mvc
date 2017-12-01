@@ -9,68 +9,76 @@
 
     public class TranslationAnimator : Animator
     {
-        public TranslationAnimator(Translation translation)
+        public TranslationAnimator(Translate translate)
         {
-            if (translation == null)
-                throw new ArgumentNullException(nameof(translation));
-            Translation = translation;
+            if (translate == null)
+                throw new ArgumentNullException(nameof(translate));
+            Translate = translate;
         }
 
-        public Translation Translation { get; }
+        public Translate Translate { get; }
 
         public override Promise Animate(
-            ViewController oldView, ViewController newView)
+            ViewController fromView, ViewController toView)
         {
-            var storyboard = new Storyboard();
-            var duration   = GetDuration(Translation);
-
-            ApplyFade(storyboard, Translation, oldView, newView, duration);
-
-            if (oldView != null && !Translation.IsSlide)
-                AddAnimation(storyboard, oldView, true, duration);
-
-            if (newView != null)
-            {
-                AddAnimation(storyboard, newView, false, duration);
-                newView.AddViewAfter(oldView);
-            }
-
-            return Animate(storyboard, oldView, newView);
+            return Animate(Translate, fromView, toView,
+                (storyboard, duration) =>
+                {
+                    FadeAnimator.Apply(storyboard, Translate.Fade,
+                        fromView, toView, duration);
+                    Apply(storyboard, Translate, fromView, toView, duration);
+                });
         }
 
-        private void AddAnimation(TimelineGroup storyboard,
-            ViewController view, bool old, TimeSpan duration)
+        public static void Apply(TimelineGroup storyboard,
+            Translate translate, ViewController fromView, 
+            ViewController toView, TimeSpan duration)
+        {
+            if (translate == null) return;
+            if (fromView != null && !translate.IsSlide)
+                Apply(storyboard, translate, fromView, true, duration);
+
+            if (toView != null)
+            {
+                Apply(storyboard, translate, toView, false, duration);
+                toView.AddViewAbove(fromView);
+            }
+        }
+
+        public static void Apply(TimelineGroup storyboard,
+            Translate translate, ViewController view, bool hide,
+            TimeSpan duration)
         {
             double from, to;
             PropertyPath path;
 
-            view.RenderTransform = new TranslateTransform();
+            var property = view.AddTransform(new TranslateTransform());
 
-            switch (Translation.Effect)
+            switch (translate.Effect)
             {
                 case TranslationEffect.PushLeft:
                 case TranslationEffect.SlideLeft:
-                    from = old ? 0 : view.RegionWidth;
-                    to   = old ? -view.ActualWidth : 0;
-                    path = TranslateX;
+                    from = hide ? 0 : view.RegionWidth;
+                    to   = hide ? -view.ActualWidth : 0;
+                    path = property(TranslateTransform.XProperty);
                     break;
                 case TranslationEffect.PushRight:
                 case TranslationEffect.SlideRight:
-                    from = old ? 0 : -view.RegionWidth;
-                    to   = old ? view.ActualWidth : 0;
-                    path = TranslateX;
+                    from = hide ? 0 : -view.RegionWidth;
+                    to   = hide ? view.ActualWidth : 0;
+                    path = property(TranslateTransform.XProperty);
                     break;
                 case TranslationEffect.PushDown:
                 case TranslationEffect.SlideDown:
-                    from = old ? 0 : -view.RegionHeight;
-                    to   = old ? view.ActualHeight : 0;
-                    path = TranslateY;
+                    from = hide ? 0 : -view.RegionHeight;
+                    to   = hide ? view.ActualHeight : 0;
+                    path = property(TranslateTransform.YProperty);
                     break;
                 case TranslationEffect.PushUp:
                 case TranslationEffect.SlideUp:
-                    from = old ? 0 : view.RegionHeight;
-                    to   = old ? -view.ActualHeight : 0;
-                    path = TranslateY;
+                    from = hide ? 0 : view.RegionHeight;
+                    to   = hide ? -view.ActualHeight : 0;
+                    path = property(TranslateTransform.YProperty);
                     break;
                 default:
                     throw new InvalidOperationException("Invalid translation");
@@ -81,7 +89,7 @@
                 To             = to,
                 From           = from,
                 Duration       = duration,
-                EasingFunction = Translation.Behaviors.Find<IEasingFunction>()
+                EasingFunction = translate.Behaviors.Find<IEasingFunction>()
                                  ?? new CubicEase()
             };
 
@@ -89,5 +97,31 @@
             Storyboard.SetTarget(animation, view);
             Storyboard.SetTargetProperty(animation, path);
         }
+
+        private TranslationEffect GetInverseEffect()
+        {
+            var effect = Translate.Effect;
+            switch (effect)
+            {
+                case TranslationEffect.SlideLeft:
+                    return TranslationEffect.SlideRight;
+                case TranslationEffect.SlideRight:
+                    return TranslationEffect.SlideLeft;
+                case TranslationEffect.SlideUp:
+                    return TranslationEffect.SlideDown;
+                case TranslationEffect.SlideDown:
+                    return TranslationEffect.SlideUp;
+                case TranslationEffect.PushLeft:
+                    return TranslationEffect.PushRight;
+                case TranslationEffect.PushRight:
+                    return TranslationEffect.PushLeft;
+                case TranslationEffect.PushUp:
+                    return TranslationEffect.PushDown;
+                case TranslationEffect.PushDown:
+                    return TranslationEffect.PushUp;
+            }
+            return effect;
+        }
     }
 }
+

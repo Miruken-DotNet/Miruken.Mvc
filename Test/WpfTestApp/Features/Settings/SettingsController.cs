@@ -12,7 +12,7 @@
 
         public void Back()
         {
-            GoBack(IO.Zoom().Fade());
+            GoBack(IO.Fade().RollIn(Position.BottomRight));
         }
     }
 }

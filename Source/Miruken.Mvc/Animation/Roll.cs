@@ -4,31 +4,16 @@
     using Callback;
     using Options;
 
-    public enum RollAnchor
-    {
-        TopLeft,
-        TopRight,
-        BottomLeft,
-        BottomRight
-    }
-
     public class Roll : Animation
     {
-        public bool Clockwise { get; set; }
+        public Mode?     Mode   { get; set; }
+        public Position? Anchor { get; set; }
+        public Zoom      Zoom   { get; set; }
 
-        public Roll(RollAnchor anchor)
+        public override IAnimation Merge(IAnimation other)
         {
-            Anchor = anchor;
-        }
-
-        public RollAnchor Anchor { get; }
-
-        public override IAnimation CreateInverse()
-        {
-            return new Roll(Anchor)
-            {
-                Clockwise = !Clockwise
-            };
+            Zoom = Zoom ?? other as Zoom;
+            return base.Merge(other);
         }
     }
 
@@ -37,53 +22,62 @@
     public static class RollExtensions
     {
         public static IHandler Roll(
-            this IHandler handler,
-            RollAnchor anchor, bool clockwise = false,
-            TimeSpan? duration = null)
+            this IHandler handler, Roll roll)
         {
+            if (roll == null)
+                throw new ArgumentNullException(nameof(roll));
             return new RegionOptions
             {
-                Animation = new Roll(anchor)
-                {
-                    Duration  = duration,
-                    Clockwise = clockwise
-                }
+                Animation = roll
             }.Decorate(handler);
         }
 
         public static IHandler Roll(
-            this IHandler handler, bool clockwise = false,
-            TimeSpan? duration = null)
+            this IHandler handler, Mode? mode = null,
+            Position? anchor = null, TimeSpan? duration = null)
         {
-            return handler.Roll(RollAnchor.BottomLeft, clockwise, duration);
+            return handler.Roll(new Roll
+            {
+                Mode      = mode,
+                Anchor    = anchor,
+                Duration  = duration
+            });
         }
 
-        public static IHandler RollTopLeft(
-            this IHandler handler, bool clockwise = false,
+        public static IHandler RollIn(
+            this IHandler handler, Position? anchor = null,
             TimeSpan? duration = null)
         {
-            return handler.Roll(RollAnchor.TopLeft, clockwise, duration);
+            return handler.Roll(new Roll
+            {
+                Mode     = Mode.In,
+                Anchor   = anchor,
+                Duration = duration
+            });
         }
 
-        public static IHandler RollTopRight(
-            this IHandler handler, bool clockwise = false,
+        public static IHandler RollOut(
+            this IHandler handler, Position? anchor = null,
             TimeSpan? duration = null)
         {
-            return handler.Roll(RollAnchor.TopRight, clockwise, duration);
+            return handler.Roll(new Roll
+            {
+                Mode     = Mode.Out,
+                Anchor   = anchor,
+                Duration = duration
+            });
         }
 
-        public static IHandler RollBottomLeft(
-            this IHandler handler, bool clockwise = false,
+        public static IHandler RollInOut(
+            this IHandler handler, Position? anchor = null,
             TimeSpan? duration = null)
         {
-            return handler.Roll(RollAnchor.BottomLeft, clockwise, duration);
-        }
-
-        public static IHandler RollBottomRight(
-            this IHandler handler, bool clockwise = false,
-            TimeSpan? duration = null)
-        {
-            return handler.Roll(RollAnchor.BottomRight, clockwise, duration);
+            return handler.Roll(new Roll
+            {
+                Mode     = Mode.InOut,
+                Anchor   = anchor,
+                Duration = duration
+            });
         }
     }
 

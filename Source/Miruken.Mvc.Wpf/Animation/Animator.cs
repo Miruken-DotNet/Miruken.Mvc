@@ -2,83 +2,41 @@
 {
     using System;
     using System.Windows;
+    using System.Windows.Media;
     using System.Windows.Media.Animation;
     using Concurrency;
     using Mvc.Animation;
+    using Point = System.Windows.Point;
 
     public abstract class Animator : IAnimator
     {
-        #region Property Paths
-
         protected static readonly PropertyPath Opacity =
             new PropertyPath(UIElement.OpacityProperty);
-
-        protected static readonly PropertyPath TranslateX =
-            new PropertyPath("RenderTransform.X");
-
-        protected static readonly PropertyPath TranslateY =
-            new PropertyPath("RenderTransform.Y");
-
-        protected static readonly PropertyPath ScaleX =
-            new PropertyPath("RenderTransform.ScaleX");
-
-        protected static readonly PropertyPath ScaleY =
-            new PropertyPath("RenderTransform.ScaleY");
-
-        protected static readonly PropertyPath RotateAngle =
-            new PropertyPath("RenderTransform.Angle");
-
-        #endregion
 
         protected static readonly TimeSpan DefaultDuration =
             TimeSpan.FromMilliseconds(400);
 
         public abstract Promise Animate(
-            ViewController oldView, ViewController newView);
+            ViewController fromView, ViewController toView);
 
         protected static TimeSpan GetDuration(IAnimation animation)
         {
             return animation.Duration.GetValueOrDefault(DefaultDuration);
         }
 
-        protected static void ApplyFade(TimelineGroup storyboard,
-            IAnimation transition, DependencyObject oldView,
-            DependencyObject newView, TimeSpan duration)
+        protected static Promise Animate(IAnimation animation, 
+            ViewController fromView, ViewController toView,
+            Action<Storyboard, TimeSpan> animations,
+            bool removeFromView = true, Action onCompleted = null)
         {
-            var fade = transition.Fade;
-            if (fade == null) return;
-            var ease = fade.Behaviors.Find<IEasingFunction>();
-            if (oldView != null)
+            if (animations == null)
+                throw new ArgumentNullException(nameof(animations));
+            var duration   = GetDuration(animation);
+            var storyboard = new Storyboard
             {
-                var animation = new DoubleAnimation
-                {
-                    To             = 0,
-                    Duration       = duration,
-                    EasingFunction = ease
-                };
-                storyboard.Children.Add(animation);
-                Storyboard.SetTarget(animation, oldView);
-                Storyboard.SetTargetProperty(animation, Opacity);
-            }
-            if (newView != null)
-            {
-                var animation = new DoubleAnimation
-                {
-                    From           = 0,
-                    To             = 1,
-                    Duration       = duration,
-                    EasingFunction = ease
-                };
-                storyboard.Children.Add(animation);
-                Storyboard.SetTarget(animation, newView);
-                Storyboard.SetTargetProperty(animation, Opacity);
-            }
-        }
-
-        protected static Promise Animate(Storyboard storyboard, 
-            ViewController oldView, ViewController newView,
-            Action cleanup = null)
-        {
+                Duration = duration
+            };
+            animations(storyboard, duration);
             return new Promise<object>((resolve, reject) =>
             {
                 EventHandler completed = null;
@@ -86,10 +44,15 @@
                 {
                     storyboard.Completed -= completed;
                     storyboard.Remove();
-                    oldView?.RemoveView();
-                    if (newView != null)
-                        newView.RenderTransform = null;
-                    cleanup?.Invoke();
+                    if (removeFromView)
+                        fromView?.RemoveView();
+                    if (toView != null)
+                    {
+                        toView.RenderTransform       = Transform.Identity;
+                        toView.RenderTransformOrigin = new Point(0, 0);
+                    }
+
+                    onCompleted?.Invoke();
                     resolve(null, true);
                 };
                 storyboard.Completed += completed;
@@ -97,24 +60,30 @@
             });
         }
 
-        protected static Promise Animate(AnimationTimeline animation,
-            ViewController view, DependencyProperty property, bool remove = true,
-            Action cleanup = null)
+        protected static Point ConvertToPoint(Position position)
         {
-            return new Promise<object>((resolve, reject) =>
+            switch (position)
             {
-                EventHandler completed = null;
-                completed = (s, e) =>
-                {
-                    animation.Completed -= completed;
-                    view.BeginAnimation(property, null);
-                    if (remove) view.RemoveView();
-                    cleanup?.Invoke();
-                    resolve(null, true);
-                };
-                animation.Completed += completed;
-                view.BeginAnimation(property, animation);
-            });
+                case Position.TopLeft:
+                    return new Point(0, 0);
+                case Position.TopCenter:
+                    return new Point(.5, 0);
+                case Position.TopRight:
+                    return new Point(1, 0);
+                case Position.MiddleLeft:
+                    return new Point(0, .5);
+                case Position.MiddleCenter:
+                    return new Point(.5, .5);
+                case Position.MiddleRight:
+                    return new Point(1, .5);
+                case Position.BottomLeft:
+                    return new Point(0, 1);
+                case Position.BottomCenter:
+                    return new Point(.5, 1);
+                case Position.BottomRight:
+                    return new Point(1, 1);
+            }
+            throw new InvalidOperationException("Invalid position");
         }
     }
 }

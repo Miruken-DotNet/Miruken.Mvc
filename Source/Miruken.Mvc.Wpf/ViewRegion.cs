@@ -428,7 +428,7 @@
                 var oldView = View;
                 if (oldView != null && 
                     !ReferenceEquals(oldView, Region.ActiveView))
-                    Region.RemoveView(oldView, _animation?.CreateInverse(), _composer);
+                    Region.RemoveView(oldView, _animation, _composer);
                 View = null;
             }
 

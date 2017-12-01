@@ -20,7 +20,11 @@
 
         public void Done()
         {
-            Next<HelloWorldController>(IO.Fade().RollBottomRight(true)).Greet();
+            Next<HelloWorldController>(IO
+                .Zoom()
+                .Fade()
+                .RollOut(Position.BottomRight))
+                .Greet();
         }
     }
 }

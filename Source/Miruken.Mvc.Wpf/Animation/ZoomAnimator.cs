@@ -1,7 +1,6 @@
 ﻿namespace Miruken.Mvc.Wpf.Animation
 {
     using System;
-    using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Animation;
     using Concurrency;
@@ -19,54 +18,68 @@
         public Zoom Zoom { get; }
 
         public override Promise Animate(
-            ViewController oldView, ViewController newView)
+            ViewController fromView, ViewController toView)
         {
-            var storyboard = new Storyboard();
-            var duration   = GetDuration(Zoom);
-            var newOrigin  = newView?.RenderTransformOrigin;
-
-            ApplyFade(storyboard, Zoom, oldView, newView, duration);
-
-            if (oldView != null)
-            {
-                newView?.AddViewBefore(oldView);
-                AddAnimation(storyboard, oldView, null, 0, duration);
-            }
-            else if (newView != null)
-            {
-                newView.AddView();
-                AddAnimation(storyboard, newView, 0, 1, duration);
-            }
-
-            return Animate(storyboard, oldView, newView, () =>
-            {
-                if (newView != null && newOrigin.HasValue)
-                    newView.RenderTransformOrigin = newOrigin.Value;
-            });
+            return Animate(Zoom, fromView, toView,
+                (storyboard, duration) =>
+                {
+                    FadeAnimator.Apply(storyboard, Zoom.Fade,
+                        fromView, toView, duration, Zoom.Mode);
+                    Apply(storyboard, Zoom, fromView, toView, duration);
+                });
         }
 
-        private void AddAnimation(TimelineGroup storyboard,
-            UIElement view, double? from, double? to, TimeSpan duration)
+        public static void Apply(TimelineGroup storyboard,
+            Zoom zoom, ViewController fromView, ViewController toView,
+            TimeSpan duration, Mode? defaultMmode = null)
         {
-            view.RenderTransform       = new ScaleTransform();
-            view.RenderTransformOrigin = new Point(.5, .5);
+            if (zoom == null) return;
+            switch (zoom.Mode ?? defaultMmode ?? Mode.In)
+            {
+                case Mode.In:
+                    toView.AddViewAbove(fromView);
+                    Apply(storyboard, zoom, toView, false, duration);
+                    break;
+                case Mode.Out:
+                    toView?.AddViewBelow(fromView);
+                    Apply(storyboard, zoom, fromView, true, duration);
+                    break;
+                case Mode.InOut:
+                    toView.AddViewAbove(fromView);
+                    Apply(storyboard, zoom, toView, false, duration);
+                    Apply(storyboard, zoom, fromView, true, duration);
+                    break;
+            }
+        }
+
+        public static void Apply(TimelineGroup storyboard,
+            Zoom zoom, ViewController view, bool zoomOut,
+            TimeSpan duration)
+        {
+            if (zoom == null || view == null) return;
+
+            var origin = zoom.Origin ?? Position.MiddleCenter;
+            view.RenderTransformOrigin = ConvertToPoint(origin);
+            var property = view.AddTransform(new ScaleTransform());
 
             var animation = new DoubleAnimation
             {
+                To             = zoomOut ? 0 : 1,
                 Duration       = duration,
-                EasingFunction = Zoom.Behaviors.Find<IEasingFunction>()
+                EasingFunction = zoom.Behaviors.Find<IEasingFunction>()
             };
-            if (from.HasValue) animation.From = from.Value;
-            if (to.HasValue) animation.To = to.Value;
+            if (!zoomOut) animation.From = 0;
 
             storyboard.Children.Add(animation);
             Storyboard.SetTarget(animation, view);
-            Storyboard.SetTargetProperty(animation, ScaleX);
+            Storyboard.SetTargetProperty(animation, 
+                property(ScaleTransform.ScaleXProperty));
 
             var animationY = animation.Clone();
             storyboard.Children.Add(animationY);
             Storyboard.SetTarget(animationY, view);
-            Storyboard.SetTargetProperty(animation, ScaleY);
+            Storyboard.SetTargetProperty(animation,
+                property(ScaleTransform.ScaleYProperty));
         }
     }
 }

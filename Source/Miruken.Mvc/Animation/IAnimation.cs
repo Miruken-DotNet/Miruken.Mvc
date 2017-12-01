@@ -9,8 +9,6 @@
         TimeSpan?                   Duration  { get; set; }
         TypeKeyedCollection<object> Behaviors { get; }
 
-        IAnimation CreateInverse();
-
         IAnimation Merge(IAnimation other);
     }
 }

@@ -13,18 +13,13 @@
 
         public virtual IAnimation Merge(IAnimation other)
         {
-            Fade = other as Fade;
+            Fade = Fade ?? other as Fade;
             foreach (var behavior in other.Behaviors)
             {
                 if (!Behaviors.Contains(behavior.GetType()))
                     Behaviors.Add(behavior);
             }
             return this;
-        }
-
-        public virtual IAnimation CreateInverse()
-        {
-            return null;
         }
     }
 }

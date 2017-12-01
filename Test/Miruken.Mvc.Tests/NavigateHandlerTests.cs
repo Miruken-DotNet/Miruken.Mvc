@@ -69,7 +69,7 @@
                 .Next<HelloController>();
             var options = controller.SayHello();
             Assert.IsNotNull(options);
-            var translation = options.Animation as Translation;
+            var translation = options.Animation as Translate;
             Assert.IsNotNull(translation);
             Assert.AreEqual(translation.Effect, TranslationEffect.PushLeft);
         }
@@ -82,7 +82,7 @@
                 .Push<HelloController>();
             var options = controller.SayHello();
             Assert.IsNotNull(options);
-            var translation = options.Animation as Translation;
+            var translation = options.Animation as Translate;
             Assert.IsNotNull(translation);
             Assert.AreEqual(translation.Effect, TranslationEffect.PushLeft);
         }

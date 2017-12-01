@@ -1,7 +1,9 @@
 ﻿namespace Miruken.Mvc.Wpf
 {
+    using System;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Windows.Media;
 
     public class ViewController : ContentControl
     {
@@ -31,38 +33,50 @@
             Visibility = Visibility.Hidden;
         }
 
-        public void AddView()
+        public bool AddView()
         {
-            _region.Children.Add(this);
+            var children = _region.Children;
+            if (children.Contains(this))
+                return false;
+            children.Add(this);
+            return true;
         }
 
-        public void AddViewAtIndex(int index)
+        public bool AddViewAtIndex(int index)
         {
-            _region.Children.Insert(index, this);
+            var children = _region.Children;
+            if (children.Contains(this))
+                return false;
+            children.Insert(index, this);
+            return true;
         }
 
-        public bool AddViewAfter(ViewController view)
+        public bool AddViewAbove(ViewController view)
         {
+            var children = _region.Children;
+            if (children.Contains(this))
+                return false;
             if (view == null)
             {
-                _region.Children.Add(this);
+                children.Add(this);
                 return true;
             }
-            var children = _region.Children;
             var index = children.IndexOf(view);
             if (index < 0) return false;
             children.Insert(index + 1, this);
             return true;
         }
 
-        public bool AddViewBefore(ViewController view)
+        public bool AddViewBelow(ViewController view)
         {
+            var children = _region.Children;
+            if (children.Contains(this))
+                return false;
             if (view == null)
             {
-                _region.Children.Add(this);
+                children.Add(this);
                 return true;
             }
-            var children = _region.Children;
             var index = children.IndexOf(view);
             if (index < 0) return false;
             children.Insert(index, this);
@@ -88,6 +102,25 @@
                 return true;
             }
             return false;
+        }
+
+        public Func<DependencyProperty, PropertyPath> 
+            AddTransform(Transform transform)
+        {
+            if (transform == null)
+                throw new ArgumentNullException(nameof(transform));
+            TransformGroup group;
+            var renderTransform = RenderTransform;
+            if (renderTransform == null || 
+                Equals(renderTransform, Transform.Identity))
+                RenderTransform = group = new TransformGroup();
+            else if ((group = renderTransform as TransformGroup) == null)
+                throw new InvalidOperationException(
+                    "Expected RenderTransform to be TransformGroup");
+            var index = group.Children.Count;
+            group.Children.Add(transform);
+            return dep => new PropertyPath(
+                $"RenderTransform.Children[{index}].{dep.Name}");
         }
     }
 }
