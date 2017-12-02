@@ -61,7 +61,7 @@
 
         public void Settings()
         {
-            Next<SettingsController>(IO.Fade().SlideRight()).Configure();
+            Next<SettingsController>(IO.Fade().Zoom()).Configure();
         }
 
         public void Delay()

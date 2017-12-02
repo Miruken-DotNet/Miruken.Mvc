@@ -25,7 +25,7 @@
                 (storyboard, duration) =>
                 {
                     FadeAnimator.Apply(storyboard, Translate.Fade,
-                        fromView, toView, duration);
+                        fromView, toView, duration, Mode.InOut);
                     Apply(storyboard, Translate, fromView, toView, duration);
                 });
         }
