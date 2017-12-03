@@ -48,36 +48,21 @@
             this IHandler handler, Position? anchor = null,
             TimeSpan? duration = null)
         {
-            return handler.Roll(new Roll
-            {
-                Mode     = Mode.In,
-                Anchor   = anchor,
-                Duration = duration
-            });
+            return handler.Roll(Mode.In, anchor, duration);
         }
 
         public static IHandler RollOut(
             this IHandler handler, Position? anchor = null,
             TimeSpan? duration = null)
         {
-            return handler.Roll(new Roll
-            {
-                Mode     = Mode.Out,
-                Anchor   = anchor,
-                Duration = duration
-            });
+            return handler.Roll(Mode.Out, anchor, duration);
         }
 
         public static IHandler RollInOut(
             this IHandler handler, Position? anchor = null,
             TimeSpan? duration = null)
         {
-            return handler.Roll(new Roll
-            {
-                Mode     = Mode.InOut,
-                Anchor   = anchor,
-                Duration = duration
-            });
+            return handler.Roll(Mode.InOut, anchor, duration);
         }
     }
 

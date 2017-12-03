@@ -3,6 +3,7 @@
     using About;
     using Documentation;
     using Error;
+    using Miruken.Infrastructure;
     using Miruken.Mvc;
     using Miruken.Mvc.Animation;
     using Miruken.Mvc.Options;
@@ -61,7 +62,9 @@
 
         public void Settings()
         {
-            Next<SettingsController>(IO.Fade().Zoom()).Configure();
+            Next<SettingsController>(IO
+                .FadeInOut().Push())
+                .Configure();
         }
 
         public void Delay()

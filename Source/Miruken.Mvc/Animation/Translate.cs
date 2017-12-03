@@ -4,43 +4,10 @@
     using Callback;
     using Options;
 
-    public enum TranslationEffect
-    {
-        SlideLeft,
-        SlideRight,
-        SlideUp,
-        SlideDown,
-        PushLeft,
-        PushRight,
-        PushUp,
-        PushDown
-    }
-
     public class Translate : Animation
     {
-        public Translate(TranslationEffect effect)
-        {
-            Effect = effect;
-        }
-
-        public TranslationEffect Effect { get; }
-
-        public bool IsSlide
-        {
-            get
-            {
-                switch (Effect)
-                {
-                    case TranslationEffect.SlideLeft:
-                    case TranslationEffect.SlideRight:
-                    case TranslationEffect.SlideDown:
-                    case TranslationEffect.SlideUp:
-                        return true;
-                    default:
-                        return false;
-                }
-            }    
-        }
+        public Mode?     Mode  { get; set; }
+        public Position? Start { get; set; }
     }
 
     #region TranslateExtensions
@@ -58,61 +25,34 @@
             }.Decorate(handler);
         }
 
-        public static IHandler Translate(this IHandler handler,
-            TranslationEffect effect, TimeSpan? duration = null)
+        public static IHandler Translate(
+            this IHandler handler, Mode? mode = null,
+            Position? start = null, TimeSpan? duration = null)
         {
-            return handler.Translate(new Translate(effect)
+            return handler.Translate(new Translate
             {
+                Mode     = mode,
+                Start    = start,
                 Duration = duration
             });
         }
 
-        public static IHandler SlideLeft(
-            this IHandler handler, TimeSpan? duration = null)
+        public static IHandler SlideIn(this IHandler handler,
+            Position? start = null, TimeSpan? duration = null)
         {
-            return handler.Translate(TranslationEffect.SlideLeft, duration);
+            return handler.Translate(Mode.In, start, duration);
         }
 
-        public static IHandler SlideRight(
-            this IHandler handler, TimeSpan? duration = null)
+        public static IHandler SlideOut(this IHandler handler,
+            Position? start = null, TimeSpan? duration = null)
         {
-            return handler.Translate(TranslationEffect.SlideRight, duration);
+            return handler.Translate(Mode.Out, start, duration);
         }
 
-        public static IHandler SlideDown(
-            this IHandler handler, TimeSpan? duration = null)
+        public static IHandler Push(this IHandler handler,
+            Position? start = null, TimeSpan? duration = null)
         {
-            return handler.Translate(TranslationEffect.SlideDown, duration);
-        }
-
-        public static IHandler SlideUp(
-            this IHandler handler, TimeSpan? duration = null)
-        {
-            return handler.Translate(TranslationEffect.SlideUp, duration);
-        }
-
-        public static IHandler PushLeft(
-            this IHandler handler, TimeSpan? duration = null)
-        {
-            return handler.Translate(TranslationEffect.PushLeft, duration);
-        }
-
-        public static IHandler PushRight(
-            this IHandler handler, TimeSpan? duration = null)
-        {
-            return handler.Translate(TranslationEffect.PushRight, duration);
-        }
-
-        public static IHandler PushDown(
-            this IHandler handler, TimeSpan? duration = null)
-        {
-            return handler.Translate(TranslationEffect.PushDown, duration);
-        }
-
-        public static IHandler PushUp(
-            this IHandler handler, TimeSpan? duration = null)
-        {
-            return handler.Translate(TranslationEffect.PushUp, duration);
+            return handler.Translate(Mode.InOut, start, duration);
         }
     }
 

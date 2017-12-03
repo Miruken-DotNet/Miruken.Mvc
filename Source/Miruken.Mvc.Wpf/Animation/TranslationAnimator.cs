@@ -1,7 +1,6 @@
 ﻿namespace Miruken.Mvc.Wpf.Animation
 {
     using System;
-    using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Animation;
     using Concurrency;
@@ -25,23 +24,32 @@
                 (storyboard, duration) =>
                 {
                     FadeAnimator.Apply(storyboard, Translate.Fade,
-                        fromView, toView, duration, Mode.InOut);
+                        fromView, toView, duration, Translate.Mode);
                     Apply(storyboard, Translate, fromView, toView, duration);
                 });
         }
 
         public static void Apply(TimelineGroup storyboard,
             Translate translate, ViewController fromView, 
-            ViewController toView, TimeSpan duration)
+            ViewController toView, TimeSpan duration,
+            Mode? defaultMode = null)
         {
             if (translate == null) return;
-            if (fromView != null && !translate.IsSlide)
-                Apply(storyboard, translate, fromView, true, duration);
-
-            if (toView != null)
+            switch (translate.Mode ?? defaultMode ?? Mode.InOut)
             {
-                Apply(storyboard, translate, toView, false, duration);
-                toView.AddViewAbove(fromView);
+                case Mode.In:
+                    toView.AddViewAbove(fromView);
+                    Apply(storyboard, translate, toView, false, duration);
+                    break;
+                case Mode.Out:
+                    toView?.AddViewBelow(fromView);
+                    Apply(storyboard, translate, fromView, true, duration);
+                    break;
+                case Mode.InOut:
+                    toView.AddViewAbove(fromView);
+                    Apply(storyboard, translate, toView, false, duration);
+                    Apply(storyboard, translate, fromView, true, duration);
+                    break;
             }
         }
 
@@ -49,79 +57,82 @@
             Translate translate, ViewController view, bool hide,
             TimeSpan duration)
         {
-            double from, to;
-            PropertyPath path;
+            DoubleAnimation translateX = null;
+            DoubleAnimation translateY = null;
+
+            var start = translate.Start ?? Position.MiddleLeft;
+
+            switch (start)
+            {
+                case Position.TopLeft:
+                case Position.TopCenter:
+                case Position.TopRight:
+                    translateY = new DoubleAnimation
+                    {
+                        From = hide ? 0 : -view.RegionHeight,
+                        To   = hide ? view.ActualHeight : 0
+                    };
+                    break;
+                case Position.BottomLeft:
+                case Position.BottomCenter:
+                case Position.BottomRight:
+                    translateY = new DoubleAnimation
+                    {
+                        From = hide ? 0 : view.RegionHeight,
+                        To   = hide ? -view.ActualHeight : 0
+                    };
+                    break;
+            }
+
+            switch (start)
+            {
+                case Position.TopLeft:
+                case Position.MiddleLeft:
+                case Position.BottomLeft:
+                    translateX = new DoubleAnimation
+                    {
+                        From = hide ? 0 : -view.RegionWidth,
+                        To   = hide ? view.ActualWidth : 0
+                    };
+                    break;
+                case Position.TopRight:
+                case Position.MiddleRight:
+                case Position.BottomRight:
+                    translateX = new DoubleAnimation
+                    {
+                        From = hide ? 0 : view.RegionWidth,
+                        To   = hide ? -view.ActualWidth : 0
+                    };
+                    break;
+            }
+
+            if (translateX == null && translateY == null)
+                return;
+
+            var ease = translate.Behaviors.Find<IEasingFunction>()
+                    ?? new CubicEase();
 
             var property = view.AddTransform(new TranslateTransform());
 
-            switch (translate.Effect)
+            if (translateX != null)
             {
-                case TranslationEffect.PushLeft:
-                case TranslationEffect.SlideLeft:
-                    from = hide ? 0 : view.RegionWidth;
-                    to   = hide ? -view.ActualWidth : 0;
-                    path = property(TranslateTransform.XProperty);
-                    break;
-                case TranslationEffect.PushRight:
-                case TranslationEffect.SlideRight:
-                    from = hide ? 0 : -view.RegionWidth;
-                    to   = hide ? view.ActualWidth : 0;
-                    path = property(TranslateTransform.XProperty);
-                    break;
-                case TranslationEffect.PushDown:
-                case TranslationEffect.SlideDown:
-                    from = hide ? 0 : -view.RegionHeight;
-                    to   = hide ? view.ActualHeight : 0;
-                    path = property(TranslateTransform.YProperty);
-                    break;
-                case TranslationEffect.PushUp:
-                case TranslationEffect.SlideUp:
-                    from = hide ? 0 : view.RegionHeight;
-                    to   = hide ? -view.ActualHeight : 0;
-                    path = property(TranslateTransform.YProperty);
-                    break;
-                default:
-                    throw new InvalidOperationException("Invalid translation");
+                translateX.Duration = duration;
+                translateX.EasingFunction = ease;
+                storyboard.Children.Add(translateX);
+                Storyboard.SetTarget(translateX, view);
+                Storyboard.SetTargetProperty(translateX,
+                    property(TranslateTransform.XProperty));
             }
 
-            var animation = new DoubleAnimation
+            if (translateY != null)
             {
-                To             = to,
-                From           = from,
-                Duration       = duration,
-                EasingFunction = translate.Behaviors.Find<IEasingFunction>()
-                                 ?? new CubicEase()
-            };
-
-            storyboard.Children.Add(animation);
-            Storyboard.SetTarget(animation, view);
-            Storyboard.SetTargetProperty(animation, path);
-        }
-
-        private TranslationEffect GetInverseEffect()
-        {
-            var effect = Translate.Effect;
-            switch (effect)
-            {
-                case TranslationEffect.SlideLeft:
-                    return TranslationEffect.SlideRight;
-                case TranslationEffect.SlideRight:
-                    return TranslationEffect.SlideLeft;
-                case TranslationEffect.SlideUp:
-                    return TranslationEffect.SlideDown;
-                case TranslationEffect.SlideDown:
-                    return TranslationEffect.SlideUp;
-                case TranslationEffect.PushLeft:
-                    return TranslationEffect.PushRight;
-                case TranslationEffect.PushRight:
-                    return TranslationEffect.PushLeft;
-                case TranslationEffect.PushUp:
-                    return TranslationEffect.PushDown;
-                case TranslationEffect.PushDown:
-                    return TranslationEffect.PushUp;
+                translateY.Duration = duration;
+                translateY.EasingFunction = ease;
+                storyboard.Children.Add(translateY);
+                Storyboard.SetTarget(translateY, view);
+                Storyboard.SetTargetProperty(translateY,
+                    property(TranslateTransform.YProperty));
             }
-            return effect;
         }
     }
 }
-

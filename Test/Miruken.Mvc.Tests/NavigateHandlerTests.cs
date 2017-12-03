@@ -65,26 +65,28 @@
         public void Should_Propogate_Next_Options()
         {
             var controller = 
-                _rootContext.PushLeft()
+                _rootContext.Push(Position.MiddleLeft)
                 .Next<HelloController>();
             var options = controller.SayHello();
             Assert.IsNotNull(options);
             var translation = options.Animation as Translate;
             Assert.IsNotNull(translation);
-            Assert.AreEqual(translation.Effect, TranslationEffect.PushLeft);
+            Assert.AreEqual(Mode.InOut, translation.Mode);
+            Assert.AreEqual(translation.Start, Position.MiddleLeft);
         }
 
         [TestMethod]
         public void Should_Propogate_Push_Options()
         {
             var controller =
-                _rootContext.PushLeft()
+                _rootContext.SlideIn(Position.MiddleRight)
                 .Push<HelloController>();
             var options = controller.SayHello();
             Assert.IsNotNull(options);
             var translation = options.Animation as Translate;
             Assert.IsNotNull(translation);
-            Assert.AreEqual(translation.Effect, TranslationEffect.PushLeft);
+            Assert.AreEqual(Mode.In, translation.Mode);
+            Assert.AreEqual(translation.Start, Position.MiddleRight);
         }
 
         [TestMethod, 
