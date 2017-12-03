@@ -6,7 +6,6 @@
 
     public class Roll : Animation
     {
-        public Mode?     Mode   { get; set; }
         public Position? Anchor { get; set; }
         public Zoom      Zoom   { get; set; }
 

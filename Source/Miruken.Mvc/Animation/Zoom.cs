@@ -6,7 +6,6 @@
 
     public class Zoom : Animation
     {
-        public Mode?     Mode   { get; set; }
         public Position? Origin { get; set; }
     }
 

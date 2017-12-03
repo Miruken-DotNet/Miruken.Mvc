@@ -6,7 +6,6 @@
 
     public class Translate : Animation
     {
-        public Mode?     Mode  { get; set; }
         public Position? Start { get; set; }
     }
 

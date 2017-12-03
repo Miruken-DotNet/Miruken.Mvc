@@ -59,52 +59,130 @@
             TimeSpan duration)
         {
             if (roll == null) return;
-
             var anchor = roll.Anchor ?? Position.BottomLeft;
             view.RenderTransformOrigin = ConvertToPoint(anchor);
-            var property = view.AddTransform(new RotateTransform());
 
-            var animation = new DoubleAnimation
-            {
-                Duration       = duration,
-                EasingFunction = roll.Behaviors.Find<IEasingFunction>()
-            };
-            Configure(animation, anchor, rollOut);
+            AddRotation(storyboard, view, anchor, rollOut, duration,
+                roll.Behaviors.Find<IEasingFunction>());
 
-            storyboard.Children.Add(animation);
-            Storyboard.SetTarget(animation, view);
-            Storyboard.SetTargetProperty(animation,
-                property(RotateTransform.AngleProperty));
+            if (roll.Zoom != null)
+                AddSkew(storyboard, view, anchor, rollOut, duration);
         }
 
-        private static void Configure(
-            DoubleAnimation animation, Position position, bool rollOut)
+        private static void AddRotation(TimelineGroup storyboard,
+            ViewController view, Position anchor, bool rollOut, 
+            TimeSpan duration, IEasingFunction ease)
         {
-            switch (position)
+            var rotation = new DoubleAnimation
+            {
+                Duration       = duration,
+                EasingFunction = ease
+            };
+            switch (anchor)
             {
                 case Position.TopLeft:
                 case Position.BottomLeft:
                 case Position.MiddleLeft:
-                    animation.From = rollOut ? 0 : -90;
-                    animation.To   = rollOut ? -90 : 0;
+                    rotation.From = rollOut ? 0 : -90;
+                    rotation.To   = rollOut ? -90 : 0;
                     break;
                 case Position.TopRight:
                 case Position.BottomRight:
                 case Position.MiddleRight:
-                    animation.From = rollOut ? 0 : 90;
-                    animation.To   = rollOut ? 90 : 0;
+                    rotation.From = rollOut ? 0 : 90;
+                    rotation.To   = rollOut ? 90 : 0;
                     break;
                 case Position.TopCenter:
                 case Position.MiddleCenter:
-                    animation.From = rollOut ? 0 : -180;
-                    animation.To   = rollOut ? -180 : 0;
+                    rotation.From = rollOut ? 0 : -180;
+                    rotation.To   = rollOut ? -180 : 0;
                     break;
                 case Position.BottomCenter:
-                    animation.From = rollOut ? 0 : 180;
-                    animation.To   = rollOut ? 180 : 0;
+                    rotation.From = rollOut ? 0 : 180;
+                    rotation.To   = rollOut ? 180 : 0;
                     break;
                 default:
-                    throw new InvalidOperationException("Invalid position");
+                    throw new InvalidOperationException("Invalid anchor point");
+            }
+            var property = view.AddTransform(new RotateTransform());
+            storyboard.Children.Add(rotation);
+            Storyboard.SetTarget(rotation, view);
+            Storyboard.SetTargetProperty(rotation,
+                property(RotateTransform.AngleProperty));
+        }
+
+        private static void AddSkew(TimelineGroup storyboard,
+            ViewController view, Position anchor, bool rollOut,
+            TimeSpan duration)
+        {
+            DoubleAnimation skewY;
+            DoubleAnimation skewX = null;
+
+            switch (anchor)
+            {
+                case Position.TopLeft:
+                    skewY = rollOut 
+                          ? new DoubleAnimation(0, 45, duration)
+                          : new DoubleAnimation(45, 0, duration);
+                    break;
+                case Position.TopCenter:
+                    skewX = skewY = rollOut
+                          ? new DoubleAnimation(0, 45, duration)
+                          : new DoubleAnimation(45, 0, duration);
+                    break;
+                case Position.TopRight:
+                    skewY = rollOut
+                          ? new DoubleAnimation(0, -45, duration)
+                          : new DoubleAnimation(-45, 0, duration);
+                    break;
+                case Position.MiddleLeft:
+                    skewX = rollOut
+                          ? new DoubleAnimation(0, -45, duration)
+                          : new DoubleAnimation(-45, 0, duration);
+                    skewY = rollOut
+                          ? new DoubleAnimation(0, 45, duration)
+                          : new DoubleAnimation(45, 0, duration);
+                    break;
+                case Position.MiddleRight:
+                    skewX = rollOut
+                          ? new DoubleAnimation(0, 45, duration)
+                          : new DoubleAnimation(45, 0, duration);
+                    skewY = rollOut
+                          ? new DoubleAnimation(0, -45, duration)
+                          : new DoubleAnimation(-45, 0, duration);
+                    break;
+                case Position.BottomRight:
+                    skewX = skewY = rollOut
+                          ? new DoubleAnimation(0, 45, duration)
+                          : new DoubleAnimation(45, 0, duration);
+                    break;
+                case Position.BottomCenter:
+                    skewX = skewY = rollOut
+                          ? new DoubleAnimation(0, -45, duration)
+                          : new DoubleAnimation(-45, -0, duration);
+                    break;
+                case Position.BottomLeft:
+                    skewX = skewY = rollOut
+                          ? new DoubleAnimation(0, -45, duration)
+                          : new DoubleAnimation(-45, 0, duration);
+                    break;
+                default:
+                    return;
+            }
+
+            var property = view.AddTransform(new SkewTransform());
+
+            storyboard.Children.Add(skewY);
+            Storyboard.SetTarget(skewY, view);
+            Storyboard.SetTargetProperty(skewY,
+                property(SkewTransform.AngleYProperty));
+
+            if (skewX != null)
+            {
+                storyboard.Children.Add(skewX);
+                Storyboard.SetTarget(skewX, view);
+                Storyboard.SetTargetProperty(skewX,
+                    property(SkewTransform.AngleXProperty));
             }
         }
     }

@@ -6,8 +6,6 @@
 
     public class Fade : Animation
     {
-        public Mode? Mode { get; set; }
-
         public override IAnimation Merge(IAnimation other)
         {
             return other?.Merge(this) ?? base.Merge(other);

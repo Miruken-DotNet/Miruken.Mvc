@@ -5,8 +5,10 @@
 
     public interface IAnimation
     {
-        Fade                        Fade      { get; set; }
-        TimeSpan?                   Duration  { get; set; }
+        Mode?     Mode     { get; set; }
+        TimeSpan? Duration { get; set; }
+        Fade      Fade     { get; set; }
+
         TypeKeyedCollection<object> Behaviors { get; }
 
         IAnimation Merge(IAnimation other);

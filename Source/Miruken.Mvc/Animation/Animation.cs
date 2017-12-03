@@ -5,8 +5,9 @@
 
     public abstract class Animation : IAnimation
     {
-        public Fade      Fade     { get; set; }
+        public Mode?     Mode     { get; set; }
         public TimeSpan? Duration { get; set; }
+        public Fade      Fade     { get; set; }
 
         public TypeKeyedCollection<object> Behaviors { get; }
             = new TypeKeyedCollection<object>();

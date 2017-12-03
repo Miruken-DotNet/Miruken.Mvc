@@ -23,7 +23,7 @@
             Next<HelloWorldController>(IO
                 .Zoom()
                 .Fade()
-                .RollOut(Position.BottomRight))
+                .Push(Position.BottomCenter))
                 .Greet();
         }
     }
