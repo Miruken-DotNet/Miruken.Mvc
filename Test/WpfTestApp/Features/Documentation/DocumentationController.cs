@@ -20,11 +20,14 @@
 
         public void Done()
         {
+            EndContext();
+            /*
             Next<HelloWorldController>(IO
                 .Zoom()
                 .Fade()
                 .Push(Position.BottomCenter))
                 .Greet();
+                */
         }
     }
 }

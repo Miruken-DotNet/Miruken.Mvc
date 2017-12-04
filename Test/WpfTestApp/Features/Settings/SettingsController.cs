@@ -1,7 +1,6 @@
 ﻿namespace WpfTestApp.Features.Settings
 {
     using Miruken.Mvc;
-    using Miruken.Mvc.Animation;
 
     public class SettingsController : Controller
     {
@@ -12,7 +11,13 @@
 
         public void Back()
         {
-            GoBack(IO.Fade().RollIn(Position.BottomRight));
+            EndContext();
+            /*
+            GoBack(IO
+                .Zoom()
+                .Fade()
+                .RollIn(Position.BottomLeft));
+                */
         }
     }
 }

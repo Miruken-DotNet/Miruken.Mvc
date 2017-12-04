@@ -45,8 +45,10 @@
         public bool AddViewAtIndex(int index)
         {
             var children = _region.Children;
-            if (children.Contains(this))
-                return false;
+            var current  = children.IndexOf(this);
+            if (current == index) return false;
+            children.RemoveAt(current);
+            if (current < index) --index;
             children.Insert(index, this);
             return true;
         }
@@ -54,15 +56,21 @@
         public bool AddViewAbove(ViewController view)
         {
             var children = _region.Children;
-            if (children.Contains(this))
-                return false;
+            var current  = children.IndexOf(this);
             if (view == null)
             {
+                if (current >= 0) return false;
                 children.Add(this);
                 return true;
             }
             var index = children.IndexOf(view);
             if (index < 0) return false;
+            if (current >= 0)
+            {
+                if (current > index) return false;
+                children.RemoveAt(current);
+                --index;
+            }
             children.Insert(index + 1, this);
             return true;
         }
@@ -70,15 +78,20 @@
         public bool AddViewBelow(ViewController view)
         {
             var children = _region.Children;
-            if (children.Contains(this))
-                return false;
+            var current  = children.IndexOf(this);
             if (view == null)
             {
+                if (current >= 0) return false;
                 children.Add(this);
                 return true;
             }
             var index = children.IndexOf(view);
             if (index < 0) return false;
+            if (current >= 0)
+            {
+                if (current < index) return false;
+                children.RemoveAt(current);
+            }
             children.Insert(index, this);
             return true;
         }

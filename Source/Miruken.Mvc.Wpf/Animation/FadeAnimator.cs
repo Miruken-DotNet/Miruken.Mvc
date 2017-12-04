@@ -1,12 +1,16 @@
 ﻿namespace Miruken.Mvc.Wpf.Animation
 {
     using System;
+    using System.Windows;
     using System.Windows.Media.Animation;
     using Concurrency;
     using Mvc.Animation;
 
     public class FadeAnimator : Animator
     {
+        private static readonly PropertyPath Opacity =
+            new PropertyPath(UIElement.OpacityProperty);
+
         public FadeAnimator(Fade fade)
         {
             if (fade == null)
@@ -16,31 +20,56 @@
 
         public Fade Fade { get; }
 
-        public override Promise Animate(
+        public override Promise Present(
+            ViewController fromView, ViewController toView,
+            bool removeFromView)
+        {
+            return Animate(Fade, fromView, toView,
+                (storyboard, duration) =>
+                    Apply(storyboard, Fade, fromView, toView, duration),
+                removeFromView);
+        }
+
+        public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
             return Animate(Fade, fromView, toView,
                 (storyboard, duration) =>
-                    Apply(storyboard, Fade, fromView, toView, duration));
+                    Apply(storyboard, Fade, fromView, toView, duration, false));
         }
 
         public static void Apply(TimelineGroup storyboard,
             Fade fade, ViewController fromView, ViewController toView,
-            TimeSpan duration, Mode? defaultMmode = null)
+            TimeSpan duration, bool present = true,
+            Mode? defaultMmode = null)
         {
             if (fade == null) return;
             switch (fade.Mode ?? defaultMmode ?? Mode.In)
             {
                 case Mode.In:
-                    toView.AddViewAbove(fromView);
-                    Apply(storyboard, fade, toView, false, duration);
+                    if (present)
+                    {
+                        toView.AddViewAbove(fromView);
+                        Apply(storyboard, fade, toView, false, duration);
+                    }
+                    else
+                        Apply(storyboard, fade, fromView, true, duration);
                     break;
                 case Mode.Out:
-                    toView?.AddViewBelow(fromView);
-                    Apply(storyboard, fade, fromView, true, duration);
+                    if (present)
+                    {
+                        toView?.AddViewBelow(fromView);
+                        Apply(storyboard, fade, fromView, true, duration);
+                    }
+                    else
+                    {
+                        toView?.AddViewAbove(fromView);
+                        Apply(storyboard, fade, toView, false, duration);
+                    }
                     break;
                 case Mode.InOut:
-                    toView.AddViewAbove(fromView);
+                    if (present)
+                        toView.AddViewAbove(fromView);
                     Apply(storyboard, fade, toView, false, duration);
                     Apply(storyboard, fade, fromView, true, duration);
                     break;

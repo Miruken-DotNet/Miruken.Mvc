@@ -4,6 +4,11 @@
 
     public interface IAnimator 
     {
-        Promise Animate(ViewController fromView, ViewController toView);
+        Promise Present(
+            ViewController fromView, ViewController toView,
+            bool removeFromView);
+
+        Promise Dismiss(
+            ViewController fromView, ViewController toView);
     }
 }

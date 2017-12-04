@@ -17,35 +17,63 @@
 
         public Zoom Zoom { get; }
 
-        public override Promise Animate(
+        public override Promise Present(
+            ViewController fromView, ViewController toView,
+            bool removeFromView)
+        {
+            return Animate(Zoom, fromView, toView,
+                (storyboard, duration) =>
+                {
+                    FadeAnimator.Apply(storyboard, Zoom.Fade,
+                        fromView, toView, duration, true, Zoom.Mode);
+                    Apply(storyboard, Zoom, fromView, toView, duration);
+                }, removeFromView);
+        }
+
+        public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
             return Animate(Zoom, fromView, toView,
                 (storyboard, duration) =>
                 {
                     FadeAnimator.Apply(storyboard, Zoom.Fade,
-                        fromView, toView, duration, Zoom.Mode);
-                    Apply(storyboard, Zoom, fromView, toView, duration);
+                        fromView, toView, duration, false, Zoom.Mode);
+                    Apply(storyboard, Zoom, fromView, toView, duration, false);
                 });
         }
 
         public static void Apply(TimelineGroup storyboard,
             Zoom zoom, ViewController fromView, ViewController toView,
-            TimeSpan duration, Mode? defaultMmode = null)
+            TimeSpan duration, bool present = true,
+            Mode? defaultMmode = null)
         {
             if (zoom == null) return;
             switch (zoom.Mode ?? defaultMmode ?? Mode.In)
             {
                 case Mode.In:
-                    toView.AddViewAbove(fromView);
-                    Apply(storyboard, zoom, toView, false, duration);
+                    if (present)
+                    {
+                        toView.AddViewAbove(fromView);
+                        Apply(storyboard, zoom, toView, false, duration);
+                    }
+                    else
+                        Apply(storyboard, zoom, fromView, true, duration);
                     break;
                 case Mode.Out:
-                    toView?.AddViewBelow(fromView);
-                    Apply(storyboard, zoom, fromView, true, duration);
+                    if (present)
+                    {
+                        toView?.AddViewBelow(fromView);
+                        Apply(storyboard, zoom, fromView, true, duration);
+                    }
+                    else
+                    {
+                        toView?.AddViewAbove(fromView);
+                        Apply(storyboard, zoom, toView, false, duration);
+                    }
                     break;
                 case Mode.InOut:
-                    toView.AddViewAbove(fromView);
+                    if (present)
+                        toView.AddViewAbove(fromView);
                     Apply(storyboard, zoom, toView, false, duration);
                     Apply(storyboard, zoom, fromView, true, duration);
                     break;

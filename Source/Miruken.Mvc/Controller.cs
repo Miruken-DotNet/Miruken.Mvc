@@ -63,12 +63,12 @@
 
         #region Protocol
 
-        protected TProto id<TProto>() where TProto : class
+        protected TProto Proxy<TProto>() where TProto : class
         {
             return IO.Proxy<TProto>();
         }
 
-        protected TProto id<TProto>(IHandler handler) where TProto : class
+        protected TProto Proxy<TProto>(IHandler handler) where TProto : class
         {
             return handler.Proxy<TProto>();
         }
@@ -103,7 +103,7 @@
 
         protected IViewRegion Region(IHandler handler)
         {
-            return id<IViewRegion>(handler);
+            return Proxy<IViewRegion>(handler);
         }
 
         protected IContext AddRegion(IViewRegion region, Action<IViewRegion> init = null)

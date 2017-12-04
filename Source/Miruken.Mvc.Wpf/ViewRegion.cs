@@ -255,6 +255,12 @@
             return layer;
         }
 
+        private ViewLayer GetLayerBelow(ViewLayer layer)
+        {
+            var index = GetLayerIndex(layer);
+            return index > 0 ? Layers[index - 1] : null;
+        }
+
         private int GetLayerIndex(ViewLayer layer)
         {
             return Layers.IndexOf(layer);
@@ -266,13 +272,13 @@
 
         private Promise AddView(ViewController fromView,
             ViewController view, RegionOptions options,
-            IHandler composer)
+            bool removeFromView, IHandler composer)
         {
             if (!Dispatcher.CheckAccess())
                 return (Promise)Dispatcher.Invoke(
                     new Func<ViewController, ViewController,
-                    RegionOptions, IHandler, Promise>(AddView),
-                    fromView, view, options, composer);
+                    RegionOptions, bool, IHandler, Promise>(AddView),
+                    fromView, view, options, removeFromView, composer);
 
             if (_unwinding || Children.Contains(view))
                 return Promise.Empty;
@@ -285,7 +291,7 @@
                 var animator = composer.BestEffort().Resolve()
                     .Proxy<IMapping>().Map<IAnimator>(animation);
                 if (animator != null)
-                    return animator.Animate(fromView, view);
+                    return animator.Present(fromView, view, removeFromView);
             }
 
             var fromIndex = Children.IndexOf(fromView);
@@ -299,27 +305,30 @@
                 view.Focus();
 
             if (fromView != null)
-                RemoveView(fromView, null, composer);
+                RemoveView(fromView, null,  null, composer);
 
             return Promise.Empty;
         }
 
-        private Promise RemoveView(ViewController view,
-            IAnimation animation, IHandler composer)
+        private Promise RemoveView(ViewController fromView,
+            ViewController toView, IAnimation animation,
+            IHandler composer)
         {
             if (!Dispatcher.CheckAccess())
-                return (Promise)Dispatcher.Invoke(new Func<ViewController, 
-                    IAnimation, IHandler, Promise>(RemoveView), view, composer);
+                return (Promise)Dispatcher.Invoke(
+                    new Func<ViewController, ViewController,
+                    IAnimation, IHandler, Promise>(RemoveView)
+                    , fromView, composer);
 
             if (animation != null)
             {
                 var animator = composer.BestEffort().Resolve()
                     .Proxy<IMapping>().Map<IAnimator>(animation);
                 if (animator != null)
-                    return animator.Animate(view, null);
+                    return animator.Dismiss(fromView, toView);
             }
 
-            view.RemoveView();
+            fromView.RemoveView();
             return Promise.Empty;
         }
 
@@ -411,13 +420,20 @@
                     if (layer != null)
                     {
                         var actual = layer.TransitionTo(view, options, composer);
-                        Region.RemoveView(oldView, null, composer);
+                        Region.RemoveView(oldView, null, null, composer);
                         return actual;
                     }
                 }
 
+                var removeFromView = oldView != null;
+                if (!removeFromView)
+                {
+                    var below = Region.GetLayerBelow(this);
+                    if (below != null)
+                        oldView = below.View;
+                }
                 View = new ViewController(Region, view);
-                Region.AddView(oldView, View, options, composer);
+                Region.AddView(oldView, View, options, removeFromView, composer);
                 Events.Raise(this, TransitionedEvent);
 
                 return this;
@@ -425,10 +441,19 @@
 
             public void TransitionFrom()
             {
-                var oldView = View;
+                var dispatcher = Region.Dispatcher;
+                if (!dispatcher.CheckAccess())
+                {
+                    if (!dispatcher.HasShutdownStarted && 
+                        !dispatcher.HasShutdownFinished)
+                        dispatcher.Invoke(TransitionFrom);
+                    return;
+                }
+                var oldView    = View;
+                var activeView = Region.ActiveView;
                 if (oldView != null && 
-                    !ReferenceEquals(oldView, Region.ActiveView))
-                    Region.RemoveView(oldView, _animation, _composer);
+                    !ReferenceEquals(oldView, activeView))
+                    Region.RemoveView(oldView, activeView, _animation, _composer);
                 View = null;
             }
 

@@ -1,7 +1,6 @@
 ﻿namespace Miruken.Mvc.Wpf.Animation
 {
     using System;
-    using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Animation;
     using Concurrency;
@@ -10,13 +9,14 @@
 
     public abstract class Animator : IAnimator
     {
-        protected static readonly PropertyPath Opacity =
-            new PropertyPath(UIElement.OpacityProperty);
-
         protected static readonly TimeSpan DefaultDuration =
             TimeSpan.FromMilliseconds(400);
 
-        public abstract Promise Animate(
+        public abstract Promise Present(
+            ViewController fromView, ViewController toView,
+            bool removeFromView);
+
+        public abstract Promise Dismiss(
             ViewController fromView, ViewController toView);
 
         protected static TimeSpan GetDuration(IAnimation animation)
@@ -46,6 +46,8 @@
                     storyboard.Remove();
                     if (removeFromView)
                         fromView?.RemoveView();
+                    else if (fromView != null)
+                        toView?.AddViewAbove(fromView);
                     if (toView != null)
                     {
                         toView.RenderTransform       = Transform.Identity;

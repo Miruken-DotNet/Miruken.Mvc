@@ -48,7 +48,7 @@
             return handler.Zoom(Mode.Out, origin, duration);
         }
 
-        public static IHandler ZoomoInOut(this IHandler handler,
+        public static IHandler ZoomInOut(this IHandler handler,
             Position? origin = null, TimeSpan? duration = null)
         {
             return handler.Zoom(Mode.InOut, origin, duration);

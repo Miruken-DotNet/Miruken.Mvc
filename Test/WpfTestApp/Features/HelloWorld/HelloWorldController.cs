@@ -22,10 +22,10 @@
 
         public void Documentation()
         {
-            Next<DocumentationController>(IO
+            Push<DocumentationController>(IO
                 .Zoom()
                 .Fade()
-                .RollOut(Position.MiddleCenter))
+                .RollInOut(Position.MiddleCenter))
                 .Index();
         }
 
@@ -61,10 +61,10 @@
 
         public void Settings()
         {
-            Next<SettingsController>(IO
-                .Zoom()
-                .Fade()
-                .RollOut(Position.BottomLeft))
+            Push<SettingsController>(IO
+                .ZoomIn()
+                .Fade())
+                //.RollOut(Position.BottomLeft))
                 .Configure();
         }
 

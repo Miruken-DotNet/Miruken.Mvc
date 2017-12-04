@@ -17,16 +17,23 @@
 
         public Translate Translate { get; }
 
-        public override Promise Animate(
-            ViewController fromView, ViewController toView)
+        public override Promise Present(
+            ViewController fromView, ViewController toView,
+            bool removeFromView)
         {
             return Animate(Translate, fromView, toView,
                 (storyboard, duration) =>
                 {
                     FadeAnimator.Apply(storyboard, Translate.Fade,
-                        fromView, toView, duration, Translate.Mode);
+                        fromView, toView, duration, true, Translate.Mode);
                     Apply(storyboard, Translate, fromView, toView, duration);
-                });
+                }, removeFromView);
+        }
+
+        public override Promise Dismiss(
+            ViewController fromView, ViewController toView)
+        {
+            return null;
         }
 
         public static void Apply(TimelineGroup storyboard,

@@ -17,37 +17,67 @@
 
         public Roll Roll { get; }
 
-        public override Promise Animate(
+        public override Promise Present(
+            ViewController fromView, ViewController toView,
+            bool removeFromView)
+        {
+            return Animate(Roll, fromView, toView,
+                (storyboard, duration) =>
+                {
+                    FadeAnimator.Apply(storyboard, Roll.Fade,
+                        fromView, toView, duration, true, Roll.Mode);
+                    ZoomAnimator.Apply(storyboard, Roll.Zoom,
+                        fromView, toView, duration, true, Roll.Mode);
+                    Apply(storyboard, Roll, fromView, toView, duration);
+                }, removeFromView);
+        }
+
+        public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
             return Animate(Roll, fromView, toView,
                 (storyboard, duration) =>
                 {
                     FadeAnimator.Apply(storyboard, Roll.Fade,
-                        fromView, toView, duration, Roll.Mode);
+                        fromView, toView, duration, false, Roll.Mode);
                     ZoomAnimator.Apply(storyboard, Roll.Zoom,
-                        fromView, toView, duration, Roll.Mode);
-                    Apply(storyboard, Roll, fromView, toView, duration);
+                        fromView, toView, duration, false, Roll.Mode);
+                    Apply(storyboard, Roll, fromView, toView, duration, false);
                 });
         }
 
         public static void Apply(TimelineGroup storyboard,
             Roll roll, ViewController fromView, ViewController toView,
-            TimeSpan duration, Mode? defaultMode = null)
+            TimeSpan duration, bool present = true, 
+            Mode? defaultMode = null)
         {
             if (roll == null) return;
             switch (roll.Mode ?? defaultMode ?? Mode.Out)
             {
                 case Mode.In:
-                    toView.AddViewAbove(fromView);
-                    Apply(storyboard, roll, toView, false, duration);
+                    if (present)
+                    {
+                        toView.AddViewAbove(fromView);
+                        Apply(storyboard, roll, toView, false, duration);
+                    }
+                    else
+                        Apply(storyboard, roll, fromView, true, duration);
                     break;
                 case Mode.Out:
-                    toView?.AddViewBelow(fromView);
-                    Apply(storyboard, roll, fromView, true, duration);
+                    if (present)
+                    {
+                        toView?.AddViewBelow(fromView);
+                        Apply(storyboard, roll, fromView, true, duration);
+                    }
+                    else
+                    {
+                        toView?.AddViewAbove(fromView);
+                        Apply(storyboard, roll, toView, false, duration);
+                    }
                     break;
                 case Mode.InOut:
-                    toView.AddViewAbove(fromView);
+                    if (present)
+                        toView.AddViewAbove(fromView);
                     Apply(storyboard, roll, toView, false, duration);
                     Apply(storyboard, roll, fromView, true, duration);
                     break;
@@ -80,13 +110,13 @@
             };
             switch (anchor)
             {
-                case Position.TopLeft:
+                case Position.TopRight:
                 case Position.BottomLeft:
                 case Position.MiddleLeft:
                     rotation.From = rollOut ? 0 : -90;
                     rotation.To   = rollOut ? -90 : 0;
                     break;
-                case Position.TopRight:
+                case Position.TopLeft:
                 case Position.BottomRight:
                 case Position.MiddleRight:
                     rotation.From = rollOut ? 0 : 90;
@@ -115,23 +145,22 @@
             ViewController view, Position anchor, bool rollOut,
             TimeSpan duration)
         {
+            DoubleAnimation skewX;
             DoubleAnimation skewY;
-            DoubleAnimation skewX = null;
 
             switch (anchor)
             {
                 case Position.TopLeft:
-                    skewY = rollOut 
-                          ? new DoubleAnimation(0, 45, duration)
-                          : new DoubleAnimation(45, 0, duration);
-                    break;
                 case Position.TopCenter:
+                case Position.BottomRight:
                     skewX = skewY = rollOut
                           ? new DoubleAnimation(0, 45, duration)
                           : new DoubleAnimation(45, 0, duration);
                     break;
                 case Position.TopRight:
-                    skewY = rollOut
+                case Position.BottomLeft:
+                case Position.BottomCenter:
+                    skewX = skewY = rollOut
                           ? new DoubleAnimation(0, -45, duration)
                           : new DoubleAnimation(-45, 0, duration);
                     break;
@@ -151,39 +180,21 @@
                           ? new DoubleAnimation(0, -45, duration)
                           : new DoubleAnimation(-45, 0, duration);
                     break;
-                case Position.BottomRight:
-                    skewX = skewY = rollOut
-                          ? new DoubleAnimation(0, 45, duration)
-                          : new DoubleAnimation(45, 0, duration);
-                    break;
-                case Position.BottomCenter:
-                    skewX = skewY = rollOut
-                          ? new DoubleAnimation(0, -45, duration)
-                          : new DoubleAnimation(-45, -0, duration);
-                    break;
-                case Position.BottomLeft:
-                    skewX = skewY = rollOut
-                          ? new DoubleAnimation(0, -45, duration)
-                          : new DoubleAnimation(-45, 0, duration);
-                    break;
                 default:
                     return;
             }
 
             var property = view.AddTransform(new SkewTransform());
 
+            storyboard.Children.Add(skewX);
+            Storyboard.SetTarget(skewX, view);
+            Storyboard.SetTargetProperty(skewX,
+                property(SkewTransform.AngleXProperty));
+
             storyboard.Children.Add(skewY);
             Storyboard.SetTarget(skewY, view);
             Storyboard.SetTargetProperty(skewY,
                 property(SkewTransform.AngleYProperty));
-
-            if (skewX != null)
-            {
-                storyboard.Children.Add(skewX);
-                Storyboard.SetTarget(skewX, view);
-                Storyboard.SetTargetProperty(skewX,
-                    property(SkewTransform.AngleXProperty));
-            }
         }
     }
 }
