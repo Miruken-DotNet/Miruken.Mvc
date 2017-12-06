@@ -304,7 +304,7 @@
             if (fromIndex < 0 || ReferenceEquals(fromView, activeView))
                 view.Focus();
 
-            if (fromView != null)
+            if (removeFromView && fromView != null)
                 RemoveView(fromView, null,  null, composer);
 
             return Promise.Empty;

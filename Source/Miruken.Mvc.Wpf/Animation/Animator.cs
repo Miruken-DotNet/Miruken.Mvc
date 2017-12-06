@@ -48,13 +48,13 @@
                     {
                         if (removeFromView)
                             fromView.RemoveView();
-                        else
-                            toView?.AddViewAbove(fromView);
-                        fromView.RenderTransform = Transform.Identity;
+                        fromView.RenderTransform       = Transform.Identity;
                         fromView.RenderTransformOrigin = new Point(0, 0);
                     }
                     if (toView != null)
                     {
+                        if (!removeFromView)
+                            toView.AddViewAbove(fromView);
                         toView.RenderTransform       = Transform.Identity;
                         toView.RenderTransformOrigin = new Point(0, 0);
                     }

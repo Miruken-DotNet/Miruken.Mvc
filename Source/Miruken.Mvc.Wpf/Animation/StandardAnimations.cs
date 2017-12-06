@@ -29,5 +29,11 @@
         {
             return new ZoomAnimator(zoom);
         }
+
+        [Maps]
+        public SplitAnimator Create(Split split)
+        {
+            return new SplitAnimator(split);
+        }
     }
 }

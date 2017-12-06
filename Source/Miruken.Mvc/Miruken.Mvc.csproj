@@ -57,6 +57,7 @@
     </Compile>
     <Compile Include="Animation\Animation.cs" />
     <Compile Include="Animation\Mode.cs" />
+    <Compile Include="Animation\Orientation.cs" />
     <Compile Include="Animation\Position.cs" />
     <Compile Include="Animation\Zoom.cs" />
     <Compile Include="Animation\IAnimation.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Policy\IPolicy.cs" />
     <Compile Include="Policy\PromisePolicy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Animation\Split.cs" />
     <Compile Include="Views\IView.cs" />
     <Compile Include="Views\IViewRegion.cs" />
     <Compile Include="Views\IViewStack.cs" />
