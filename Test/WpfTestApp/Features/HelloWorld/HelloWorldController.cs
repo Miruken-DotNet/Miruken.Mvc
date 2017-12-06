@@ -25,7 +25,7 @@
             Push<DocumentationController>(IO
                 .Zoom()
                 .Fade()
-                .RollInOut(Position.MiddleCenter))
+                .RollOut(Position.BottomLeft))
                 .Index();
         }
 

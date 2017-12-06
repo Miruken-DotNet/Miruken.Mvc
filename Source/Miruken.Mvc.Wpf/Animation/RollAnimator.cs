@@ -21,7 +21,7 @@
             ViewController fromView, ViewController toView,
             bool removeFromView)
         {
-            return Animate(Roll, fromView, toView,
+            return AnimateStory(Roll, fromView, toView,
                 (storyboard, duration) =>
                 {
                     FadeAnimator.Apply(storyboard, Roll.Fade,
@@ -35,7 +35,7 @@
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
-            return Animate(Roll, fromView, toView,
+            return AnimateStory(Roll, fromView, toView,
                 (storyboard, duration) =>
                 {
                     FadeAnimator.Apply(storyboard, Roll.Fade,

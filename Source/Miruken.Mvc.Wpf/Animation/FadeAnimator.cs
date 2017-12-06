@@ -24,7 +24,7 @@
             ViewController fromView, ViewController toView,
             bool removeFromView)
         {
-            return Animate(Fade, fromView, toView,
+            return AnimateStory(Fade, fromView, toView,
                 (storyboard, duration) =>
                     Apply(storyboard, Fade, fromView, toView, duration),
                 removeFromView);
@@ -33,7 +33,7 @@
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
-            return Animate(Fade, fromView, toView,
+            return AnimateStory(Fade, fromView, toView,
                 (storyboard, duration) =>
                     Apply(storyboard, Fade, fromView, toView, duration, false));
         }

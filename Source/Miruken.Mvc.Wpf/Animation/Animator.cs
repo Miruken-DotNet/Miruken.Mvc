@@ -24,10 +24,10 @@
             return animation.Duration.GetValueOrDefault(DefaultDuration);
         }
 
-        protected static Promise Animate(IAnimation animation, 
+        protected static Promise AnimateStory(IAnimation animation, 
             ViewController fromView, ViewController toView,
             Action<Storyboard, TimeSpan> animations,
-            bool removeFromView = true, Action onCompleted = null)
+            bool removeFromView = true)
         {
             if (animations == null)
                 throw new ArgumentNullException(nameof(animations));
@@ -44,17 +44,20 @@
                 {
                     storyboard.Completed -= completed;
                     storyboard.Remove();
-                    if (removeFromView)
-                        fromView?.RemoveView();
-                    else if (fromView != null)
-                        toView?.AddViewAbove(fromView);
+                    if (fromView != null)
+                    {
+                        if (removeFromView)
+                            fromView.RemoveView();
+                        else
+                            toView?.AddViewAbove(fromView);
+                        fromView.RenderTransform = Transform.Identity;
+                        fromView.RenderTransformOrigin = new Point(0, 0);
+                    }
                     if (toView != null)
                     {
                         toView.RenderTransform       = Transform.Identity;
                         toView.RenderTransformOrigin = new Point(0, 0);
                     }
-
-                    onCompleted?.Invoke();
                     resolve(null, true);
                 };
                 storyboard.Completed += completed;

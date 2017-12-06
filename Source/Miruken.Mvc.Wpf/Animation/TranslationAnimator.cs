@@ -21,7 +21,7 @@
             ViewController fromView, ViewController toView,
             bool removeFromView)
         {
-            return Animate(Translate, fromView, toView,
+            return AnimateStory(Translate, fromView, toView,
                 (storyboard, duration) =>
                 {
                     FadeAnimator.Apply(storyboard, Translate.Fade,
