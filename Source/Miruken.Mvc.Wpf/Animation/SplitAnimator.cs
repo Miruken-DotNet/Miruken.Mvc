@@ -55,24 +55,18 @@
             {
                 MappingMode  = BrushMappingMode.Absolute,
                 SpreadMethod = GradientSpreadMethod.Repeat,
-                StartPoint   = new Point(0, 0),
                 EndPoint     = vertical ? new Point(width, 0) : new Point(0, width)
             };
+            var offset = present ? 0 : 1;
             var gradientStops = brush.GradientStops;
-            ViewController view;
+            gradientStops.Add(new GradientStop(Colors.White, offset));
+            gradientStops.Add(new GradientStop { Offset = offset });
+
+            var view = fromView;
             if (present)
             {
                 view = toView;
                 toView.AddViewAbove(fromView);
-                gradientStops.Add(new GradientStop(Colors.White, 0));
-                gradientStops.Add(new GradientStop());
-
-            }
-            else
-            {
-                view = fromView;
-                gradientStops.Add(new GradientStop { Offset = 1 });
-                gradientStops.Add(new GradientStop(Colors.White, 0));
             }
 
             var opacityMask  = view.OpacityMask;
@@ -81,7 +75,7 @@
             for (var index = 0; index < gradientStops.Count; ++index)
             {
                 var animation = new DoubleAnimation(present ? 1 : 0, duration);
-                if (index == 0)
+                if (index == offset)
                     animation.BeginTime = new TimeSpan(duration.Ticks / 2);
                 storyboard.Children.Add(animation);
                 Storyboard.SetTarget(animation, view);

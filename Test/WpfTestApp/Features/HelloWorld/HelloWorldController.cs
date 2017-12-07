@@ -3,7 +3,6 @@
     using About;
     using Documentation;
     using Error;
-    using Miruken.Infrastructure;
     using Miruken.Mvc;
     using Miruken.Mvc.Animation;
     using Miruken.Mvc.Options;
