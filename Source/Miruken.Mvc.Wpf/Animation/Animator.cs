@@ -65,27 +65,27 @@
             });
         }
 
-        protected static Point ConvertToPoint(Position position)
+        protected static Point ConvertToPoint(Origin origin)
         {
-            switch (position)
+            switch (origin)
             {
-                case Position.TopLeft:
+                case Origin.TopLeft:
                     return new Point(0, 0);
-                case Position.TopCenter:
+                case Origin.TopCenter:
                     return new Point(.5, 0);
-                case Position.TopRight:
+                case Origin.TopRight:
                     return new Point(1, 0);
-                case Position.MiddleLeft:
+                case Origin.MiddleLeft:
                     return new Point(0, .5);
-                case Position.MiddleCenter:
+                case Origin.MiddleCenter:
                     return new Point(.5, .5);
-                case Position.MiddleRight:
+                case Origin.MiddleRight:
                     return new Point(1, .5);
-                case Position.BottomLeft:
+                case Origin.BottomLeft:
                     return new Point(0, 1);
-                case Position.BottomCenter:
+                case Origin.BottomCenter:
                     return new Point(.5, 1);
-                case Position.BottomRight:
+                case Origin.BottomRight:
                     return new Point(1, 1);
             }
             throw new InvalidOperationException("Invalid position");

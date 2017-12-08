@@ -89,7 +89,7 @@
             TimeSpan duration)
         {
             if (roll == null) return;
-            var anchor = roll.Anchor ?? Position.BottomLeft;
+            var anchor = roll.Anchor ?? Origin.BottomLeft;
             view.RenderTransformOrigin = ConvertToPoint(anchor);
 
             AddRotation(storyboard, view, anchor, rollOut, duration,
@@ -100,7 +100,7 @@
         }
 
         private static void AddRotation(TimelineGroup storyboard,
-            ViewController view, Position anchor, bool rollOut, 
+            ViewController view, Origin anchor, bool rollOut, 
             TimeSpan duration, IEasingFunction ease)
         {
             var rotation = new DoubleAnimation
@@ -110,24 +110,24 @@
             };
             switch (anchor)
             {
-                case Position.TopRight:
-                case Position.BottomLeft:
-                case Position.MiddleLeft:
+                case Origin.TopRight:
+                case Origin.BottomLeft:
+                case Origin.MiddleLeft:
                     rotation.From = rollOut ? 0 : -90;
                     rotation.To   = rollOut ? -90 : 0;
                     break;
-                case Position.TopLeft:
-                case Position.BottomRight:
-                case Position.MiddleRight:
+                case Origin.TopLeft:
+                case Origin.BottomRight:
+                case Origin.MiddleRight:
                     rotation.From = rollOut ? 0 : 90;
                     rotation.To   = rollOut ? 90 : 0;
                     break;
-                case Position.TopCenter:
-                case Position.MiddleCenter:
+                case Origin.TopCenter:
+                case Origin.MiddleCenter:
                     rotation.From = rollOut ? 0 : -180;
                     rotation.To   = rollOut ? -180 : 0;
                     break;
-                case Position.BottomCenter:
+                case Origin.BottomCenter:
                     rotation.From = rollOut ? 0 : 180;
                     rotation.To   = rollOut ? 180 : 0;
                     break;
@@ -142,7 +142,7 @@
         }
 
         private static void AddSkew(TimelineGroup storyboard,
-            ViewController view, Position anchor, bool rollOut,
+            ViewController view, Origin anchor, bool rollOut,
             TimeSpan duration)
         {
             DoubleAnimation skewX;
@@ -150,21 +150,21 @@
 
             switch (anchor)
             {
-                case Position.TopLeft:
-                case Position.TopCenter:
-                case Position.BottomRight:
+                case Origin.TopLeft:
+                case Origin.TopCenter:
+                case Origin.BottomRight:
                     skewX = skewY = rollOut
                           ? new DoubleAnimation(0, 45, duration)
                           : new DoubleAnimation(45, 0, duration);
                     break;
-                case Position.TopRight:
-                case Position.BottomLeft:
-                case Position.BottomCenter:
+                case Origin.TopRight:
+                case Origin.BottomLeft:
+                case Origin.BottomCenter:
                     skewX = skewY = rollOut
                           ? new DoubleAnimation(0, -45, duration)
                           : new DoubleAnimation(-45, 0, duration);
                     break;
-                case Position.MiddleLeft:
+                case Origin.MiddleLeft:
                     skewX = rollOut
                           ? new DoubleAnimation(0, -45, duration)
                           : new DoubleAnimation(-45, 0, duration);
@@ -172,7 +172,7 @@
                           ? new DoubleAnimation(0, 45, duration)
                           : new DoubleAnimation(45, 0, duration);
                     break;
-                case Position.MiddleRight:
+                case Origin.MiddleRight:
                     skewX = rollOut
                           ? new DoubleAnimation(0, 45, duration)
                           : new DoubleAnimation(45, 0, duration);

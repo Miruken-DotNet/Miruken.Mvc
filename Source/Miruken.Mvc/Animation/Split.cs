@@ -6,8 +6,8 @@
 
     public class Split : Animation
     {
-        public Orientation? Orientation { get; set; }
-        public int?         Width       { get; set; }
+        public Origin? Start { get; set; }
+        public int?    Width { get; set; }
     }
 
     public static class SplitExtensions
@@ -24,29 +24,36 @@
         }
 
         public static IHandler Split(
-            this IHandler handler, Orientation? orientation = null,
-            int? width = null, TimeSpan? duration = null)
+            this IHandler handler, Mode? mode = null,
+            Origin? start = null, TimeSpan? duration = null)
         {
             return handler.Split(new Split
             {
-                Orientation = orientation,
-                Width       = width,
-                Duration    = duration
+                Mode     = mode,
+                Start    = start,
+                Duration = duration
             });
         }
 
-        public static IHandler SplitVertical(
-            this IHandler handler, int? width = null,
+        public static IHandler SplitIn(
+            this IHandler handler, Origin? start = null,
             TimeSpan? duration = null)
         {
-            return handler.Split(Orientation.Vertical, width, duration);
+            return handler.Split(Mode.In, start, duration);
         }
 
-        public static IHandler SplitHorizontal(
-            this IHandler handler, int? width = null,
+        public static IHandler SplitOut(
+            this IHandler handler, Origin? start = null,
             TimeSpan? duration = null)
         {
-            return handler.Split(Orientation.Horizontal, width, duration);
+            return handler.Split(Mode.Out, start, duration);
+        }
+
+        public static IHandler SplitInOut(
+            this IHandler handler, Origin? start = null,
+            TimeSpan? duration = null)
+        {
+            return handler.Split(Mode.InOut, start, duration);
         }
     }
 }

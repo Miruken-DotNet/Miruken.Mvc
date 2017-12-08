@@ -6,7 +6,7 @@
 
     public class Zoom : Animation
     {
-        public Position? Origin { get; set; }
+        public Origin? Origin { get; set; }
     }
 
     #region ZoomExtensions
@@ -25,7 +25,7 @@
         }
 
         public static IHandler Zoom(this IHandler handler,
-            Mode? mode = null, Position? origin = null,
+            Mode? mode = null, Origin? origin = null,
             TimeSpan? duration = null)
         {
             return handler.Zoom(new Zoom
@@ -37,19 +37,19 @@
         }
 
         public static IHandler ZoomIn(this IHandler handler,
-            Position? origin = null, TimeSpan? duration = null)
+            Origin? origin = null, TimeSpan? duration = null)
         {
             return handler.Zoom(Mode.In, origin, duration);
         }
 
         public static IHandler ZoomOut(this IHandler handler,
-            Position? origin = null, TimeSpan? duration = null)
+            Origin? origin = null, TimeSpan? duration = null)
         {
             return handler.Zoom(Mode.Out, origin, duration);
         }
 
         public static IHandler ZoomInOut(this IHandler handler,
-            Position? origin = null, TimeSpan? duration = null)
+            Origin? origin = null, TimeSpan? duration = null)
         {
             return handler.Zoom(Mode.InOut, origin, duration);
         }

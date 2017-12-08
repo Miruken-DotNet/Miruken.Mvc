@@ -6,7 +6,7 @@
 
     public class Translate : Animation
     {
-        public Position? Start { get; set; }
+        public Origin? Start { get; set; }
     }
 
     #region TranslateExtensions
@@ -26,7 +26,7 @@
 
         public static IHandler Translate(
             this IHandler handler, Mode? mode = null,
-            Position? start = null, TimeSpan? duration = null)
+            Origin? start = null, TimeSpan? duration = null)
         {
             return handler.Translate(new Translate
             {
@@ -37,19 +37,19 @@
         }
 
         public static IHandler SlideIn(this IHandler handler,
-            Position? start = null, TimeSpan? duration = null)
+            Origin? start = null, TimeSpan? duration = null)
         {
             return handler.Translate(Mode.In, start, duration);
         }
 
         public static IHandler SlideOut(this IHandler handler,
-            Position? start = null, TimeSpan? duration = null)
+            Origin? start = null, TimeSpan? duration = null)
         {
             return handler.Translate(Mode.Out, start, duration);
         }
 
         public static IHandler Push(this IHandler handler,
-            Position? start = null, TimeSpan? duration = null)
+            Origin? start = null, TimeSpan? duration = null)
         {
             return handler.Translate(Mode.InOut, start, duration);
         }

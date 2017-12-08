@@ -86,7 +86,7 @@
         {
             if (zoom == null || view == null) return;
 
-            var origin = zoom.Origin ?? Position.MiddleCenter;
+            var origin = zoom.Origin ?? Origin.MiddleCenter;
             view.RenderTransformOrigin = ConvertToPoint(origin);
             var property = view.AddTransform(new ScaleTransform());
 

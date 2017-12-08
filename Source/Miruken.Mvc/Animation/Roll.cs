@@ -6,8 +6,8 @@
 
     public class Roll : Animation
     {
-        public Position? Anchor { get; set; }
-        public Zoom      Zoom   { get; set; }
+        public Origin? Anchor { get; set; }
+        public Zoom    Zoom   { get; set; }
 
         public override IAnimation Merge(IAnimation other)
         {
@@ -33,7 +33,7 @@
 
         public static IHandler Roll(
             this IHandler handler, Mode? mode = null,
-            Position? anchor = null, TimeSpan? duration = null)
+            Origin? anchor = null, TimeSpan? duration = null)
         {
             return handler.Roll(new Roll
             {
@@ -44,21 +44,21 @@
         }
 
         public static IHandler RollIn(
-            this IHandler handler, Position? anchor = null,
+            this IHandler handler, Origin? anchor = null,
             TimeSpan? duration = null)
         {
             return handler.Roll(Mode.In, anchor, duration);
         }
 
         public static IHandler RollOut(
-            this IHandler handler, Position? anchor = null,
+            this IHandler handler, Origin? anchor = null,
             TimeSpan? duration = null)
         {
             return handler.Roll(Mode.Out, anchor, duration);
         }
 
         public static IHandler RollInOut(
-            this IHandler handler, Position? anchor = null,
+            this IHandler handler, Origin? anchor = null,
             TimeSpan? duration = null)
         {
             return handler.Roll(Mode.InOut, anchor, duration);

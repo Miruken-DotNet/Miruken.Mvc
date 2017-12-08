@@ -67,22 +67,22 @@
             DoubleAnimation translateX = null;
             DoubleAnimation translateY = null;
 
-            var start = translate.Start ?? Position.MiddleLeft;
+            var start = translate.Start ?? Origin.MiddleLeft;
 
             switch (start)
             {
-                case Position.TopLeft:
-                case Position.TopCenter:
-                case Position.TopRight:
+                case Origin.TopLeft:
+                case Origin.TopCenter:
+                case Origin.TopRight:
                     translateY = new DoubleAnimation
                     {
                         From = hide ? 0 : -view.RegionHeight,
                         To   = hide ? view.ActualHeight : 0
                     };
                     break;
-                case Position.BottomLeft:
-                case Position.BottomCenter:
-                case Position.BottomRight:
+                case Origin.BottomLeft:
+                case Origin.BottomCenter:
+                case Origin.BottomRight:
                     translateY = new DoubleAnimation
                     {
                         From = hide ? 0 : view.RegionHeight,
@@ -93,18 +93,18 @@
 
             switch (start)
             {
-                case Position.TopLeft:
-                case Position.MiddleLeft:
-                case Position.BottomLeft:
+                case Origin.TopLeft:
+                case Origin.MiddleLeft:
+                case Origin.BottomLeft:
                     translateX = new DoubleAnimation
                     {
                         From = hide ? 0 : -view.RegionWidth,
                         To   = hide ? view.ActualWidth : 0
                     };
                     break;
-                case Position.TopRight:
-                case Position.MiddleRight:
-                case Position.BottomRight:
+                case Origin.TopRight:
+                case Origin.MiddleRight:
+                case Origin.BottomRight:
                     translateX = new DoubleAnimation
                     {
                         From = hide ? 0 : view.RegionWidth,

@@ -45,37 +45,57 @@
                 });
         }
 
-        public static void Apply(TimelineGroup storyboard,
+        public void Apply(TimelineGroup storyboard,
             Split split, ViewController fromView, ViewController toView,
             TimeSpan duration, bool present = true)
         {
-            var width    = split.Width ?? DefaultWidth;
-            var vertical = split.Orientation != Orientation.Horizontal;
-            var brush    = new LinearGradientBrush
-            {
-                MappingMode  = BrushMappingMode.Absolute,
-                SpreadMethod = GradientSpreadMethod.Repeat,
-                EndPoint     = vertical ? new Point(width, 0) : new Point(0, width)
-            };
-            var offset = present ? 0 : 1;
-            var gradientStops = brush.GradientStops;
-            gradientStops.Add(new GradientStop(Colors.White, offset));
-            gradientStops.Add(new GradientStop { Offset = offset });
+            var mode = split.Mode ?? Mode.In;
 
-            var view = fromView;
+            var offsetStart = 0;
+            ViewController view;
             if (present)
             {
-                view = toView;
-                toView.AddViewAbove(fromView);
+                if (mode == Mode.Out)
+                {
+                    offsetStart = 1;
+                    view        = fromView;
+                    toView?.AddViewBelow(fromView);
+                }
+                else
+                {
+                    view = toView;
+                    toView.AddViewAbove(fromView);
+                }
             }
+            else
+            {
+                if (mode == Mode.Out)
+                {
+                    view = toView;
+                    toView?.AddViewAbove(fromView);
+                }
+                else
+                {
+                    offsetStart = 1;
+                    view = fromView;
+                }
+            }
+            var offsetEnd = offsetStart == 0 ? 1 : 0;
+
+            var brush = new LinearGradientBrush
+            {
+                MappingMode  = BrushMappingMode.Absolute,
+                SpreadMethod = GradientSpreadMethod.Repeat
+            };
+            ConfigureGradients(split, brush, offsetStart);
 
             var opacityMask  = view.OpacityMask;
             view.OpacityMask = brush;
 
-            for (var index = 0; index < gradientStops.Count; ++index)
+            for (var index = 0; index < brush.GradientStops.Count; ++index)
             {
-                var animation = new DoubleAnimation(present ? 1 : 0, duration);
-                if (index == offset)
+                var animation = new DoubleAnimation(offsetEnd, duration);
+                if (index == offsetStart)
                     animation.BeginTime = new TimeSpan(duration.Ticks / 2);
                 storyboard.Children.Add(animation);
                 Storyboard.SetTarget(animation, view);
@@ -84,6 +104,47 @@
             }
 
             storyboard.Completed += (s, _) => view.OpacityMask = opacityMask;
+        }
+
+        private static void ConfigureGradients(Split split, 
+            LinearGradientBrush brush, double offsetStart)
+        {
+            var width  = split.Width ?? DefaultWidth;
+            switch (split.Start ?? Origin.MiddleLeft)
+            {
+                case Origin.TopLeft:
+                    brush.EndPoint = new Point(width, width);
+                    break;
+                case Origin.MiddleLeft:
+                case Origin.MiddleCenter:
+                    brush.EndPoint = new Point(width, 0);
+                    break;
+                case Origin.BottomLeft:
+                    brush.StartPoint = new Point(0, width);
+                    brush.EndPoint   = new Point(width, 0);
+                    break;
+                case Origin.TopRight:
+                    brush.StartPoint = new Point(width, 0);
+                    brush.EndPoint = new Point(0, width);
+                    break;
+                case Origin.MiddleRight:
+                    brush.StartPoint = new Point(width, 0);
+                    brush.EndPoint   = new Point(0, 0);
+                    break;
+                case Origin.BottomRight:
+                    brush.StartPoint = new Point(width, width);
+                    break;
+                case Origin.TopCenter:
+                    brush.EndPoint = new Point(0, width);
+                    break;
+                case Origin.BottomCenter:
+                    brush.StartPoint = new Point(0, width);
+                    brush.EndPoint   = new Point(0, 0);
+                    break;
+            }
+            var gradientStops = brush.GradientStops;
+            gradientStops.Add(new GradientStop(Colors.White, offsetStart));
+            gradientStops.Add(new GradientStop { Offset = offsetStart });
         }
     }
 }

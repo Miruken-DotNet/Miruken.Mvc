@@ -1,6 +1,6 @@
 ﻿namespace Miruken.Mvc.Animation
 {
-    public enum Position
+    public enum Origin
     {
         TopLeft,
         TopCenter,
