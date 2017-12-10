@@ -7,49 +7,47 @@
     using Concurrency;
     using Mvc.Animation;
 
-    public class SplitAnimator : Animator
+    public class WipeAnimator : Animator
     {
-        private const int DefaultWidth = 30;
-
-        public SplitAnimator(Split split)
+        public WipeAnimator(Wipe wipe)
         {
-            if (split == null)
-                throw new ArgumentNullException(nameof(split));
-            Split = split;
+            if (wipe == null)
+                throw new ArgumentNullException(nameof(wipe));
+            Wipe = wipe;
         }
 
-        public Split Split { get; }
+        public Wipe Wipe { get; }
 
         public override Promise Present(
             ViewController fromView, ViewController toView,
             bool removeFromView)
         {
-            return AnimateStory(Split, fromView, toView,
+            return AnimateStory(Wipe, fromView, toView,
                 (storyboard, duration) =>
                 {
-                    FadeAnimator.Apply(storyboard, Split.Fade,
-                        fromView, toView, duration, true, Split.Mode ?? Mode.InOut);
-                    Apply(storyboard, Split, fromView, toView, duration);
+                    FadeAnimator.Apply(storyboard, Wipe.Fade,
+                        fromView, toView, duration, true, Wipe.Mode ?? Mode.InOut);
+                    Apply(storyboard, Wipe, fromView, toView, duration);
                 }, removeFromView);
         }
 
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
-            return AnimateStory(Split, fromView, toView,
+            return AnimateStory(Wipe, fromView, toView,
                 (storyboard, duration) =>
                 {
-                    FadeAnimator.Apply(storyboard, Split.Fade,
-                        fromView, toView, duration, false, Split.Mode ?? Mode.InOut);
-                    Apply(storyboard, Split, fromView, toView, duration, false);
+                    FadeAnimator.Apply(storyboard, Wipe.Fade,
+                        fromView, toView, duration, false, Wipe.Mode ?? Mode.InOut);
+                    Apply(storyboard, Wipe, fromView, toView, duration, false);
                 });
         }
 
         public void Apply(TimelineGroup storyboard,
-            Split split, ViewController fromView, ViewController toView,
+            Wipe wipe, ViewController fromView, ViewController toView,
             TimeSpan duration, bool present = true)
         {
-            var mode = split.Mode ?? Mode.In;
+            var mode = wipe.Mode ?? Mode.In;
 
             var offsetStart = 0;
             ViewController view;
@@ -82,12 +80,8 @@
             }
             var offsetEnd = offsetStart == 0 ? 1 : 0;
 
-            var brush = new LinearGradientBrush
-            {
-                MappingMode  = BrushMappingMode.Absolute,
-                SpreadMethod = GradientSpreadMethod.Repeat
-            };
-            ConfigureGradients(split, brush, offsetStart);
+            var brush = new LinearGradientBrush();
+            ConfigureGradients(wipe, brush, offsetStart);
 
             var opacityMask  = view.OpacityMask;
             view.OpacityMask = brush;
@@ -96,7 +90,7 @@
             {
                 var animation = new DoubleAnimation(offsetEnd, duration);
                 if (index == offsetStart)
-                    animation.BeginTime = new TimeSpan(duration.Ticks / 2);
+                    animation.BeginTime = TimeSpan.FromMilliseconds(50);
                 storyboard.Children.Add(animation);
                 Storyboard.SetTarget(animation, view);
                 Storyboard.SetTargetProperty(animation,
@@ -106,40 +100,39 @@
             storyboard.Completed += (s, _) => view.OpacityMask = opacityMask;
         }
 
-        private static void ConfigureGradients(Split split, 
+        private static void ConfigureGradients(Wipe wipe, 
             LinearGradientBrush brush, double offsetStart)
         {
-            var width  = split.Width ?? DefaultWidth;
-            switch (split.Start ?? Origin.MiddleLeft)
+            switch (wipe.Start ?? Origin.MiddleLeft)
             {
                 case Origin.TopLeft:
-                    brush.EndPoint = new Point(width, width);
+                    brush.EndPoint = new Point(1, 1);
                     break;
                 case Origin.MiddleLeft:
                 case Origin.MiddleCenter:
-                    brush.EndPoint = new Point(width, 0);
+                    brush.EndPoint = new Point(1, 0);
                     break;
                 case Origin.BottomLeft:
-                    brush.StartPoint = new Point(0, width);
-                    brush.EndPoint   = new Point(width, 0);
+                    brush.StartPoint = new Point(0, 1);
+                    brush.EndPoint   = new Point(1, 0);
                     break;
                 case Origin.TopRight:
-                    brush.StartPoint = new Point(width, 0);
-                    brush.EndPoint = new Point(0, width);
+                    brush.StartPoint = new Point(1, 0);
+                    brush.EndPoint = new Point(0, 1);
                     break;
                 case Origin.MiddleRight:
-                    brush.StartPoint = new Point(width, 0);
+                    brush.StartPoint = new Point(1, 0);
                     brush.EndPoint   = new Point(0, 0);
                     break;
                 case Origin.BottomRight:
-                    brush.StartPoint = new Point(width, width);
+                    brush.StartPoint = new Point(1, 1);
                     brush.EndPoint   = new Point(0, 0);
                     break;
                 case Origin.TopCenter:
-                    brush.EndPoint = new Point(0, width);
+                    brush.EndPoint = new Point(0, 1);
                     break;
                 case Origin.BottomCenter:
-                    brush.StartPoint = new Point(0, width);
+                    brush.StartPoint = new Point(0, 1);
                     brush.EndPoint   = new Point(0, 0);
                     break;
             }

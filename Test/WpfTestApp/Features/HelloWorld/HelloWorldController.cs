@@ -64,7 +64,7 @@
         {
             Push<SettingsController>(IO
                 .Fade()
-                .SplitIn(Origin.MiddleLeft))
+                .SlideIn(Origin.MiddleLeft))
                 //.ZoomIn()
                 //.Fade()
                 //.RollOut(Position.BottomLeft))

@@ -33,40 +33,59 @@
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
-            return null;
+            return AnimateStory(Translate, fromView, toView,      
+            (storyboard, duration) =>
+            {
+                FadeAnimator.Apply(storyboard, Translate.Fade,
+                    fromView, toView, duration, true, Translate.Mode);
+                Apply(storyboard, Translate, fromView, toView, duration, false);
+            });
         }
 
         public static void Apply(TimelineGroup storyboard,
             Translate translate, ViewController fromView, 
             ViewController toView, TimeSpan duration,
-            Mode? defaultMode = null)
+            bool present = true, Mode? defaultMode = null)
         {
             if (translate == null) return;
             switch (translate.Mode ?? defaultMode ?? Mode.InOut)
             {
                 case Mode.In:
-                    toView.AddViewAbove(fromView);
-                    Apply(storyboard, translate, toView, false, duration);
+                    if (present)
+                    {
+                        toView.AddViewAbove(fromView);
+                        Apply(storyboard, translate, toView, true, false, duration);
+                    }
+                    else
+                        Apply(storyboard, translate, fromView, false, true, duration);
                     break;
                 case Mode.Out:
-                    toView?.AddViewBelow(fromView);
-                    Apply(storyboard, translate, fromView, true, duration);
+                    if (present)
+                    {
+                        toView?.AddViewBelow(fromView);
+                        Apply(storyboard, translate, fromView, true, true, duration);
+                    }
+                    else
+                    {
+                        toView?.AddViewAbove(fromView);
+                        Apply(storyboard, translate, toView, false, false, duration);
+                    }
                     break;
                 case Mode.InOut:
-                    toView.AddViewAbove(fromView);
-                    Apply(storyboard, translate, toView, false, duration);
-                    Apply(storyboard, translate, fromView, true, duration);
+                    if (present)
+                        toView.AddViewAbove(fromView);
+                    Apply(storyboard, translate, toView, present, false, duration);
+                    Apply(storyboard, translate, fromView, present, true, duration);
                     break;
             }
         }
 
         public static void Apply(TimelineGroup storyboard,
-            Translate translate, ViewController view, bool hide,
-            TimeSpan duration)
+            Translate translate, ViewController view,
+            bool present, bool hide, TimeSpan duration)
         {
-            DoubleAnimation translateX = null;
-            DoubleAnimation translateY = null;
-
+            int? adjustX = null;
+            int? adjustY = null;
             var start = translate.Start ?? Origin.MiddleLeft;
 
             switch (start)
@@ -74,20 +93,12 @@
                 case Origin.TopLeft:
                 case Origin.TopCenter:
                 case Origin.TopRight:
-                    translateY = new DoubleAnimation
-                    {
-                        From = hide ? 0 : -view.RegionHeight,
-                        To   = hide ? view.ActualHeight : 0
-                    };
+                    adjustY = present ? -1 : 1;
                     break;
                 case Origin.BottomLeft:
                 case Origin.BottomCenter:
                 case Origin.BottomRight:
-                    translateY = new DoubleAnimation
-                    {
-                        From = hide ? 0 : view.RegionHeight,
-                        To   = hide ? -view.ActualHeight : 0
-                    };
+                    adjustY = present ? 1 : -1;
                     break;
             }
 
@@ -96,45 +107,45 @@
                 case Origin.TopLeft:
                 case Origin.MiddleLeft:
                 case Origin.BottomLeft:
-                    translateX = new DoubleAnimation
-                    {
-                        From = hide ? 0 : -view.RegionWidth,
-                        To   = hide ? view.ActualWidth : 0
-                    };
+                case Origin.MiddleCenter:
+                    adjustX = present ? -1 : 1;
                     break;
                 case Origin.TopRight:
                 case Origin.MiddleRight:
                 case Origin.BottomRight:
-                    translateX = new DoubleAnimation
-                    {
-                        From = hide ? 0 : view.RegionWidth,
-                        To   = hide ? -view.ActualWidth : 0
-                    };
+                    adjustX = present ? 1 : -1;
                     break;
             }
-
-            if (translateX == null && translateY == null)
-                return;
 
             var ease = translate.Behaviors.Find<IEasingFunction>()
                     ?? new CubicEase();
 
             var property = view.AddTransform(new TranslateTransform());
 
-            if (translateX != null)
+            if (adjustX.HasValue)
             {
-                translateX.Duration = duration;
-                translateX.EasingFunction = ease;
+                var translateX = new DoubleAnimation
+                {
+                    From           = hide ? 0 : view.RegionWidth * adjustX,
+                    To             = hide ? view.ActualWidth * adjustX * -1 : 0,
+                    Duration       = duration,
+                    EasingFunction = ease
+                };
                 storyboard.Children.Add(translateX);
                 Storyboard.SetTarget(translateX, view);
                 Storyboard.SetTargetProperty(translateX,
                     property(TranslateTransform.XProperty));
             }
 
-            if (translateY != null)
+            if (adjustY.HasValue)
             {
-                translateY.Duration = duration;
-                translateY.EasingFunction = ease;
+                var translateY = new DoubleAnimation
+                {
+                    From           = hide ? 0 : view.RegionHeight * adjustY,
+                    To             = hide ? view.ActualHeight * adjustY * -1 : 0,
+                    Duration       = duration,
+                    EasingFunction = ease
+                };
                 storyboard.Children.Add(translateY);
                 Storyboard.SetTarget(translateY, view);
                 Storyboard.SetTargetProperty(translateY,

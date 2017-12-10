@@ -35,5 +35,12 @@
         {
             return new SplitAnimator(split);
         }
+
+        [Maps]
+        public WipeAnimator Create(Wipe wipe)
+        {
+            return new WipeAnimator(wipe);
+        }
+
     }
 }

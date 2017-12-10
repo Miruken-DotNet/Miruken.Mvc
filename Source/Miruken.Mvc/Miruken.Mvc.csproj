@@ -58,6 +58,7 @@
     <Compile Include="Animation\Animation.cs" />
     <Compile Include="Animation\Mode.cs" />
     <Compile Include="Animation\Origin.cs" />
+    <Compile Include="Animation\Wipe.cs" />
     <Compile Include="Animation\Zoom.cs" />
     <Compile Include="Animation\IAnimation.cs" />
     <Compile Include="Animation\Fade.cs" />
