@@ -63,11 +63,9 @@
         public void Settings()
         {
             Push<SettingsController>(IO
+                .Zoom()
                 .Fade()
-                .SlideIn(Origin.MiddleLeft))
-                //.ZoomIn()
-                //.Fade()
-                //.RollOut(Position.BottomLeft))
+                .WipeIn(Origin.TopLeft))
                 .Configure();
         }
 

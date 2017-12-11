@@ -25,35 +25,37 @@
 
         public static IHandler Wipe(
             this IHandler handler, Mode? mode = null,
-            Origin? start = null, TimeSpan? duration = null)
+            Origin? start = null, bool? rotate = null,
+            TimeSpan? duration = null)
         {
             return handler.Wipe(new Wipe
             {
                 Mode     = mode,
                 Start    = start,
+                Rotate   = rotate,
                 Duration = duration
             });
         }
 
         public static IHandler WipeIn(
             this IHandler handler, Origin? start = null,
-            TimeSpan? duration = null)
+            bool? rotate = null, TimeSpan? duration = null)
         {
-            return handler.Wipe(Mode.In, start, duration);
+            return handler.Wipe(Mode.In, start, rotate, duration);
         }
 
         public static IHandler WipeOut(
             this IHandler handler, Origin? start = null,
-            TimeSpan? duration = null)
+            bool? rotate = null, TimeSpan? duration = null)
         {
-            return handler.Wipe(Mode.Out, start, duration);
+            return handler.Wipe(Mode.Out, start, rotate, duration);
         }
 
         public static IHandler WipeInOut(
             this IHandler handler, Origin? start = null,
-            TimeSpan? duration = null)
+            bool? rotate = null, TimeSpan? duration = null)
         {
-            return handler.Wipe(Mode.InOut, start, duration);
+            return handler.Wipe(Mode.InOut, start, rotate, duration);
         }
     }
 }
