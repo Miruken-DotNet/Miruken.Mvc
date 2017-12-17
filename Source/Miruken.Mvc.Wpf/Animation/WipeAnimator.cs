@@ -47,6 +47,22 @@
             Wipe wipe, ViewController fromView, ViewController toView,
             TimeSpan duration, bool present = true)
         {
+            if (wipe.Rotate == true)
+            {
+                ApplyWipeRotate(storyboard, wipe, fromView,
+                    toView, duration, present);
+            }
+            else
+            {
+                ApplyWipe(storyboard, wipe, fromView,
+                    toView, duration, present);
+            }
+        }
+
+        private static void ApplyWipe(TimelineGroup storyboard,
+            Wipe wipe, ViewController fromView, ViewController toView,
+            TimeSpan duration, bool present = true)
+        {
             var mode = wipe.Mode ?? Mode.In;
 
             var offsetStart = 0;
@@ -86,16 +102,86 @@
             var opacityMask  = view.OpacityMask;
             view.OpacityMask = brush;
 
+            var overlap = wipe.OverlapDuration ?? TimeSpan.FromMilliseconds(50);
+
             for (var index = 0; index < brush.GradientStops.Count; ++index)
             {
                 var animation = new DoubleAnimation(offsetEnd, duration);
                 if (index == offsetStart)
-                    animation.BeginTime = TimeSpan.FromMilliseconds(50);
+                    animation.BeginTime = overlap;
                 storyboard.Children.Add(animation);
                 Storyboard.SetTarget(animation, view);
                 Storyboard.SetTargetProperty(animation,
                     new PropertyPath($"OpacityMask.GradientStops[{index}].Offset"));
             }
+
+            storyboard.Completed += (s, _) => view.OpacityMask = opacityMask;
+        }
+
+        private static void ApplyWipeRotate(TimelineGroup storyboard,
+            Wipe wipe, ViewController fromView, ViewController toView,
+            TimeSpan duration, bool present = true)
+        {
+            var mode = wipe.Mode ?? Mode.In;
+
+            ViewController view;
+            if (present)
+            {
+                if (mode == Mode.Out)
+                {
+                    view = fromView;
+                    toView?.AddViewBelow(fromView);
+                }
+                else
+                {
+                    view = toView;
+                    toView.AddViewAbove(fromView);
+                }
+            }
+            else
+            {
+                if (mode == Mode.Out)
+                {
+                    view = toView;
+                    toView?.AddViewAbove(fromView);
+                }
+                else
+                    view = fromView;
+            }
+
+            var transform = new RotateTransform();
+            var brush     = new LinearGradientBrush
+            {
+                EndPoint  = new Point(1, 0),
+                Transform  = transform
+            };
+            var gradientStops = brush.GradientStops;
+            gradientStops.Add(new GradientStop(Colors.White, 0));
+            gradientStops.Add(new GradientStop { Offset = .1 });
+
+            var opacityMask  = view.OpacityMask;
+            view.OpacityMask = brush;
+
+            var animation = new DoubleAnimation
+            {
+                Duration = duration
+            };
+
+            if (present)
+            {
+                transform.Angle = 10;
+                animation.To    = -90;
+            }
+            else
+            {
+                transform.Angle = -90;
+                animation.To    = 10;
+            }
+
+            storyboard.Children.Add(animation);
+            Storyboard.SetTarget(animation, view);
+            Storyboard.SetTargetProperty(animation,
+                new PropertyPath("OpacityMask.Transform.Angle"));
 
             storyboard.Completed += (s, _) => view.OpacityMask = opacityMask;
         }

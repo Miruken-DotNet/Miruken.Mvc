@@ -10,7 +10,7 @@
     public abstract class Animator : IAnimator
     {
         protected static readonly TimeSpan DefaultDuration =
-            TimeSpan.FromMilliseconds(400);
+            TimeSpan.FromMilliseconds(500);
 
         public abstract Promise Present(
             ViewController fromView, ViewController toView,
