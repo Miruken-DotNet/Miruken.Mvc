@@ -140,9 +140,14 @@
                 }
             }
 
-            var brush    = new DrawingBrush();
-            var group    = new DrawingGroup();
-            var geometry = Geometry.Parse("M0,0 L1,0 L1,1 L0,1 z");
+            var brush     = new DrawingBrush();
+            var group     = new DrawingGroup();
+            var geometry  = Geometry.Parse("M0,0 L1,0 L1,1 L0,1 z");
+            var gradients = new GradientStopCollection
+            {
+                new GradientStop(Colors.White, 0),
+                new GradientStop { Offset = .1 }
+            };
 
             var drawTop = new GeometryDrawing
             {
@@ -154,11 +159,7 @@
                     {
                         Angle = fromAngle
                     },
-                    GradientStops =
-                    {
-                        new GradientStop(Colors.White, 0),
-                        new GradientStop { Offset = .1 }
-                    }
+                    GradientStops = gradients
                 }
             };
 
@@ -175,11 +176,7 @@
                         CenterY = 1,
                         Angle   = fromAngle,
                     },
-                    GradientStops =
-                    {
-                        new GradientStop(Colors.White, 0),
-                        new GradientStop { Offset = .1 }
-                    }
+                    GradientStops = gradients
                 }
             };
 
