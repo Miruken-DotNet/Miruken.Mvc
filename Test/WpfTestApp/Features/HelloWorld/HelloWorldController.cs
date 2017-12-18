@@ -61,9 +61,7 @@
 
         public void Settings()
         {
-            Push<SettingsController>(IO
-                .WipeIn())
-                .Configure();
+            Push<SettingsController>(IO.WipeConvergeIn()).Configure();
         }
 
         public void Delay()

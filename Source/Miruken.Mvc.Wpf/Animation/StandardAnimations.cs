@@ -42,5 +42,10 @@
             return new WipeAnimator(wipe);
         }
 
+        [Maps]
+        public WipeRotateAnimator Create(WipeRotate wipe)
+        {
+            return new WipeRotateAnimator(wipe);
+        }
     }
 }

@@ -8,7 +8,11 @@
     {
         public Origin?   Start           { get; set; }
         public TimeSpan? OverlapDuration { get; set; }
-        public bool?     Rotate          { get; set; }
+    }
+
+    public class WipeRotate : Animation
+    {
+        public bool? Converge { get; set; }
     }
 
     #region WipeExtensions
@@ -28,7 +32,7 @@
 
         public static IHandler Wipe(
             this IHandler handler, Mode? mode = null,
-            Origin? start = null, bool? rotate = null,
+            Origin? start = null,
             TimeSpan? duration = null,
             TimeSpan? overlapDuration = null)
         {
@@ -36,7 +40,6 @@
             {
                 Mode            = mode,
                 Start           = start,
-                Rotate          = rotate,
                 Duration        = duration,
                 OverlapDuration = overlapDuration
             });
@@ -44,56 +47,75 @@
 
         public static IHandler WipeIn(
             this IHandler handler, Origin? start = null,
-            bool? rotate = null, TimeSpan? duration = null,
+            TimeSpan? duration = null,
             TimeSpan? overlapDuration = null)
         {
-            return handler.Wipe(Mode.In, start, rotate,
+            return handler.Wipe(Mode.In, start,
                 duration, overlapDuration);
         }
 
         public static IHandler WipeOut(
             this IHandler handler, Origin? start = null,
-            bool? rotate = null, TimeSpan? duration = null,
+            TimeSpan? duration = null,
             TimeSpan? overlapDuration = null)
         {
-            return handler.Wipe(Mode.Out, start, rotate,
+            return handler.Wipe(Mode.Out, start,
                 duration, overlapDuration);
         }
 
         public static IHandler WipeInOut(
             this IHandler handler, Origin? start = null,
-            bool? rotate = null, TimeSpan? duration = null,
-            TimeSpan? overlapDuration = null)
-        {
-            return handler.Wipe(Mode.InOut, start, rotate, 
-                duration, overlapDuration);
-        }
-
-        public static IHandler WipeRotateIn(
-            this IHandler handler,
             TimeSpan? duration = null,
             TimeSpan? overlapDuration = null)
         {
-            return handler.Wipe(Mode.In, null, true,
+            return handler.Wipe(Mode.InOut, start, 
                 duration, overlapDuration);
         }
 
-        public static IHandler WipeRotateOut(
-            this IHandler handler,
-            TimeSpan? duration = null,
-            TimeSpan? overlapDuration = null)
+        public static IHandler WipeRotate(
+            this IHandler handler, WipeRotate wipe)
         {
-            return handler.Wipe(Mode.Out, null, true,
-                duration, overlapDuration);
+            if (wipe == null)
+                throw new ArgumentNullException(nameof(Wipe));
+            return new RegionOptions
+            {
+                Animation = wipe
+            }.Decorate(handler);
         }
 
-        public static IHandler WipeRotateInOut(
+        public static IHandler WipeRotate(
             this IHandler handler,
-            TimeSpan? duration = null,
-            TimeSpan? overlapDuration = null)
+            Mode? mode = null,
+            bool? converge = false,
+            TimeSpan? duration = null)
         {
-            return handler.Wipe(Mode.InOut, null, true,
-                duration, overlapDuration);
+            return handler.WipeRotate(new WipeRotate
+            {
+                Converge = converge,
+                Duration = duration
+            });
+        }
+
+        public static IHandler WipeConvergeIn(
+            this IHandler handler, TimeSpan? duration = null)
+        {
+            return handler.WipeRotate(new WipeRotate
+            {
+                Mode     = Mode.In,
+                Converge = true,
+                Duration = duration,
+            });
+        }
+
+        public static IHandler WipeConvergeOut(
+            this IHandler handler, TimeSpan? duration = null)
+        {
+            return handler.WipeRotate(new WipeRotate
+            {
+                Mode     = Mode.Out,
+                Converge = true,
+                Duration = duration,
+            });
         }
     }
 

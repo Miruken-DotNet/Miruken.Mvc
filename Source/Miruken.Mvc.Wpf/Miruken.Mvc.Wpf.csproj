@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="Animation\Animator.cs" />
     <Compile Include="Animation\Behavior.cs" />
+    <Compile Include="Animation\WipeRotateAnimator.cs" />
     <Compile Include="Animation\WipeAnimator.cs" />
     <Compile Include="Animation\SplitAnimator.cs" />
     <Compile Include="Animation\ZoomAnimator.cs" />
