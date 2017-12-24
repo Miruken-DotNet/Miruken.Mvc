@@ -13,6 +13,13 @@
     public class WipeRotate : Animation
     {
         public bool? Converge { get; set; }
+        public Zoom  Zoom     { get; set; }
+
+        public override IAnimation Merge(IAnimation other)
+        {
+            Zoom = Zoom ?? other as Zoom;
+            return base.Merge(other);
+        }
     }
 
     #region WipeExtensions

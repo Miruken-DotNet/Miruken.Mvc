@@ -27,6 +27,7 @@
                 {
                     FadeAnimator.Apply(storyboard, Wipe.Fade,
                         fromView, toView, duration, true, Wipe.Mode ?? Mode.InOut);
+                    ZoomAnimator.Apply(storyboard, Wipe.Zoom, fromView, true, duration);
                     Apply(storyboard, Wipe, fromView, toView, duration);
                 }, removeFromView);
         }
@@ -39,6 +40,7 @@
                 {
                     FadeAnimator.Apply(storyboard, Wipe.Fade,
                         fromView, toView, duration, false, Wipe.Mode ?? Mode.InOut);
+                    ZoomAnimator.Apply(storyboard, Wipe.Zoom, toView, false, duration);
                     Apply(storyboard, Wipe, fromView, toView, duration, false);
                 });
         }
