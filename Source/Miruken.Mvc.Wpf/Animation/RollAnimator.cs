@@ -21,12 +21,15 @@
             ViewController fromView, ViewController toView,
             bool removeFromView)
         {
+            var zoom = Roll.Zoom;
+            if (zoom == null && Roll.Anchor == Origin.MiddleCenter)
+                zoom = new Zoom();
             return AnimateStory(Roll, fromView, toView,
                 (storyboard, duration) =>
                 {
                     FadeAnimator.Apply(storyboard, Roll.Fade,
                         fromView, toView, duration, true, Roll.Mode);
-                    ZoomAnimator.Apply(storyboard, Roll.Zoom,
+                    ZoomAnimator.Apply(storyboard, zoom,
                         fromView, toView, duration, true, Roll.Mode);
                     Apply(storyboard, Roll, fromView, toView, duration);
                 }, removeFromView);
@@ -35,12 +38,15 @@
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
+            var zoom = Roll.Zoom;
+            if (zoom == null && Roll.Anchor == Origin.MiddleCenter)
+                zoom = new Zoom();
             return AnimateStory(Roll, fromView, toView,
                 (storyboard, duration) =>
                 {
                     FadeAnimator.Apply(storyboard, Roll.Fade,
                         fromView, toView, duration, false, Roll.Mode);
-                    ZoomAnimator.Apply(storyboard, Roll.Zoom,
+                    ZoomAnimator.Apply(storyboard, zoom,
                         fromView, toView, duration, false, Roll.Mode);
                     Apply(storyboard, Roll, fromView, toView, duration, false);
                 });
@@ -58,42 +64,42 @@
                     if (present)
                     {
                         toView.AddViewAbove(fromView);
-                        Apply(storyboard, roll, toView, false, duration);
+                        Apply(storyboard, roll, toView, true, false, duration);
                     }
                     else
-                        Apply(storyboard, roll, fromView, true, duration);
+                        Apply(storyboard, roll, fromView, false, true, duration);
                     break;
                 case Mode.Out:
                     if (present)
                     {
                         toView?.AddViewBelow(fromView);
-                        Apply(storyboard, roll, fromView, true, duration);
+                        Apply(storyboard, roll, fromView, true, true, duration);
                     }
                     else
                     {
                         toView?.AddViewAbove(fromView);
-                        Apply(storyboard, roll, toView, false, duration);
+                        Apply(storyboard, roll, toView, false, false, duration);
                     }
                     break;
                 case Mode.InOut:
                     if (present)
                         toView.AddViewAbove(fromView);
-                    Apply(storyboard, roll, toView, false, duration);
-                    Apply(storyboard, roll, fromView, true, duration);
+                    Apply(storyboard, roll, toView, present, false, duration);
+                    Apply(storyboard, roll, fromView, present, true, duration);
                     break;
             }
         }
 
         public static void Apply(TimelineGroup storyboard,
-            Roll roll, ViewController view, bool rollOut,
-            TimeSpan duration)
+            Roll roll, ViewController view, bool present,
+            bool rollOut, TimeSpan duration)
         {
             if (roll == null) return;
             var anchor = roll.Anchor ?? Origin.BottomLeft;
             view.RenderTransformOrigin = ConvertToPoint(anchor);
 
             AddRotation(storyboard, view, anchor, rollOut, duration,
-                roll.Behaviors.Find<IEasingFunction>());
+                roll.Behaviors.Find<IEasingFunction>(), present);
 
             if (roll.Zoom != null)
                 AddSkew(storyboard, view, anchor, rollOut, duration);
@@ -101,39 +107,44 @@
 
         private static void AddRotation(TimelineGroup storyboard,
             ViewController view, Origin anchor, bool rollOut, 
-            TimeSpan duration, IEasingFunction ease)
+            TimeSpan duration, IEasingFunction ease, bool present)
         {
-            var rotation = new DoubleAnimation
-            {
-                Duration       = duration,
-                EasingFunction = ease
-            };
+            double angle;
+
             switch (anchor)
             {
                 case Origin.TopRight:
                 case Origin.BottomLeft:
-                case Origin.MiddleLeft:
-                    rotation.From = rollOut ? 0 : -90;
-                    rotation.To   = rollOut ? -90 : 0;
+                    angle = 90;
                     break;
                 case Origin.TopLeft:
                 case Origin.BottomRight:
-                case Origin.MiddleRight:
-                    rotation.From = rollOut ? 0 : 90;
-                    rotation.To   = rollOut ? 90 : 0;
+                    angle = -90;
                     break;
                 case Origin.TopCenter:
-                case Origin.MiddleCenter:
-                    rotation.From = rollOut ? 0 : -180;
-                    rotation.To   = rollOut ? -180 : 0;
+                case Origin.MiddleLeft:
+                    angle = 180;
                     break;
                 case Origin.BottomCenter:
-                    rotation.From = rollOut ? 0 : 180;
-                    rotation.To   = rollOut ? 180 : 0;
+                case Origin.MiddleRight:
+                case Origin.MiddleCenter:
+                    angle = -180;
                     break;
+
                 default:
                     throw new InvalidOperationException("Invalid anchor point");
             }
+
+            angle = angle * (present ? 1 : -1);
+
+            var rotation = new DoubleAnimation
+            {
+                From           = rollOut ? 0 : angle,
+                To             = rollOut ? -angle : 0,
+                Duration       = duration,
+                EasingFunction = ease
+            };
+
             var property = view.AddTransform(new RotateTransform());
             storyboard.Children.Add(rotation);
             Storyboard.SetTarget(rotation, view);

@@ -23,8 +23,8 @@
         public void Documentation()
         {
             Push<DocumentationController>(IO
-                .Zoom()
-                .Fade()
+                //.Zoom()
+                //.Fade()
                 .RollOut(Origin.BottomLeft))
                 .Index();
         }
