@@ -23,7 +23,7 @@
         public void Documentation()
         {
             Push<DocumentationController>(IO
-                .Zoom()
+                //.Zoom()
                 .Fade()
                 .RollOut(Origin.BottomLeft))
                 .Index();
@@ -63,6 +63,7 @@
         {
             Push<SettingsController>(IO
                 .Zoom()
+                .Fade()
                 .WipeConvergeIn())
                 .Configure();
         }
