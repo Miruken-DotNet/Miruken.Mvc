@@ -92,11 +92,19 @@
 
             var animation = new DoubleAnimation
             {
-                To             = zoomOut ? 0 : 1,
                 Duration       = duration,
                 EasingFunction = zoom.Behaviors.Find<IEasingFunction>()
             };
-            if (!zoomOut) animation.From = 0;
+
+            if (zoomOut)
+            {
+                animation.To = zoom.Scale ?? 0;
+            }
+            else
+            {
+                animation.From = zoom.Scale ?? 0;
+                animation.To   = 1;
+            }
 
             storyboard.Children.Add(animation);
             Storyboard.SetTarget(animation, view);

@@ -25,8 +25,7 @@
             return AnimateStory(Wipe, fromView, toView,
                 (storyboard, duration) =>
                 {
-                    if (Wipe.Fade != null)
-                        FadeAnimator.Apply(storyboard, Wipe.Fade, fromView, true, duration);
+                    FadeAnimator.Apply(storyboard, Wipe.Fade, fromView, true, duration);
                     ZoomAnimator.Apply(storyboard, Wipe.Zoom, fromView, true, duration);
                     Apply(storyboard, Wipe, fromView, toView, duration);
                 }, removeFromView);
@@ -38,8 +37,7 @@
             return AnimateStory(Wipe, fromView, toView,
                 (storyboard, duration) =>
                 {
-                    if (Wipe.Fade != null)
-                        FadeAnimator.Apply(storyboard, Wipe.Fade, toView, false, duration);
+                    FadeAnimator.Apply(storyboard, Wipe.Fade, toView, false, duration);
                     ZoomAnimator.Apply(storyboard, Wipe.Zoom, toView, false, duration);
                     Apply(storyboard, Wipe, fromView, toView, duration, false);
                 });

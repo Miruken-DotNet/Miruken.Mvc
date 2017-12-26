@@ -1,9 +1,7 @@
 ﻿namespace WpfTestApp.Features.Documentation
 {
     using System.Threading.Tasks;
-    using HelloWorld;
     using Miruken.Mvc;
-    using Miruken.Mvc.Animation;
 
     public class DocumentationController: Controller
     {
@@ -21,13 +19,6 @@
         public void Done()
         {
             EndContext();
-            /*
-            Next<HelloWorldController>(IO
-                .Zoom()
-                .Fade()
-                .Push(Position.BottomCenter))
-                .Greet();
-                */
         }
     }
 }

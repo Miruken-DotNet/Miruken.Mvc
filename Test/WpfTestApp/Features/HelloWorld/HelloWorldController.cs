@@ -23,9 +23,9 @@
         public void Documentation()
         {
             Push<DocumentationController>(IO
-                //.Zoom()
-                .Fade()
-                .RollOut(Origin.BottomLeft))
+                .Zoom())
+                //.Fade()
+                //.RollOut(Origin.BottomLeft))
                 .Index();
         }
 
@@ -62,7 +62,7 @@
         public void Settings()
         {
             Push<SettingsController>(IO
-                .Zoom()
+                .Zoom(scale:.5)
                 .Fade()
                 .WipeConvergeIn())
                 .Configure();

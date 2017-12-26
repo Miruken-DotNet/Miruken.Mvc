@@ -7,6 +7,7 @@
     public class Zoom : Animation
     {
         public Origin? Origin { get; set; }
+        public double? Scale  { get; set; }
     }
 
     #region ZoomExtensions
@@ -26,32 +27,36 @@
 
         public static IHandler Zoom(this IHandler handler,
             Mode? mode = null, Origin? origin = null,
-            TimeSpan? duration = null)
+            double? scale = null, TimeSpan? duration = null)
         {
             return handler.Zoom(new Zoom
             {
                 Mode     = mode,
                 Origin   = origin,
+                Scale    = scale,
                 Duration = duration
             });
         }
 
         public static IHandler ZoomIn(this IHandler handler,
-            Origin? origin = null, TimeSpan? duration = null)
+            Origin? origin = null, double? scale = null,
+            TimeSpan? duration = null)
         {
-            return handler.Zoom(Mode.In, origin, duration);
+            return handler.Zoom(Mode.In, origin, scale, duration);
         }
 
         public static IHandler ZoomOut(this IHandler handler,
-            Origin? origin = null, TimeSpan? duration = null)
+            Origin? origin = null, double? scale = null,
+            TimeSpan? duration = null)
         {
-            return handler.Zoom(Mode.Out, origin, duration);
+            return handler.Zoom(Mode.Out, origin, scale, duration);
         }
 
         public static IHandler ZoomInOut(this IHandler handler,
-            Origin? origin = null, TimeSpan? duration = null)
+            Origin? origin = null, double? scale = null,
+            TimeSpan? duration = null)
         {
-            return handler.Zoom(Mode.InOut, origin, duration);
+            return handler.Zoom(Mode.InOut, origin, scale, duration);
         }
     }
 
