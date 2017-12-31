@@ -36,6 +36,12 @@
         {
             return handler.Behavior(easing);
         }
+
+        public static IHandler Timeline(
+            this IHandler handler, TimelineBehavior timeline)
+        {
+            return handler.Behavior(timeline);
+        }
     }
 
     #endregion

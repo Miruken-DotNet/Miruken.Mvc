@@ -22,40 +22,38 @@
             ViewController fromView, ViewController toView,
             bool removeFromView)
         {
-            return AnimateStory(Wipe, fromView, toView,
-                (storyboard, duration) =>
-                {
-                    FadeAnimator.Apply(storyboard, Wipe.Fade, fromView, true, duration);
-                    ZoomAnimator.Apply(storyboard, Wipe.Zoom, fromView, true, duration);
-                    Apply(storyboard, Wipe, fromView, toView, duration);
-                }, removeFromView);
+            return AnimateStory(Wipe, fromView, toView, storyboard =>
+            {
+                FadeAnimator.Apply(storyboard, Wipe.Fade, fromView, true);
+                ZoomAnimator.Apply(storyboard, Wipe.Zoom, fromView, true);
+                Apply(storyboard, Wipe, fromView, toView);
+            }, removeFromView);
         }
 
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
-            return AnimateStory(Wipe, fromView, toView,
-                (storyboard, duration) =>
-                {
-                    FadeAnimator.Apply(storyboard, Wipe.Fade, toView, false, duration);
-                    ZoomAnimator.Apply(storyboard, Wipe.Zoom, toView, false, duration);
-                    Apply(storyboard, Wipe, fromView, toView, duration, false);
-                });
+            return AnimateStory(Wipe, fromView, toView, storyboard =>
+            {
+                FadeAnimator.Apply(storyboard, Wipe.Fade, toView, false);
+                ZoomAnimator.Apply(storyboard, Wipe.Zoom, toView, false);
+                Apply(storyboard, Wipe, fromView, toView, false);
+            });
         }
 
         public void Apply(TimelineGroup storyboard,
             WipeRotate wipe, ViewController fromView, ViewController toView,
-            TimeSpan duration, bool present = true)
+            bool present = true)
         {
             if (wipe.Converge == true)
-                ApplyConverge(storyboard, wipe, fromView, toView, duration, present);
+                ApplyConverge(storyboard, wipe, fromView, toView, present);
             else
-                ApplyRotate(storyboard, fromView, toView, duration, present);
+                ApplyRotate(storyboard, wipe, fromView, toView, present);
         }
 
         private static void ApplyRotate(TimelineGroup storyboard,
-            ViewController fromView, ViewController toView,
-            TimeSpan duration, bool present = true)
+            WipeRotate wipe, ViewController fromView, ViewController toView,
+            bool present = true)
         {
             var transform = new RotateTransform();
             var brush     = new LinearGradientBrush
@@ -69,8 +67,9 @@
 
             var animation = new DoubleAnimation
             {
-                Duration = duration
+                Duration = storyboard.Duration
             };
+            Configure(animation, wipe);
 
             ViewController view;
             if (present)
@@ -100,9 +99,10 @@
 
         private static void ApplyConverge(TimelineGroup storyboard,
             WipeRotate wipe, ViewController fromView, ViewController toView,
-            TimeSpan duration, bool present = true)
+            bool present = true)
         {
-            var mode = wipe.Mode ?? Mode.In;
+            var mode     = wipe.Mode ?? Mode.In;
+            var duration = storyboard.Duration.TimeSpan;
 
             double fromAngle, toAngle;
             ViewController view;
@@ -188,12 +188,14 @@
             view.OpacityMask = brush;
 
             var animationTop = new DoubleAnimation(toAngle, duration);
+            Configure(animationTop, wipe);
             storyboard.Children.Add(animationTop);
             Storyboard.SetTarget(animationTop, view);
             Storyboard.SetTargetProperty(animationTop,
                 new PropertyPath("OpacityMask.Drawing.Children[0].Brush.Transform.Angle"));
 
             var animationBottom = new DoubleAnimation(toAngle, duration);
+            Configure(animationBottom, wipe);
             storyboard.Children.Add(animationBottom);
             Storyboard.SetTarget(animationBottom, view);
             Storyboard.SetTargetProperty(animationBottom,

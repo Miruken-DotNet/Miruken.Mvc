@@ -25,8 +25,7 @@
             bool removeFromView)
         {
             return AnimateStory(Fade, fromView, toView,
-                (storyboard, duration) =>
-                    Apply(storyboard, Fade, fromView, toView, duration),
+                storyboard => Apply(storyboard, Fade, fromView, toView),
                 removeFromView);
         }
 
@@ -34,14 +33,12 @@
             ViewController fromView, ViewController toView)
         {
             return AnimateStory(Fade, fromView, toView,
-                (storyboard, duration) =>
-                    Apply(storyboard, Fade, fromView, toView, duration, false));
+                storyboard => Apply(storyboard, Fade, fromView, toView, false));
         }
 
         public static void Apply(TimelineGroup storyboard,
             Fade fade, ViewController fromView, ViewController toView,
-            TimeSpan duration, bool present = true,
-            Mode? defaultMmode = null)
+            bool present = true, Mode? defaultMmode = null)
         {
             if (fade == null) return;
             switch (fade.Mode ?? defaultMmode ?? Mode.In)
@@ -50,44 +47,43 @@
                     if (present)
                     {
                         toView.AddViewAbove(fromView);
-                        Apply(storyboard, fade, toView, false, duration);
+                        Apply(storyboard, fade, toView, false);
                     }
                     else
-                        Apply(storyboard, fade, fromView, true, duration);
+                        Apply(storyboard, fade, fromView, true);
                     break;
                 case Mode.Out:
                     if (present)
                     {
                         toView?.AddViewBelow(fromView);
-                        Apply(storyboard, fade, fromView, true, duration);
+                        Apply(storyboard, fade, fromView, true);
                     }
                     else
                     {
                         toView?.AddViewAbove(fromView);
-                        Apply(storyboard, fade, toView, false, duration);
+                        Apply(storyboard, fade, toView, false);
                     }
                     break;
                 case Mode.InOut:
                     if (present)
                         toView.AddViewAbove(fromView);
-                    Apply(storyboard, fade, toView, false, duration);
-                    Apply(storyboard, fade, fromView, true, duration);
+                    Apply(storyboard, fade, toView, false);
+                    Apply(storyboard, fade, fromView, true);
                     break;
             }
         }
 
         public static void Apply(TimelineGroup storyboard,
-            Fade fade, ViewController view, bool fadeOut,
-            TimeSpan duration)
+            Fade fade, ViewController view, bool fadeOut)
         {
             if (fade == null || view == null) return;
             var animation = new DoubleAnimation
             {
-                To             = fadeOut ? 0 : 1,
-                Duration       = duration,
-                EasingFunction = fade.Behaviors.Find<IEasingFunction>()
+                To       = fadeOut ? 0 : 1,
+                Duration = storyboard.Duration
             };
             if (!fadeOut) animation.From = 0;
+            Configure(animation, fade);
             storyboard.Children.Add(animation);
             Storyboard.SetTarget(animation, view);
             Storyboard.SetTargetProperty(animation, Opacity);

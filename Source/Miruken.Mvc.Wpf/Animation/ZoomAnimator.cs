@@ -21,31 +21,28 @@
             ViewController fromView, ViewController toView,
             bool removeFromView)
         {
-            return AnimateStory(Zoom, fromView, toView,
-                (storyboard, duration) =>
-                {
-                    FadeAnimator.Apply(storyboard, Zoom.Fade,
-                        fromView, toView, duration, true, Zoom.Mode);
-                    Apply(storyboard, Zoom, fromView, toView, duration);
-                }, removeFromView);
+            return AnimateStory(Zoom, fromView, toView, storyboard =>
+            {
+                FadeAnimator.Apply(storyboard, Zoom.Fade,
+                    fromView, toView, true, Zoom.Mode);
+                Apply(storyboard, Zoom, fromView, toView);
+            }, removeFromView);
         }
 
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
-            return AnimateStory(Zoom, fromView, toView,
-                (storyboard, duration) =>
-                {
-                    FadeAnimator.Apply(storyboard, Zoom.Fade,
-                        fromView, toView, duration, false, Zoom.Mode);
-                    Apply(storyboard, Zoom, fromView, toView, duration, false);
-                });
+            return AnimateStory(Zoom, fromView, toView, storyboard =>
+            {
+                FadeAnimator.Apply(storyboard, Zoom.Fade,
+                    fromView, toView, false, Zoom.Mode);
+                Apply(storyboard, Zoom, fromView, toView, false);
+            });
         }
 
         public static void Apply(TimelineGroup storyboard,
             Zoom zoom, ViewController fromView, ViewController toView,
-            TimeSpan duration, bool present = true,
-            Mode? defaultMmode = null)
+            bool present = true, Mode? defaultMmode = null)
         {
             if (zoom == null) return;
             switch (zoom.Mode ?? defaultMmode ?? Mode.In)
@@ -54,35 +51,34 @@
                     if (present)
                     {
                         toView.AddViewAbove(fromView);
-                        Apply(storyboard, zoom, toView, false, duration);
+                        Apply(storyboard, zoom, toView, false);
                     }
                     else
-                        Apply(storyboard, zoom, fromView, true, duration);
+                        Apply(storyboard, zoom, fromView, true);
                     break;
                 case Mode.Out:
                     if (present)
                     {
                         toView?.AddViewBelow(fromView);
-                        Apply(storyboard, zoom, fromView, true, duration);
+                        Apply(storyboard, zoom, fromView, true);
                     }
                     else
                     {
                         toView?.AddViewAbove(fromView);
-                        Apply(storyboard, zoom, toView, false, duration);
+                        Apply(storyboard, zoom, toView, false);
                     }
                     break;
                 case Mode.InOut:
                     if (present)
                         toView.AddViewAbove(fromView);
-                    Apply(storyboard, zoom, toView, false, duration);
-                    Apply(storyboard, zoom, fromView, true, duration);
+                    Apply(storyboard, zoom, toView, false);
+                    Apply(storyboard, zoom, fromView, true);
                     break;
             }
         }
 
         public static void Apply(TimelineGroup storyboard,
-            Zoom zoom, ViewController view, bool zoomOut,
-            TimeSpan duration)
+            Zoom zoom, ViewController view, bool zoomOut)
         {
             if (zoom == null || view == null) return;
 
@@ -92,9 +88,9 @@
 
             var animation = new DoubleAnimation
             {
-                Duration       = duration,
-                EasingFunction = zoom.Behaviors.Find<IEasingFunction>()
+                Duration = storyboard.Duration
             };
+            Configure(animation, zoom);
 
             if (zoomOut)
             {

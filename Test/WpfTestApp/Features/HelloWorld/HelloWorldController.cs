@@ -6,6 +6,7 @@
     using Miruken.Mvc;
     using Miruken.Mvc.Animation;
     using Miruken.Mvc.Options;
+    using Miruken.Mvc.Wpf.Animation;
     using Settings;
 
     public class HelloWorldController : Controller
@@ -23,9 +24,10 @@
         public void Documentation()
         {
             Push<DocumentationController>(IO
-                .Zoom())
+                //.Zoom()
                 //.Fade()
-                //.RollOut(Origin.BottomLeft))
+                .RollInOut(Origin.MiddleCenter)
+                .Behavior(new TimelineBehavior { DecelerationRatio = .9 }))
                 .Index();
         }
 
@@ -62,7 +64,7 @@
         public void Settings()
         {
             Push<SettingsController>(IO
-                .Zoom(scale:.5)
+                .Zoom(scale:.8)
                 .Fade()
                 .WipeConvergeIn())
                 .Configure();

@@ -19,24 +19,15 @@
         public abstract Promise Dismiss(
             ViewController fromView, ViewController toView);
 
-        protected static TimeSpan GetDuration(IAnimation animation)
-        {
-            return animation.Duration.GetValueOrDefault(DefaultDuration);
-        }
-
         protected static Promise AnimateStory(IAnimation animation, 
             ViewController fromView, ViewController toView,
-            Action<Storyboard, TimeSpan> animations,
+            Action<Storyboard> animations,
             bool removeFromView = true)
         {
             if (animations == null)
                 throw new ArgumentNullException(nameof(animations));
-            var duration   = GetDuration(animation);
-            var storyboard = new Storyboard
-            {
-                Duration = duration
-            };
-            animations(storyboard, duration);
+            var storyboard = CreateStoryboard(animation);
+            animations(storyboard);
             return new Promise<object>((resolve, reject) =>
             {
                 EventHandler completed = null;
@@ -63,6 +54,45 @@
                 storyboard.Completed += completed;
                 storyboard.Begin();
             });
+        }
+
+        protected static void Configure(
+            DoubleAnimation timeline, IAnimation animation)
+        {
+            var easing = animation.Behaviors.Find<IEasingFunction>();
+            if (easing != null)
+                timeline.EasingFunction = easing;
+        }
+
+        protected static TimeSpan GetDuration(IAnimation animation)
+        {
+            return animation.Duration.GetValueOrDefault(DefaultDuration);
+        }
+
+        private static Storyboard CreateStoryboard(IAnimation animation)
+        {
+            var storyboard = new Storyboard
+            {
+                Duration = GetDuration(animation)
+            };
+            var timelineBehavior = animation?.Behaviors.Find<TimelineBehavior>();
+            if (timelineBehavior == null) return storyboard;
+            var accelerationRatio = timelineBehavior.AccelerationRatio;
+            if (accelerationRatio.HasValue)
+                storyboard.AccelerationRatio = accelerationRatio.Value;
+            var decelerationRatio = timelineBehavior.DecelerationRatio;
+            if (decelerationRatio.HasValue)
+                storyboard.DecelerationRatio = decelerationRatio.Value;
+            var speedRatio = timelineBehavior.SpeedRatio;
+            if (speedRatio.HasValue)
+                storyboard.SpeedRatio = speedRatio.Value;
+            var fillBehavior = timelineBehavior.FillBehavior;
+            if (fillBehavior.HasValue)
+                storyboard.FillBehavior = fillBehavior.Value;
+            var repeatBehavior = timelineBehavior.RepeatBehavior;
+            if (repeatBehavior.HasValue)
+                storyboard.RepeatBehavior = repeatBehavior.Value;
+            return storyboard;
         }
 
         protected static Point ConvertToPoint(Origin origin)

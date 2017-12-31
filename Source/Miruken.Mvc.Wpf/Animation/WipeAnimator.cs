@@ -22,32 +22,31 @@
             ViewController fromView, ViewController toView,
             bool removeFromView)
         {
-            return AnimateStory(Wipe, fromView, toView,
-                (storyboard, duration) =>
-                {
-                    FadeAnimator.Apply(storyboard, Wipe.Fade,
-                        fromView, toView, duration, true, Wipe.Mode ?? Mode.InOut);
-                    Apply(storyboard, Wipe, fromView, toView, duration);
-                }, removeFromView);
+            return AnimateStory(Wipe, fromView, toView, storyboard =>
+            {
+                FadeAnimator.Apply(storyboard, Wipe.Fade,
+                    fromView, toView, true, Wipe.Mode ?? Mode.InOut);
+                Apply(storyboard, Wipe, fromView, toView);
+            }, removeFromView);
         }
 
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
-            return AnimateStory(Wipe, fromView, toView,
-                (storyboard, duration) =>
-                {
-                    FadeAnimator.Apply(storyboard, Wipe.Fade,
-                        fromView, toView, duration, false, Wipe.Mode ?? Mode.InOut);
-                    Apply(storyboard, Wipe, fromView, toView, duration, false);
-                });
+            return AnimateStory(Wipe, fromView, toView, storyboard =>
+            {
+                FadeAnimator.Apply(storyboard, Wipe.Fade,
+                    fromView, toView, false, Wipe.Mode ?? Mode.InOut);
+                Apply(storyboard, Wipe, fromView, toView, false);
+            });
         }
 
         public void Apply(TimelineGroup storyboard,
             Wipe wipe, ViewController fromView, ViewController toView,
-            TimeSpan duration, bool present = true)
+            bool present = true)
         {
-            var mode = wipe.Mode ?? Mode.In;
+            var mode     = wipe.Mode ?? Mode.In;
+            var duration = storyboard.Duration.TimeSpan;
 
             var offsetStart = 0;
             ViewController view;
@@ -93,6 +92,7 @@
                 var animation = new DoubleAnimation(offsetEnd, duration);
                 if (index == offsetStart)
                     animation.BeginTime = overlap;
+                Configure(animation, wipe);
                 storyboard.Children.Add(animation);
                 Storyboard.SetTarget(animation, view);
                 Storyboard.SetTargetProperty(animation,

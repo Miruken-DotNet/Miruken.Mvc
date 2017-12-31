@@ -21,31 +21,29 @@
             ViewController fromView, ViewController toView,
             bool removeFromView)
         {
-            return AnimateStory(Translate, fromView, toView,
-                (storyboard, duration) =>
-                {
-                    FadeAnimator.Apply(storyboard, Translate.Fade,
-                        fromView, toView, duration, true, Translate.Mode);
-                    Apply(storyboard, Translate, fromView, toView, duration);
-                }, removeFromView);
+            return AnimateStory(Translate, fromView, toView, storyboard =>
+            {
+                FadeAnimator.Apply(storyboard, Translate.Fade,
+                    fromView, toView, true, Translate.Mode);
+                Apply(storyboard, Translate, fromView, toView);
+            }, removeFromView);
         }
 
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
-            return AnimateStory(Translate, fromView, toView,      
-            (storyboard, duration) =>
+            return AnimateStory(Translate, fromView, toView, storyboard =>
             {
                 FadeAnimator.Apply(storyboard, Translate.Fade,
-                    fromView, toView, duration, true, Translate.Mode);
-                Apply(storyboard, Translate, fromView, toView, duration, false);
+                    fromView, toView, true, Translate.Mode);
+                Apply(storyboard, Translate, fromView, toView, false);
             });
         }
 
         public static void Apply(TimelineGroup storyboard,
             Translate translate, ViewController fromView, 
-            ViewController toView, TimeSpan duration,
-            bool present = true, Mode? defaultMode = null)
+            ViewController toView, bool present = true,
+            Mode? defaultMode = null)
         {
             if (translate == null) return;
             switch (translate.Mode ?? defaultMode ?? Mode.InOut)
@@ -54,35 +52,35 @@
                     if (present)
                     {
                         toView.AddViewAbove(fromView);
-                        Apply(storyboard, translate, toView, true, false, duration);
+                        Apply(storyboard, translate, toView, true, false);
                     }
                     else
-                        Apply(storyboard, translate, fromView, false, true, duration);
+                        Apply(storyboard, translate, fromView, false, true);
                     break;
                 case Mode.Out:
                     if (present)
                     {
                         toView?.AddViewBelow(fromView);
-                        Apply(storyboard, translate, fromView, true, true, duration);
+                        Apply(storyboard, translate, fromView, true, true);
                     }
                     else
                     {
                         toView?.AddViewAbove(fromView);
-                        Apply(storyboard, translate, toView, false, false, duration);
+                        Apply(storyboard, translate, toView, false, false);
                     }
                     break;
                 case Mode.InOut:
                     if (present)
                         toView.AddViewAbove(fromView);
-                    Apply(storyboard, translate, toView, present, false, duration);
-                    Apply(storyboard, translate, fromView, present, true, duration);
+                    Apply(storyboard, translate, toView, present, false);
+                    Apply(storyboard, translate, fromView, present, true);
                     break;
             }
         }
 
         public static void Apply(TimelineGroup storyboard,
             Translate translate, ViewController view,
-            bool present, bool hide, TimeSpan duration)
+            bool present, bool hide)
         {
             int? adjustX = null;
             int? adjustY = null;
@@ -128,9 +126,10 @@
                 {
                     From           = hide ? 0 : view.RegionWidth * adjustX,
                     To             = hide ? view.ActualWidth * adjustX * -1 : 0,
-                    Duration       = duration,
+                    Duration       = storyboard.Duration,
                     EasingFunction = ease
                 };
+                Configure(translateX, translate);
                 storyboard.Children.Add(translateX);
                 Storyboard.SetTarget(translateX, view);
                 Storyboard.SetTargetProperty(translateX,
@@ -143,9 +142,10 @@
                 {
                     From           = hide ? 0 : view.RegionHeight * adjustY,
                     To             = hide ? view.ActualHeight * adjustY * -1 : 0,
-                    Duration       = duration,
+                    Duration       = storyboard.Duration,
                     EasingFunction = ease
                 };
+                Configure(translateY, translate);
                 storyboard.Children.Add(translateY);
                 Storyboard.SetTarget(translateY, view);
                 Storyboard.SetTargetProperty(translateY,

@@ -24,33 +24,32 @@
             ViewController fromView, ViewController toView,
             bool removeFromView)
         {
-            return AnimateStory(Split, fromView, toView,
-                (storyboard, duration) =>
-                {
-                    FadeAnimator.Apply(storyboard, Split.Fade,
-                        fromView, toView, duration, true, Split.Mode ?? Mode.InOut);
-                    Apply(storyboard, Split, fromView, toView, duration);
-                }, removeFromView);
+            return AnimateStory(Split, fromView, toView, storyboard =>
+            {
+                FadeAnimator.Apply(storyboard, Split.Fade,
+                    fromView, toView, true, Split.Mode ?? Mode.InOut);
+                Apply(storyboard, Split, fromView, toView);
+            }, removeFromView);
         }
 
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
-            return AnimateStory(Split, fromView, toView,
-                (storyboard, duration) =>
-                {
-                    FadeAnimator.Apply(storyboard, Split.Fade,
-                        fromView, toView, duration, false, Split.Mode ?? Mode.InOut);
-                    Apply(storyboard, Split, fromView, toView, duration, false);
-                });
+            return AnimateStory(Split, fromView, toView, storyboard =>
+            {
+                FadeAnimator.Apply(storyboard, Split.Fade,
+                    fromView, toView, false, Split.Mode ?? Mode.InOut);
+                Apply(storyboard, Split, fromView, toView, false);
+            });
         }
 
         public void Apply(TimelineGroup storyboard,
             Split split, ViewController fromView, ViewController toView,
-            TimeSpan duration, bool present = true)
+            bool present = true)
         {
-            var mode = split.Mode ?? Mode.In;
-
+            var mode     = split.Mode ?? Mode.In;
+            var duration = storyboard.Duration.TimeSpan;
+ 
             var offsetStart = 0;
             ViewController view;
             if (present)
@@ -97,6 +96,7 @@
                 var animation = new DoubleAnimation(offsetEnd, duration);
                 if (index == offsetStart)
                     animation.BeginTime = new TimeSpan(duration.Ticks / 2);
+                Configure(animation, split);
                 storyboard.Children.Add(animation);
                 Storyboard.SetTarget(animation, view);
                 Storyboard.SetTargetProperty(animation,
