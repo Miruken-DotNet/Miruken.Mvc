@@ -3,6 +3,7 @@
     using About;
     using Documentation;
     using Error;
+    using Miruken.Infrastructure;
     using Miruken.Mvc;
     using Miruken.Mvc.Animation;
     using Miruken.Mvc.Options;
@@ -24,9 +25,9 @@
         public void Documentation()
         {
             Push<DocumentationController>(IO
-                //.Zoom()
-                //.Fade()
-                .RollInOut(Origin.MiddleCenter)
+                .Zoom()
+                .Fade()
+                .RollOut(Origin.BottomLeft)
                 .Behavior(new TimelineBehavior { DecelerationRatio = .9 }))
                 .Index();
         }
@@ -64,9 +65,8 @@
         public void Settings()
         {
             Push<SettingsController>(IO
-                .Zoom(scale:.8)
-                .Fade()
-                .WipeConvergeIn())
+                //.Fade()
+                .Spin(1.5.Sec()))
                 .Configure();
         }
 

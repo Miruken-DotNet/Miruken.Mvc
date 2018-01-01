@@ -18,6 +18,8 @@
         public double RegionWidth => _region.ActualWidth;
         public double RegionHeight => _region.ActualHeight;
 
+        public bool IsChild => _region.Children.Contains(this);
+
         public void ShowView()
         {
             Visibility = Visibility.Visible;

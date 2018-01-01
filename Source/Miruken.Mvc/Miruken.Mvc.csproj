@@ -34,8 +34,8 @@
       <HintPath>..\..\packages\FluentValidation.7.3.3\lib\net45\FluentValidation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken, Version=1.10.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.1.10.0.1\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=1.10.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.1.10.1.1-prerelease\lib\net461\Miruken.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Miruken.Validate, Version=1.7.0.2, Culture=neutral, processorArchitecture=MSIL">
@@ -58,6 +58,7 @@
     <Compile Include="Animation\Animation.cs" />
     <Compile Include="Animation\Mode.cs" />
     <Compile Include="Animation\Origin.cs" />
+    <Compile Include="Animation\Spin.cs" />
     <Compile Include="Animation\Wipe.cs" />
     <Compile Include="Animation\Zoom.cs" />
     <Compile Include="Animation\IAnimation.cs" />

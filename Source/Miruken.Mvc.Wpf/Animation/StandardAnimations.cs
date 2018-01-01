@@ -37,6 +37,12 @@
         }
 
         [Maps]
+        public SpinAnimator Create(Spin spin)
+        {
+            return new SpinAnimator(spin);
+        }
+
+        [Maps]
         public WipeAnimator Create(Wipe wipe)
         {
             return new WipeAnimator(wipe);

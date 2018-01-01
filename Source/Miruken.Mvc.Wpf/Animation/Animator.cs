@@ -49,7 +49,7 @@
                         toView.RenderTransform       = Transform.Identity;
                         toView.RenderTransformOrigin = new Point(0, 0);
                     }
-                    resolve(null, true);
+                    resolve(null, false);
                 };
                 storyboard.Completed += completed;
                 storyboard.Begin();
