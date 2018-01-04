@@ -6,13 +6,13 @@
     using System.Windows.Media.Animation;
     using Mvc.Animation;
 
-    public class SpinAnimator : DualAnimator<Spin>
+    public class SpinAnimator : ChainAnimator<Spin>
     {
         public SpinAnimator(Spin spin) : base(spin)
         {          
         }
 
-        protected override void Apply(Storyboard storyboard,
+        protected override void Animate(Storyboard storyboard,
             ViewController view, bool animateOut,
             TimeSpan duration, bool present)
         {

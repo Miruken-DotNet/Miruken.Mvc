@@ -6,13 +6,13 @@
     using System.Windows.Media.Animation;
     using Mvc.Animation;
 
-    public class FlipAnimator : DualAnimator<Flip>
+    public class FlipAnimator : ChainAnimator<Flip>
     {
         public FlipAnimator(Flip flip) : base(flip)
         {
         }
 
-        protected override void Apply(Storyboard storyboard,
+        protected override void Animate(Storyboard storyboard,
             ViewController view, bool animateOut, TimeSpan duration,
             bool present)
         {

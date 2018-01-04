@@ -5,10 +5,10 @@
     using Concurrency;
     using Mvc.Animation;
 
-    public abstract class DualAnimator<T> : Animator
+    public abstract class ChainAnimator<T> : Animator
         where T : IAnimation
     {
-        protected DualAnimator(T animation)
+        protected ChainAnimator(T animation)
         {
             if (animation == null)
                 throw new ArgumentNullException(nameof(animation));
@@ -43,11 +43,11 @@
             {
                 case Mode.In:
                     animateFrom = animateFrom && !present;
-                    animationTo   = animationTo && present;
+                    animationTo = animationTo && present;
                     break;
                 case Mode.Out:
                     animateFrom = animateFrom && present;
-                    animationTo   = animationTo && !present;
+                    animationTo = animationTo && !present;
                     break;
             }
             if (animateFrom)
@@ -60,7 +60,7 @@
                 {
                     hide.Duration = middle;
                     FadeAnimator.Apply(hide, Animation.Fade, fromView, true);
-                    Apply(hide, fromView, true, middle, present);
+                    Animate(hide, fromView, true, middle, present);
                 }, removeFromView).Then((r, s) =>
                 {
                     if (animationTo)
@@ -79,7 +79,7 @@
                         toView.AddViewAbove(fromView);
                         show.Duration = middle;
                         FadeAnimator.Apply(show, Animation.Fade, toView, false);
-                        Apply(show, toView, false, middle, present);
+                        Animate(show, toView, false, middle, present);
                     }));
                 if (animateFrom)
                     promise = promise.Then((r, s) => fromView.ShowView());
@@ -87,7 +87,7 @@
             return promise;
         }
 
-        protected abstract void Apply(Storyboard storyboard,
+        protected abstract void Animate(Storyboard storyboard,
             ViewController view, bool animateOut, TimeSpan duration,
             bool present);
     }
