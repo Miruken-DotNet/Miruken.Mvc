@@ -24,11 +24,17 @@
 
         public void Documentation()
         {
+            /*
             Push<DocumentationController>(IO
-                .Zoom()
                 .Fade()
-                .RollOut(Origin.BottomLeft)
-                .Behavior(new TimelineBehavior { DecelerationRatio = .9 }))
+                .Accelerate(.9)
+                .ZoomInOut())
+                .Index();
+            */
+            Push<DocumentationController>(IO
+                .Fade()
+                .Accelerate(.9)
+                .FlipInOut(duration:1.5.Sec()))
                 .Index();
         }
 
@@ -65,8 +71,9 @@
         public void Settings()
         {
             Push<SettingsController>(IO
-                //.Fade()
-                .Spin(1.5.Sec()))
+                .Fade()
+                .Accelerate(.9)
+                .SpinInOut(1.5.Sec()))
                 .Configure();
         }
 

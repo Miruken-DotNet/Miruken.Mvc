@@ -43,6 +43,12 @@
         }
 
         [Maps]
+        public FlipAnimator Create(Flip flip)
+        {
+            return new FlipAnimator(flip);
+        }
+
+        [Maps]
         public WipeAnimator Create(Wipe wipe)
         {
             return new WipeAnimator(wipe);

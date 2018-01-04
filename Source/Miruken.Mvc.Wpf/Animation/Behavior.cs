@@ -31,6 +31,20 @@
             }.Decorate(handler);
         }
 
+        public static IHandler Accelerate(
+            this IHandler handler, double acceleration)
+        {
+            return handler.Behavior(
+                new TimelineBehavior { Acceleration = acceleration });
+        }
+
+        public static IHandler Speed(
+            this IHandler handler, double speed)
+        {
+            return handler.Behavior(
+                new TimelineBehavior { Speed = speed });
+        }
+
         public static IHandler Ease(
             this IHandler handler, IEasingFunction easing)
         {

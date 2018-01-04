@@ -70,7 +70,7 @@
                     break;
                 case Mode.InOut:
                     if (present)
-                        toView.AddViewAbove(fromView);
+                        toView?.AddViewAbove(fromView);
                     Apply(storyboard, zoom, toView, false);
                     Apply(storyboard, zoom, fromView, true);
                     break;
@@ -90,7 +90,7 @@
             {
                 Duration = storyboard.Duration
             };
-            Configure(animation, zoom);
+            Configure(animation, zoom, zoomOut);
 
             if (zoomOut)
             {
@@ -110,7 +110,7 @@
             var animationY = animation.Clone();
             storyboard.Children.Add(animationY);
             Storyboard.SetTarget(animationY, view);
-            Storyboard.SetTargetProperty(animation,
+            Storyboard.SetTargetProperty(animationY,
                 property(ScaleTransform.ScaleYProperty));
         }
     }

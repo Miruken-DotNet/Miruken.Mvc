@@ -64,6 +64,7 @@
     <Compile Include="Animation\WipeRotateAnimator.cs" />
     <Compile Include="Animation\WipeAnimator.cs" />
     <Compile Include="Animation\SplitAnimator.cs" />
+    <Compile Include="Animation\FlipAnimator.cs" />
     <Compile Include="Animation\ZoomAnimator.cs" />
     <Compile Include="Animation\IAnimator.cs" />
     <Compile Include="Animation\FadeAnimator.cs" />

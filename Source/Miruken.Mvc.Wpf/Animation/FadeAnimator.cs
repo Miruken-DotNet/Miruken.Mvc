@@ -66,7 +66,7 @@
                     break;
                 case Mode.InOut:
                     if (present)
-                        toView.AddViewAbove(fromView);
+                        toView?.AddViewAbove(fromView);
                     Apply(storyboard, fade, toView, false);
                     Apply(storyboard, fade, fromView, true);
                     break;
@@ -83,7 +83,7 @@
                 Duration = storyboard.Duration
             };
             if (!fadeOut) animation.From = 0;
-            Configure(animation, fade);
+            Configure(animation, fade, fadeOut);
             storyboard.Children.Add(animation);
             Storyboard.SetTarget(animation, view);
             Storyboard.SetTargetProperty(animation, Opacity);

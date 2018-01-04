@@ -96,7 +96,7 @@
                 var animation = new DoubleAnimation(offsetEnd, duration);
                 if (index == offsetStart)
                     animation.BeginTime = new TimeSpan(duration.Ticks / 2);
-                Configure(animation, split);
+                Configure(animation, split, true);
                 storyboard.Children.Add(animation);
                 Storyboard.SetTarget(animation, view);
                 Storyboard.SetTargetProperty(animation,

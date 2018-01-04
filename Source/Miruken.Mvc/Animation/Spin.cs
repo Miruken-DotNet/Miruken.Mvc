@@ -22,9 +22,32 @@
         }
 
         public static IHandler Spin(
-            this IHandler handler,TimeSpan? duration = null)
+            this IHandler handler, Mode? mode = null,
+            TimeSpan? duration = null)
         {
-            return handler.Spin(new Spin { Duration = duration });
+            return handler.Spin(new Spin
+            {
+                Mode     = mode,
+                Duration = duration
+            });
+        }
+
+        public static IHandler SpinIn(this IHandler handler,
+            TimeSpan? duration = null)
+        {
+            return handler.Spin(Mode.In, duration);
+        }
+
+        public static IHandler SpinOut(this IHandler handler,
+            TimeSpan? duration = null)
+        {
+            return handler.Spin(Mode.Out, duration);
+        }
+
+        public static IHandler SpinInOut(this IHandler handler,
+            TimeSpan? duration = null)
+        {
+            return handler.Spin(Mode.InOut, duration);
         }
     }
 }

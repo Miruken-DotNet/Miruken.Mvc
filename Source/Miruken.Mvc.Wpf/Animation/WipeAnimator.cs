@@ -92,7 +92,7 @@
                 var animation = new DoubleAnimation(offsetEnd, duration);
                 if (index == offsetStart)
                     animation.BeginTime = overlap;
-                Configure(animation, wipe);
+                Configure(animation, wipe, false);
                 storyboard.Children.Add(animation);
                 Storyboard.SetTarget(animation, view);
                 Storyboard.SetTargetProperty(animation,

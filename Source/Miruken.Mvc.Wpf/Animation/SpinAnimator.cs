@@ -16,6 +16,8 @@
             Spin = spin;
         }
 
+        public Spin Spin { get; }
+
         public override Promise Present(
             ViewController fromView, ViewController toView,
             bool removeFromView)
@@ -26,7 +28,6 @@
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
-            if (toView.IsChild) toView = null;
             return AnimateSpin(fromView, toView, true, false);
         }
 
@@ -34,32 +35,60 @@
             ViewController fromView, ViewController toView,
             bool removeFromView, bool present)
         {
-            var promise = fromView != null && removeFromView
-                ? AnimateStory(Spin, fromView, null, hide =>
+            var promise  = Promise.Empty;
+            var spinFrom = fromView != null;
+            var spinTo   = toView != null;
+            var duration = GetDuration(Spin);
+            var middle   = new TimeSpan(duration.Ticks / 2);
+            switch (Spin.Mode ?? Mode.InOut)
+            {
+                case Mode.In:
+                    spinFrom = spinFrom && !present;
+                    spinTo   = spinTo && present;
+                    break;
+                case Mode.Out:
+                    spinFrom = spinFrom && present;
+                    spinTo   = spinTo && !present;
+                    break;
+            }
+            if (spinFrom)
+            {
+                if (spinTo)
+                    toView.HideView();
+                else
+                    toView?.AddViewBelow(fromView);
+                promise = AnimateStory(Spin, fromView, null, hide =>
                 {
-                    var duration  = hide.Duration.TimeSpan;
-                    var middle    = new TimeSpan(duration.Ticks / 2);
                     hide.Duration = middle;
                     FadeAnimator.Apply(hide, Spin.Fade, fromView, true);
                     Apply(hide, fromView, true, middle, present);
-                })
-                : Promise.Empty;
-            return toView != null ? promise.Then((r, s) =>
-                AnimateStory(Spin, null, toView, show =>
+                }, removeFromView).Then((r, s) =>
                 {
-                    toView.AddView();
-                    var duration  = show.Duration.TimeSpan;
-                    var middle    = new TimeSpan(duration.Ticks / 2);
-                    show.Duration = middle;
-                    FadeAnimator.Apply(show, Spin.Fade, toView, false);
-                    Apply(show, toView, false, middle, present);
-                }))
-               : promise;
+                    if (spinTo)
+                        toView?.ShowView();
+                    else
+                        toView?.AddViewAbove(fromView);
+                });
+            }
+            if (spinTo)
+            {
+                promise = promise.Then((r, s) =>
+                    AnimateStory(Spin, null, toView, show =>
+                    {
+                        if (spinFrom)
+                            fromView?.HideView();
+                        toView.AddViewAbove(fromView);
+                        show.Duration = middle;
+                        FadeAnimator.Apply(show, Spin.Fade, toView, false);
+                        Apply(show, toView, false, middle, present);
+                    }));
+                if (spinFrom)
+                    promise = promise.Then((r, s) => fromView.ShowView());
+            }
+            return promise;
         }
 
-        public Spin Spin { get; }
-
-        private static void Apply(TimelineGroup storyboard,
+        private void Apply(TimelineGroup storyboard,
             ViewController view, bool hide, TimeSpan duration,
             bool present)
         {
@@ -72,6 +101,7 @@
                 To        = hide ? -angle : 0,
                 Duration  = duration
             };
+            Configure(rotation, Spin, hide);
             storyboard.Children.Add(rotation);
             Storyboard.SetTarget(rotation, view);
             Storyboard.SetTargetProperty(rotation,
@@ -84,12 +114,14 @@
                 To        = hide ? 0 : 1,
                 Duration  = duration
             };
+            Configure(scaleX, Spin, hide);
             storyboard.Children.Add(scaleX);
             Storyboard.SetTarget(scaleX, view);
             Storyboard.SetTargetProperty(scaleX,
                 property(ScaleTransform.ScaleXProperty));
 
             var scaleY = scaleX.Clone();
+            Configure(scaleY, Spin, hide);
             storyboard.Children.Add(scaleY);
             Storyboard.SetTarget(scaleY, view);
             Storyboard.SetTargetProperty(scaleY,

@@ -80,7 +80,7 @@
                     break;
                 case Mode.InOut:
                     if (present)
-                        toView.AddViewAbove(fromView);
+                        toView?.AddViewAbove(fromView);
                     Apply(storyboard, roll, toView, present, false);
                     Apply(storyboard, roll, fromView, present, true);
                     break;
@@ -138,7 +138,7 @@
                 To             = rollOut ? -angle : 0,
                 Duration       = storyboard.Duration
             };
-            Configure(rotation, roll);
+            Configure(rotation, roll, rollOut);
             var property = view.AddTransform(new RotateTransform());
             storyboard.Children.Add(rotation);
             Storyboard.SetTarget(rotation, view);
@@ -189,8 +189,8 @@
                     return;
             }
 
-            Configure(skewX, roll);
-            Configure(skewY, roll);
+            Configure(skewX, roll, rollOut);
+            Configure(skewY, roll, rollOut);
 
             var property = view.AddTransform(new SkewTransform());
 

@@ -4,10 +4,9 @@
 
     public class TimelineBehavior
     {
-        public double?         AccelerationRatio { get; set; }
-        public double?         DecelerationRatio { get; set; }
-        public FillBehavior?   FillBehavior      { get; set; }
-        public RepeatBehavior? RepeatBehavior    { get; set; }
-        public double?         SpeedRatio        { get; set; }
+        public double?         Acceleration { get; set; }
+        public FillBehavior?   Fill         { get; set; }
+        public RepeatBehavior? Repeat       { get; set; }
+        public double?         Speed        { get; set; }
     }
 }

@@ -129,7 +129,7 @@
                     Duration       = storyboard.Duration,
                     EasingFunction = ease
                 };
-                Configure(translateX, translate);
+                Configure(translateX, translate, hide);
                 storyboard.Children.Add(translateX);
                 Storyboard.SetTarget(translateX, view);
                 Storyboard.SetTargetProperty(translateX,
@@ -145,7 +145,7 @@
                     Duration       = storyboard.Duration,
                     EasingFunction = ease
                 };
-                Configure(translateY, translate);
+                Configure(translateY, translate, hide);
                 storyboard.Children.Add(translateY);
                 Storyboard.SetTarget(translateY, view);
                 Storyboard.SetTargetProperty(translateY,

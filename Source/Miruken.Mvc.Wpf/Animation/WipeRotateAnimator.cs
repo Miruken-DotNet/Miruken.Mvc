@@ -69,7 +69,7 @@
             {
                 Duration = storyboard.Duration
             };
-            Configure(animation, wipe);
+            Configure(animation, wipe, false);
 
             ViewController view;
             if (present)
@@ -188,14 +188,14 @@
             view.OpacityMask = brush;
 
             var animationTop = new DoubleAnimation(toAngle, duration);
-            Configure(animationTop, wipe);
+            Configure(animationTop, wipe, false);
             storyboard.Children.Add(animationTop);
             Storyboard.SetTarget(animationTop, view);
             Storyboard.SetTargetProperty(animationTop,
                 new PropertyPath("OpacityMask.Drawing.Children[0].Brush.Transform.Angle"));
 
             var animationBottom = new DoubleAnimation(toAngle, duration);
-            Configure(animationBottom, wipe);
+            Configure(animationBottom, wipe, false);
             storyboard.Children.Add(animationBottom);
             Storyboard.SetTarget(animationBottom, view);
             Storyboard.SetTargetProperty(animationBottom,

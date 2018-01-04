@@ -26,7 +26,10 @@
         {
             if (animations == null)
                 throw new ArgumentNullException(nameof(animations));
-            var storyboard = CreateStoryboard(animation);
+            var storyboard = new Storyboard
+            {
+                Duration = GetDuration(animation)
+            };
             animations(storyboard);
             return new Promise<object>((resolve, reject) =>
             {
@@ -39,14 +42,14 @@
                     {
                         if (removeFromView)
                             fromView.RemoveView();
-                        fromView.RenderTransform       = Transform.Identity;
+                        fromView.RenderTransform = Transform.Identity;
                         fromView.RenderTransformOrigin = new Point(0, 0);
                     }
                     if (toView != null)
                     {
                         if (!removeFromView)
                             toView.AddViewAbove(fromView);
-                        toView.RenderTransform       = Transform.Identity;
+                        toView.RenderTransform = Transform.Identity;
                         toView.RenderTransformOrigin = new Point(0, 0);
                     }
                     resolve(null, false);
@@ -56,43 +59,42 @@
             });
         }
 
-        protected static void Configure(
-            DoubleAnimation timeline, IAnimation animation)
-        {
-            var easing = animation.Behaviors.Find<IEasingFunction>();
-            if (easing != null)
-                timeline.EasingFunction = easing;
-        }
-
         protected static TimeSpan GetDuration(IAnimation animation)
         {
             return animation.Duration.GetValueOrDefault(DefaultDuration);
         }
 
-        private static Storyboard CreateStoryboard(IAnimation animation)
+        protected static void Configure(
+            DoubleAnimation timeline, IAnimation animation, bool from)
         {
-            var storyboard = new Storyboard
-            {
-                Duration = GetDuration(animation)
-            };
+            Configure((Timeline)timeline, animation, from);
+            var easing = animation.Behaviors.Find<IEasingFunction>();
+            if (easing != null)
+                timeline.EasingFunction = easing;
+        }
+
+        protected static void Configure(
+            Timeline timeline, IAnimation animation, bool from)
+        {
             var timelineBehavior = animation?.Behaviors.Find<TimelineBehavior>();
-            if (timelineBehavior == null) return storyboard;
-            var accelerationRatio = timelineBehavior.AccelerationRatio;
-            if (accelerationRatio.HasValue)
-                storyboard.AccelerationRatio = accelerationRatio.Value;
-            var decelerationRatio = timelineBehavior.DecelerationRatio;
-            if (decelerationRatio.HasValue)
-                storyboard.DecelerationRatio = decelerationRatio.Value;
-            var speedRatio = timelineBehavior.SpeedRatio;
-            if (speedRatio.HasValue)
-                storyboard.SpeedRatio = speedRatio.Value;
-            var fillBehavior = timelineBehavior.FillBehavior;
-            if (fillBehavior.HasValue)
-                storyboard.FillBehavior = fillBehavior.Value;
-            var repeatBehavior = timelineBehavior.RepeatBehavior;
-            if (repeatBehavior.HasValue)
-                storyboard.RepeatBehavior = repeatBehavior.Value;
-            return storyboard;
+            if (timelineBehavior == null) return;
+            var acceleration = timelineBehavior.Acceleration;
+            if (acceleration.HasValue)
+            {
+                if (from)
+                    timeline.AccelerationRatio = acceleration.Value;
+                else
+                    timeline.DecelerationRatio = acceleration.Value;
+            }
+            var speed = timelineBehavior.Speed;
+            if (speed.HasValue)
+                timeline.SpeedRatio = speed.Value;
+            var fill = timelineBehavior.Fill;
+            if (fill.HasValue)
+                timeline.FillBehavior = fill.Value;
+            var repeat = timelineBehavior.Repeat;
+            if (repeat.HasValue)
+                timeline.RepeatBehavior = repeat.Value;
         }
 
         protected static Point ConvertToPoint(Origin origin)
