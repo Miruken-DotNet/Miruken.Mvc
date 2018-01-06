@@ -13,9 +13,9 @@
         }
 
         [Maps]
-        public TranslationAnimator Create(Translate translate)
+        public TranslateAnimator Create(Translate translate)
         {
-            return new TranslationAnimator(translate);
+            return new TranslateAnimator(translate);
         }
 
         [Maps]

@@ -6,9 +6,9 @@
     using Concurrency;
     using Mvc.Animation;
 
-    public class TranslationAnimator : Animator
+    public class TranslateAnimator : Animator
     {
-        public TranslationAnimator(Translate translate)
+        public TranslateAnimator(Translate translate)
         {
             if (translate == null)
                 throw new ArgumentNullException(nameof(translate));

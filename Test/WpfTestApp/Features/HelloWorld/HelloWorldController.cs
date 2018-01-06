@@ -24,18 +24,17 @@
 
         public void Documentation()
         {
-            /*
             Push<DocumentationController>(IO
-                .Fade()
-                .Accelerate(.9)
-                .ZoomInOut())
+                //.Fade()
+                .RollOut(Origin.BottomLeft))
                 .Index();
-            */
+            /*
             Push<DocumentationController>(IO
                 .Fade()
                 .Accelerate(.9)
                 .FlipInOut(duration:1.5.Sec()))
                 .Index();
+            */
         }
 
         public void About()
