@@ -4,52 +4,27 @@
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Animation;
-    using Concurrency;
     using Mvc.Animation;
 
-    public class SplitAnimator : Animator
+    public class SplitAnimator : BlendAnimator<Split>
     {
         private const int DefaultWidth = 30;
 
-        public SplitAnimator(Split split)
+        public SplitAnimator(Split split) : base(split)
         {
-            if (split == null)
-                throw new ArgumentNullException(nameof(split));
-            Split = split;
         }
 
-        public Split Split { get; }
-
-        public override Promise Present(
+        public override void Transition(
+            Storyboard storyboard,
             ViewController fromView, ViewController toView,
-            bool removeFromView)
+            bool present = true, Mode? defaultMmode = null)
         {
-            return AnimateStory(Split, fromView, toView, storyboard =>
-            {
-                FadeAnimator.Apply(storyboard, Split.Fade,
-                    fromView, toView, true, Split.Mode ?? Mode.InOut);
-                Apply(storyboard, Split, fromView, toView);
-            }, removeFromView);
-        }
-
-        public override Promise Dismiss(
-            ViewController fromView, ViewController toView)
-        {
-            return AnimateStory(Split, fromView, toView, storyboard =>
-            {
-                FadeAnimator.Apply(storyboard, Split.Fade,
-                    fromView, toView, false, Split.Mode ?? Mode.InOut);
-                Apply(storyboard, Split, fromView, toView, false);
-            });
-        }
-
-        public void Apply(TimelineGroup storyboard,
-            Split split, ViewController fromView, ViewController toView,
-            bool present = true)
-        {
-            var mode     = split.Mode ?? Mode.In;
+            var split    = Animation;
+            var mode     = split.Mode ?? defaultMmode ?? Mode.In;
             var duration = storyboard.Duration.TimeSpan;
- 
+
+            Fade(storyboard, split.Fade, fromView, toView, present, mode);
+
             var offsetStart = 0;
             ViewController view;
             if (present)
@@ -106,8 +81,14 @@
             storyboard.Completed += (s, _) => view.OpacityMask = opacityMask;
         }
 
-        private static void ConfigureGradients(Split split, 
-            LinearGradientBrush brush, double offsetStart)
+        public override void Animate(
+            Storyboard storyboard, ViewController view,
+            bool animateOut, bool present)
+        {            
+        }
+
+        private static void ConfigureGradients(
+            Split split, LinearGradientBrush brush, double offsetStart)
         {
             var width  = split.Width ?? DefaultWidth;
             switch (split.Start ?? Origin.MiddleLeft)

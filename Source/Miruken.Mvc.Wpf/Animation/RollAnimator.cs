@@ -3,106 +3,47 @@
     using System;
     using System.Windows.Media;
     using System.Windows.Media.Animation;
-    using Concurrency;
     using Mvc.Animation;
 
-    public class RollAnimator : Animator
+    public class RollAnimator : BlendAnimator<Roll>
     {
-        public RollAnimator(Roll roll)
+        public RollAnimator(Roll roll) : base(roll)
         {
-            if (roll == null)
-                throw new ArgumentNullException(nameof(roll));
-            Roll = roll;
         }
 
-        public Roll Roll { get; }
-
-        public override Promise Present(
+        public override void Transition(
+            Storyboard storyboard,
             ViewController fromView, ViewController toView,
-            bool removeFromView)
+            bool present = true, Mode? defaultMmode = null)
         {
-            var zoom = Roll.Zoom;
-            if (zoom == null && Roll.Anchor == Origin.MiddleCenter)
+            var zoom = Animation.Zoom;
+            if (zoom == null && Animation.Anchor == Origin.MiddleCenter)
                 zoom = new Zoom();
-            return AnimateStory(Roll, fromView, toView, storyboard =>
-            {
-                FadeAnimator.Apply(storyboard, Roll.Fade,
-                    fromView, toView, true, Roll.Mode);
-                ZoomAnimator.Apply(storyboard, zoom,
-                    fromView, toView, true, Roll.Mode);
-                Apply(storyboard, Roll, fromView, toView);
-            }, removeFromView);
+
+            Zoom(storyboard, zoom, fromView, toView,
+                present, defaultMmode ?? Mode.Out);
+
+            base.Transition(storyboard, fromView, toView,
+                present, defaultMmode);
         }
 
-        public override Promise Dismiss(
-            ViewController fromView, ViewController toView)
+        public override void Animate(
+            Storyboard storyboard, ViewController view,
+            bool animateOut, bool present)
         {
-            var zoom = Roll.Zoom;
-            if (zoom == null && Roll.Anchor == Origin.MiddleCenter)
-                zoom = new Zoom();
-            return AnimateStory(Roll, fromView, toView, storyboard =>
-            {
-                FadeAnimator.Apply(storyboard, Roll.Fade,
-                    fromView, toView, false, Roll.Mode);
-                ZoomAnimator.Apply(storyboard, zoom,
-                    fromView, toView, false, Roll.Mode);
-                Apply(storyboard, Roll, fromView, toView, false);
-            });
-        }
-
-        public static void Apply(TimelineGroup storyboard,
-            Roll roll, ViewController fromView, ViewController toView,
-            bool present = true, Mode? defaultMode = null)
-        {
-            if (roll == null) return;
-            switch (roll.Mode ?? defaultMode ?? Mode.Out)
-            {
-                case Mode.In:
-                    if (present)
-                    {
-                        toView.AddViewAbove(fromView);
-                        Apply(storyboard, roll, toView, true, false);
-                    }
-                    else
-                        Apply(storyboard, roll, fromView, false, true);
-                    break;
-                case Mode.Out:
-                    if (present)
-                    {
-                        toView?.AddViewBelow(fromView);
-                        Apply(storyboard, roll, fromView, true, true);
-                    }
-                    else
-                    {
-                        toView?.AddViewAbove(fromView);
-                        Apply(storyboard, roll, toView, false, false);
-                    }
-                    break;
-                case Mode.InOut:
-                    if (present)
-                        toView?.AddViewAbove(fromView);
-                    Apply(storyboard, roll, toView, present, false);
-                    Apply(storyboard, roll, fromView, present, true);
-                    break;
-            }
-        }
-
-        public static void Apply(TimelineGroup storyboard,
-            Roll roll, ViewController view, bool present, bool rollOut)
-        {
-            if (roll == null) return;
+            var roll   = Animation;
             var anchor = roll.Anchor ?? Origin.BottomLeft;
             view.RenderTransformOrigin = ConvertToPoint(anchor);
 
-            AddRotation(storyboard, view, anchor, rollOut, roll, present);
+            AddRotation(storyboard, view, anchor, animateOut, roll, present);
 
             if (roll.Zoom != null)
-                AddSkew(storyboard, view, anchor, rollOut, roll);
+                AddSkew(storyboard, view, anchor, animateOut, roll);
         }
 
-        private static void AddRotation(TimelineGroup storyboard,
-            ViewController view, Origin anchor, bool rollOut, 
-            Roll roll, bool present)
+        private static void AddRotation(
+            TimelineGroup storyboard, ViewController view,
+            Origin anchor, bool rollOut, Roll roll, bool present)
         {
             double angle;
 
@@ -146,8 +87,9 @@
                 property(RotateTransform.AngleProperty));
         }
 
-        private static void AddSkew(TimelineGroup storyboard,
-            ViewController view, Origin anchor, bool rollOut, Roll roll)
+        private static void AddSkew(
+            TimelineGroup storyboard, ViewController view,
+            Origin anchor, bool rollOut, Roll roll)
         {
             DoubleAnimation skewX;
             DoubleAnimation skewY;

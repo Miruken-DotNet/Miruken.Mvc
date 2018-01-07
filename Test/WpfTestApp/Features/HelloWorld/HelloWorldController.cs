@@ -25,12 +25,12 @@
         public void Documentation()
         {
             Push<DocumentationController>(IO
-                //.Fade()
-                .RollOut(Origin.BottomLeft))
+                .Fade()
+                .ZoomInOut())
                 .Index();
             /*
             Push<DocumentationController>(IO
-                .Fade()
+                .Fade()5
                 .Accelerate(.9)
                 .FlipInOut(duration:1.5.Sec()))
                 .Index();

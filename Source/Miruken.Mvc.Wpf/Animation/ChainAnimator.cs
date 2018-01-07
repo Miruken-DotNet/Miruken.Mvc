@@ -21,16 +21,16 @@
             ViewController fromView, ViewController toView,
             bool removeFromView)
         {
-            return AnimateDual(fromView, toView, removeFromView, true);
+            return Transition(fromView, toView, removeFromView, true);
         }
 
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
-            return AnimateDual(fromView, toView, true, false);
+            return Transition(fromView, toView, true, false);
         }
 
-        private Promise AnimateDual(
+        private Promise Transition(
             ViewController fromView, ViewController toView,
             bool removeFromView, bool present)
         {
@@ -59,7 +59,8 @@
                 promise = AnimateStory(Animation, fromView, null, hide =>
                 {
                     hide.Duration = middle;
-                    FadeAnimator.Apply(hide, Animation.Fade, fromView, true);
+                    Fade(hide, Animation.Fade, fromView, toView, present,
+                        present ? Mode.Out : Mode.In);
                     Animate(hide, fromView, true, middle, present);
                 }, removeFromView).Then((r, s) =>
                 {
@@ -78,7 +79,8 @@
                             fromView?.HideView();
                         toView.AddViewAbove(fromView);
                         show.Duration = middle;
-                        FadeAnimator.Apply(show, Animation.Fade, toView, false);
+                        Fade(show, Animation.Fade, fromView, toView, present,
+                            present ? Mode.In : Mode.Out);
                         Animate(show, toView, false, middle, present);
                     }));
                 if (animateFrom)

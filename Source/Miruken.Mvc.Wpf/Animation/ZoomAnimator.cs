@@ -1,87 +1,22 @@
 ﻿namespace Miruken.Mvc.Wpf.Animation
 {
-    using System;
     using System.Windows.Media;
     using System.Windows.Media.Animation;
-    using Concurrency;
     using Mvc.Animation;
 
-    public class ZoomAnimator : Animator
+    public class ZoomAnimator : BlendAnimator<Zoom>
     {
-        public ZoomAnimator(Zoom zoom)
+        public ZoomAnimator(Zoom zoom) : base(zoom)
         {
-            if (zoom == null)
-                throw new ArgumentNullException(nameof(zoom));
-            Zoom = zoom;
         }
 
-        public Zoom Zoom { get; }
-
-        public override Promise Present(
-            ViewController fromView, ViewController toView,
-            bool removeFromView)
+        public override void Animate(
+            Storyboard storyboard, ViewController view,
+            bool animateOut, bool present)
         {
-            return AnimateStory(Zoom, fromView, toView, storyboard =>
-            {
-                FadeAnimator.Apply(storyboard, Zoom.Fade,
-                    fromView, toView, true, Zoom.Mode);
-                Apply(storyboard, Zoom, fromView, toView);
-            }, removeFromView);
-        }
+            if (view == null) return;
 
-        public override Promise Dismiss(
-            ViewController fromView, ViewController toView)
-        {
-            return AnimateStory(Zoom, fromView, toView, storyboard =>
-            {
-                FadeAnimator.Apply(storyboard, Zoom.Fade,
-                    fromView, toView, false, Zoom.Mode);
-                Apply(storyboard, Zoom, fromView, toView, false);
-            });
-        }
-
-        public static void Apply(TimelineGroup storyboard,
-            Zoom zoom, ViewController fromView, ViewController toView,
-            bool present = true, Mode? defaultMmode = null)
-        {
-            if (zoom == null) return;
-            switch (zoom.Mode ?? defaultMmode ?? Mode.In)
-            {
-                case Mode.In:
-                    if (present)
-                    {
-                        toView.AddViewAbove(fromView);
-                        Apply(storyboard, zoom, toView, false);
-                    }
-                    else
-                        Apply(storyboard, zoom, fromView, true);
-                    break;
-                case Mode.Out:
-                    if (present)
-                    {
-                        toView?.AddViewBelow(fromView);
-                        Apply(storyboard, zoom, fromView, true);
-                    }
-                    else
-                    {
-                        toView?.AddViewAbove(fromView);
-                        Apply(storyboard, zoom, toView, false);
-                    }
-                    break;
-                case Mode.InOut:
-                    if (present)
-                        toView?.AddViewAbove(fromView);
-                    Apply(storyboard, zoom, toView, false);
-                    Apply(storyboard, zoom, fromView, true);
-                    break;
-            }
-        }
-
-        public static void Apply(TimelineGroup storyboard,
-            Zoom zoom, ViewController view, bool zoomOut)
-        {
-            if (zoom == null || view == null) return;
-
+            var zoom   = Animation;
             var origin = zoom.Origin ?? Origin.MiddleCenter;
             view.RenderTransformOrigin = ConvertToPoint(origin);
             var property = view.AddTransform(new ScaleTransform());
@@ -90,9 +25,9 @@
             {
                 Duration = storyboard.Duration
             };
-            Configure(animation, zoom, zoomOut);
+            Configure(animation, zoom, animateOut);
 
-            if (zoomOut)
+            if (animateOut)
             {
                 animation.To = zoom.Scale ?? 0;
             }

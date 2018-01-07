@@ -4,49 +4,24 @@
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Animation;
-    using Concurrency;
     using Mvc.Animation;
 
-    public class WipeAnimator : Animator
+    public class WipeAnimator : BlendAnimator<Wipe>
     {
-        public WipeAnimator(Wipe wipe)
+        public WipeAnimator(Wipe wipe) : base(wipe)
         {
-            if (wipe == null)
-                throw new ArgumentNullException(nameof(wipe));
-            Wipe = wipe;
         }
 
-        public Wipe Wipe { get; }
-
-        public override Promise Present(
+        public override void Transition(
+            Storyboard storyboard,
             ViewController fromView, ViewController toView,
-            bool removeFromView)
+            bool present = true, Mode? defaultMmode = null)
         {
-            return AnimateStory(Wipe, fromView, toView, storyboard =>
-            {
-                FadeAnimator.Apply(storyboard, Wipe.Fade,
-                    fromView, toView, true, Wipe.Mode ?? Mode.InOut);
-                Apply(storyboard, Wipe, fromView, toView);
-            }, removeFromView);
-        }
-
-        public override Promise Dismiss(
-            ViewController fromView, ViewController toView)
-        {
-            return AnimateStory(Wipe, fromView, toView, storyboard =>
-            {
-                FadeAnimator.Apply(storyboard, Wipe.Fade,
-                    fromView, toView, false, Wipe.Mode ?? Mode.InOut);
-                Apply(storyboard, Wipe, fromView, toView, false);
-            });
-        }
-
-        public void Apply(TimelineGroup storyboard,
-            Wipe wipe, ViewController fromView, ViewController toView,
-            bool present = true)
-        {
-            var mode     = wipe.Mode ?? Mode.In;
+            var wipe     = Animation;
+            var mode     = wipe.Mode ?? defaultMmode ?? Mode.In;
             var duration = storyboard.Duration.TimeSpan;
+
+            Fade(storyboard, wipe.Fade, fromView, toView, present, mode);
 
             var offsetStart = 0;
             ViewController view;
@@ -100,6 +75,12 @@
             }
 
             storyboard.Completed += (s, _) => view.OpacityMask = opacityMask;
+        }
+
+        public override void Animate(
+            Storyboard storyboard, ViewController view,
+            bool animateOut, bool present)
+        {
         }
 
         private static void ConfigureGradients(Wipe wipe, 

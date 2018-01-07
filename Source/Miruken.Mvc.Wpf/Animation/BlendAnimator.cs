@@ -22,56 +22,60 @@
             bool removeFromView)
         {
             return AnimateStory(Animation, fromView, toView,
-                storyboard => Animate(storyboard, Animation, 
-                fromView, toView), removeFromView);
+                storyboard => 
+                    Transition(storyboard,  fromView, toView),
+                removeFromView);
         }
 
         public override Promise Dismiss(
             ViewController fromView, ViewController toView)
         {
             return AnimateStory(Animation, fromView, toView,
-                storyboard => Animate(storyboard, Animation,
-                fromView, toView, false));
+                storyboard => 
+                    Transition(storyboard, fromView, toView, false));
         }
 
-        public void Animate(Storyboard storyboard,
-            T animation, ViewController fromView, ViewController toView,
+        public virtual void Transition(
+            Storyboard storyboard,
+            ViewController fromView, ViewController toView,
             bool present = true, Mode? defaultMmode = null)
         {
-            if (animation == null) return;
-            switch (animation.Mode ?? defaultMmode ?? Mode.In)
+            Fade(storyboard, Animation.Fade, fromView, toView,
+                present, Animation.Mode);
+            switch (Animation.Mode ?? defaultMmode ?? Mode.In)
             {
                 case Mode.In:
                     if (present)
                     {
                         toView.AddViewAbove(fromView);
-                        Animate(storyboard, animation, toView, false);
+                        Animate(storyboard, toView, false, true);
                     }
                     else
-                        Animate(storyboard, animation, fromView, true);
+                        Animate(storyboard, fromView, true, false);
                     break;
                 case Mode.Out:
                     if (present)
                     {
                         toView?.AddViewBelow(fromView);
-                        Animate(storyboard, animation, fromView, true);
+                        Animate(storyboard, fromView, true, true);
                     }
                     else
                     {
                         toView?.AddViewAbove(fromView);
-                        Animate(storyboard, animation, toView, false);
+                        Animate(storyboard, toView, false, false);
                     }
                     break;
                 case Mode.InOut:
                     if (present)
                         toView?.AddViewAbove(fromView);
-                    Animate(storyboard, animation, toView, false);
-                    Animate(storyboard, animation, fromView, true);
+                    Animate(storyboard, toView, false, present);
+                    Animate(storyboard, fromView, true, present);
                     break;
             }
         }
 
-        protected abstract void Animate(Storyboard storyboard,
-            T animation, ViewController view, bool animateOut);
+        public abstract void Animate(
+            Storyboard storyboard, ViewController view, 
+            bool animateOut, bool present);
     }
 }

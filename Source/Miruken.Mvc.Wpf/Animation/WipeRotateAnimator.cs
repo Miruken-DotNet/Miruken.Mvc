@@ -1,58 +1,56 @@
 ﻿namespace Miruken.Mvc.Wpf.Animation
 {
-    using System;
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Animation;
-    using Concurrency;
     using Mvc.Animation;
 
-    public class WipeRotateAnimator : Animator
+    public class WipeRotateAnimator : BlendAnimator<WipeRotate>
     {
-        public WipeRotateAnimator(WipeRotate wipe)
+        public WipeRotateAnimator(WipeRotate wipe) 
+            : base(wipe)
         {
-            if (wipe == null)
-                throw new ArgumentNullException(nameof(wipe));
-            Wipe = wipe;
         }
 
-        public WipeRotate Wipe { get; }
-
-        public override Promise Present(
+        public override void Transition(
+            Storyboard storyboard,
             ViewController fromView, ViewController toView,
-            bool removeFromView)
+            bool present = true, Mode? defaultMmode = null)
         {
-            return AnimateStory(Wipe, fromView, toView, storyboard =>
-            {
-                FadeAnimator.Apply(storyboard, Wipe.Fade, fromView, true);
-                ZoomAnimator.Apply(storyboard, Wipe.Zoom, fromView, true);
-                Apply(storyboard, Wipe, fromView, toView);
-            }, removeFromView);
-        }
+            var wipe    = Animation;
+            var fading  = wipe.Fade != null 
+                        ? new FadeAnimator(wipe.Fade) 
+                        : null;
+            var zooming = wipe.Zoom != null 
+                        ? new ZoomAnimator(wipe.Zoom) 
+                        : null;
 
-        public override Promise Dismiss(
-            ViewController fromView, ViewController toView)
-        {
-            return AnimateStory(Wipe, fromView, toView, storyboard =>
+            if (present)
             {
-                FadeAnimator.Apply(storyboard, Wipe.Fade, toView, false);
-                ZoomAnimator.Apply(storyboard, Wipe.Zoom, toView, false);
-                Apply(storyboard, Wipe, fromView, toView, false);
-            });
-        }
+                fading?.Animate(storyboard, fromView, true, true);
+                zooming?.Animate(storyboard, fromView, true, true);
+            }
+            else
+            {
+                fading?.Animate(storyboard, toView, false, false);
+                zooming?.Animate(storyboard, toView, false, false);
+            }
 
-        public void Apply(TimelineGroup storyboard,
-            WipeRotate wipe, ViewController fromView, ViewController toView,
-            bool present = true)
-        {
             if (wipe.Converge == true)
                 ApplyConverge(storyboard, wipe, fromView, toView, present);
             else
                 ApplyRotate(storyboard, wipe, fromView, toView, present);
         }
 
-        private static void ApplyRotate(TimelineGroup storyboard,
-            WipeRotate wipe, ViewController fromView, ViewController toView,
+        public override void Animate(
+            Storyboard storyboard, ViewController view,
+            bool animateOut, bool present)
+        {
+        }
+
+        private static void ApplyRotate(
+            TimelineGroup storyboard, WipeRotate wipe,
+            ViewController fromView, ViewController toView,
             bool present = true)
         {
             var transform = new RotateTransform();
@@ -97,8 +95,9 @@
             storyboard.Completed += (s, _) => view.OpacityMask = opacityMask;
         }
 
-        private static void ApplyConverge(TimelineGroup storyboard,
-            WipeRotate wipe, ViewController fromView, ViewController toView,
+        private static void ApplyConverge(
+            TimelineGroup storyboard, WipeRotate wipe,
+            ViewController fromView, ViewController toView,
             bool present = true)
         {
             var mode     = wipe.Mode ?? Mode.In;

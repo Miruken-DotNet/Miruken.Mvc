@@ -12,7 +12,8 @@
         {          
         }
 
-        protected override void Animate(Storyboard storyboard,
+        protected override void Animate(
+            Storyboard storyboard,
             ViewController view, bool animateOut,
             TimeSpan duration, bool present)
         {

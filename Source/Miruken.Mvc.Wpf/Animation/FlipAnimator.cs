@@ -12,9 +12,10 @@
         {
         }
 
-        protected override void Animate(Storyboard storyboard,
-            ViewController view, bool animateOut, TimeSpan duration,
-            bool present)
+        protected override void Animate(
+            Storyboard storyboard,
+            ViewController view, bool animateOut,
+            TimeSpan duration, bool present)
         {
             var angle = (Animation.Angle ?? 100) * (present ? 1 : -1);
             view.RenderTransformOrigin = new Point(.5, .5);

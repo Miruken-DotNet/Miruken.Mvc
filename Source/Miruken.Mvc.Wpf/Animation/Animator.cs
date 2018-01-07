@@ -19,7 +19,8 @@
         public abstract Promise Dismiss(
             ViewController fromView, ViewController toView);
 
-        protected static Promise AnimateStory(IAnimation animation, 
+        protected static Promise AnimateStory(
+            IAnimation animation, 
             ViewController fromView, ViewController toView,
             Action<Storyboard> animations,
             bool removeFromView = true)
@@ -57,6 +58,26 @@
                 storyboard.Completed += completed;
                 storyboard.Begin();
             });
+        }
+
+        protected void Fade(
+            Storyboard storyboard, Fade fade,
+            ViewController fromView, ViewController toView,
+            bool present, Mode? defaultMmode = null)
+        {
+            if (fade != null)
+                new FadeAnimator(fade).Transition(
+                    storyboard, fromView, toView, present, defaultMmode);
+        }
+
+        protected void Zoom(
+            Storyboard storyboard, Zoom zoom,
+            ViewController fromView, ViewController toView,
+            bool present = true, Mode? defaultMmode = null)
+        {
+            if (zoom != null)
+                new ZoomAnimator(zoom).Transition(
+                    storyboard, fromView, toView, present, defaultMmode);
         }
 
         protected static TimeSpan GetDuration(IAnimation animation)
