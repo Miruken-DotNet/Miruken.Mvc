@@ -12,7 +12,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
-        <Canvas Name="Container"/>
+        <Grid Name="Container">
+            <Label x:Name="label" Content="{Binding Path=Name}" HorizontalAlignment="Center" 
+                   VerticalAlignment="Center" Margin="0,5,0,0"
+                   FontSize="20"/>
+        </Grid>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button  x:Name="button" Content="Back" Command="{miruken:Action Back}"

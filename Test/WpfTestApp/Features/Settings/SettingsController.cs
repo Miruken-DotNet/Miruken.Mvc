@@ -4,8 +4,11 @@
 
     public class SettingsController : Controller
     {
-        public void Configure()
+        public string Name { get; set; }
+
+        public void Configure(string name)
         {
+            Name = name;
             Show<Settings>();
         }
 

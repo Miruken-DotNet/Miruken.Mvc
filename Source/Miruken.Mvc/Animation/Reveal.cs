@@ -62,13 +62,15 @@
         public static IHandler OpenPortal(this IHandler handler,
             Origin? origin = null, TimeSpan? duration = null)
         {
-            return handler.Zoom(scale:.8).RevealOut(origin);
+            return handler.Zoom(scale:.8)
+                .RevealOut(origin, duration);
         }
 
         public static IHandler ClosePortal(this IHandler handler,
             Origin? origin = null, TimeSpan? duration = null)
         {
-            return handler.Zoom(scale: .8).RevealIn(origin);
+            return handler.Zoom(scale: .8)
+                .RevealIn(origin, duration);
         }
     }
 }

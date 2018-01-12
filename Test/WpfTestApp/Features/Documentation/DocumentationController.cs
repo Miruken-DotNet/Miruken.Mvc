@@ -1,19 +1,15 @@
 ﻿namespace WpfTestApp.Features.Documentation
 {
-    using System.Threading.Tasks;
     using Miruken.Mvc;
 
     public class DocumentationController: Controller
     {
-        public void Index()
-        {
-            Show<Documentation>();
-        }
+        public string Description { get; set; }
 
-        public void Delay(int delay)
+        public void Index(string description)
         {
-            Task.Delay(delay)
-                .ContinueWith(t => Show<Documentation>());
+            Description = description;
+            Show<Documentation>();
         }
 
         public void Done()

@@ -19,6 +19,11 @@
                 <Grid Background="#FFE5E5E5"/>
             </TabItem>
         </TabControl>
+        <Grid Name="Container">
+            <TextBlock x:Name="label" Text="{Binding Path=Description}" TextWrapping="Wrap" 
+                       HorizontalAlignment="Center" Margin="30,0,30,0" FontSize="20" 
+                       Foreground="#FF666666" VerticalAlignment="Center"/>
+        </Grid>
         <Button x:Name="button" Command="{miruken:Action Done}" Content="Done" Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="61"/>
     </Grid>
 </miruken:View>
