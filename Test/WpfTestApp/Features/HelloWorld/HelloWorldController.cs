@@ -25,12 +25,12 @@
         public void Documentation()
         {
             Push<DocumentationController>(IO
-                .Fade()
-                .ZoomInOut())
+                .Accelerate(.9)
+                .OpenPortal(Origin.MiddleLeft))
                 .Index();
             /*
             Push<DocumentationController>(IO
-                .Fade()5
+                .Fade()
                 .Accelerate(.9)
                 .FlipInOut(duration:1.5.Sec()))
                 .Index();
@@ -74,11 +74,6 @@
                 .Accelerate(.9)
                 .SpinInOut(1.5.Sec()))
                 .Configure();
-        }
-
-        public void Delay()
-        {
-            Next<DocumentationController>().Delay(10000);
         }
     }
 }

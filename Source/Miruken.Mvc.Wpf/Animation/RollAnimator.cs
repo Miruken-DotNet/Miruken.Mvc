@@ -14,17 +14,17 @@
         public override void Transition(
             Storyboard storyboard,
             ViewController fromView, ViewController toView,
-            bool present = true, Mode? defaultMmode = null)
+            bool present = true)
         {
             var zoom = Animation.Zoom;
             if (zoom == null && Animation.Anchor == Origin.MiddleCenter)
                 zoom = new Zoom();
 
-            Zoom(storyboard, zoom, fromView, toView,
-                present, defaultMmode ?? Mode.Out);
+            Fade(storyboard, Animation.Fade, fromView, toView, 
+                 present, Animation.Mode ?? Mode.InOut);
+            Zoom(storyboard, zoom, fromView, toView, present, Mode.Out);
 
-            base.Transition(storyboard, fromView, toView,
-                present, defaultMmode);
+            base.Transition(storyboard, fromView, toView, present);
         }
 
         public override void Animate(

@@ -10,6 +10,16 @@
         {
         }
 
+        public override void Transition(
+            Storyboard storyboard,
+            ViewController fromView, ViewController toView,
+            bool present = true)
+        {
+            Fade(storyboard, Animation.Fade, fromView, toView,
+                present, Animation.Mode ?? Mode.InOut);
+            base.Transition(storyboard, fromView, toView, present);
+        }
+
         public override void Animate(
             Storyboard storyboard, ViewController view,
             bool animateOut, bool present)

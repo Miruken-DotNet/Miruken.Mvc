@@ -34,50 +34,68 @@
             animations(storyboard);
             return new Promise<object>((resolve, reject) =>
             {
-                EventHandler completed = null;
-                completed = (s, e) =>
+                WhenComplete(storyboard, () =>
                 {
-                    storyboard.Completed -= completed;
                     storyboard.Remove();
                     if (fromView != null)
                     {
                         if (removeFromView)
                             fromView.RemoveView();
-                        fromView.RenderTransform = Transform.Identity;
+                        fromView.RenderTransform       = Transform.Identity;
                         fromView.RenderTransformOrigin = new Point(0, 0);
+                        fromView.OpacityMask           = null;
+                        fromView.Clip                  = null;
                     }
                     if (toView != null)
                     {
                         if (!removeFromView)
                             toView.AddViewAbove(fromView);
-                        toView.RenderTransform = Transform.Identity;
+                        toView.RenderTransform       = Transform.Identity;
                         toView.RenderTransformOrigin = new Point(0, 0);
+                        toView.OpacityMask           = null;
+                        toView.Clip                  = null;
                     }
                     resolve(null, false);
-                };
-                storyboard.Completed += completed;
+                });
                 storyboard.Begin();
             });
+        }
+
+        protected static void WhenComplete(Storyboard storyboard, Action action)
+        {
+            EventHandler completed = null;
+            completed = (s, e) =>
+            {
+                storyboard.Completed -= completed;
+                action?.Invoke();
+            };
+            storyboard.Completed += completed;
         }
 
         protected void Fade(
             Storyboard storyboard, Fade fade,
             ViewController fromView, ViewController toView,
-            bool present, Mode? defaultMmode = null)
+            bool present = true, Mode? defaultMode = null)
         {
             if (fade != null)
+            {
+                fade.Mode = fade.Mode ?? defaultMode;
                 new FadeAnimator(fade).Transition(
-                    storyboard, fromView, toView, present, defaultMmode);
+                    storyboard, fromView, toView, present);
+            }
         }
 
         protected void Zoom(
             Storyboard storyboard, Zoom zoom,
             ViewController fromView, ViewController toView,
-            bool present = true, Mode? defaultMmode = null)
+            bool present = true, Mode? defaultMode = null)
         {
             if (zoom != null)
+            {
+                zoom.Mode = zoom.Mode ?? defaultMode;
                 new ZoomAnimator(zoom).Transition(
-                    storyboard, fromView, toView, present, defaultMmode);
+                    storyboard, fromView, toView, present);
+            }
         }
 
         protected static TimeSpan GetDuration(IAnimation animation)

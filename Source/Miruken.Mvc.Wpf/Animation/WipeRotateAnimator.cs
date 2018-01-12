@@ -15,7 +15,7 @@
         public override void Transition(
             Storyboard storyboard,
             ViewController fromView, ViewController toView,
-            bool present = true, Mode? defaultMmode = null)
+            bool present = true)
         {
             var wipe    = Animation;
             var fading  = wipe.Fade != null 
@@ -49,7 +49,7 @@
         }
 
         private static void ApplyRotate(
-            TimelineGroup storyboard, WipeRotate wipe,
+            Storyboard storyboard, WipeRotate wipe,
             ViewController fromView, ViewController toView,
             bool present = true)
         {
@@ -84,19 +84,16 @@
                 animation.To    = 10;
             }
 
-            var opacityMask  = view.OpacityMask;
             view.OpacityMask = brush;
 
             storyboard.Children.Add(animation);
             Storyboard.SetTarget(animation, view);
             Storyboard.SetTargetProperty(animation,
                 new PropertyPath("OpacityMask.Transform.Angle"));
-
-            storyboard.Completed += (s, _) => view.OpacityMask = opacityMask;
         }
 
         private static void ApplyConverge(
-            TimelineGroup storyboard, WipeRotate wipe,
+            Storyboard storyboard, WipeRotate wipe,
             ViewController fromView, ViewController toView,
             bool present = true)
         {
@@ -183,7 +180,6 @@
             group.Children.Add(drawTop);
             group.Children.Add(drawBottom);
 
-            var opacityMask  = view.OpacityMask;
             view.OpacityMask = brush;
 
             var animationTop = new DoubleAnimation(toAngle, duration);
@@ -199,8 +195,6 @@
             Storyboard.SetTarget(animationBottom, view);
             Storyboard.SetTargetProperty(animationBottom,
                 new PropertyPath("OpacityMask.Drawing.Children[1].Brush.Transform.Angle"));
-
-            storyboard.Completed += (s, _) => view.OpacityMask = opacityMask;
         }
     }
 }

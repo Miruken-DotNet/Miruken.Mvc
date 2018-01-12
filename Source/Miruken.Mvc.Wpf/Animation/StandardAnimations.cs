@@ -49,6 +49,12 @@
         }
 
         [Maps]
+        public RevealAnimator Create(Reveal reveal)
+        {
+            return new RevealAnimator(reveal);
+        }
+
+        [Maps]
         public WipeAnimator Create(Wipe wipe)
         {
             return new WipeAnimator(wipe);

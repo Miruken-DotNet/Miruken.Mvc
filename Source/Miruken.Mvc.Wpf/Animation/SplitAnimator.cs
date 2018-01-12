@@ -17,13 +17,14 @@
         public override void Transition(
             Storyboard storyboard,
             ViewController fromView, ViewController toView,
-            bool present = true, Mode? defaultMmode = null)
+            bool present = true)
         {
             var split    = Animation;
-            var mode     = split.Mode ?? defaultMmode ?? Mode.In;
+            var mode     = split.Mode ?? Mode.In;
             var duration = storyboard.Duration.TimeSpan;
 
-            Fade(storyboard, split.Fade, fromView, toView, present, mode);
+            Fade(storyboard, split.Fade, fromView, toView,
+                 present, mode);
 
             var offsetStart = 0;
             ViewController view;
@@ -63,7 +64,6 @@
             };
             ConfigureGradients(split, brush, offsetStart);
 
-            var opacityMask  = view.OpacityMask;
             view.OpacityMask = brush;
 
             for (var index = 0; index < brush.GradientStops.Count; ++index)
@@ -77,8 +77,6 @@
                 Storyboard.SetTargetProperty(animation,
                     new PropertyPath($"OpacityMask.GradientStops[{index}].Offset"));
             }
-
-            storyboard.Completed += (s, _) => view.OpacityMask = opacityMask;
         }
 
         public override void Animate(

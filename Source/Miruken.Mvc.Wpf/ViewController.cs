@@ -4,6 +4,7 @@
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
+    using System.Windows.Media.Imaging;
 
     public class ViewController : ContentControl
     {
@@ -136,6 +137,42 @@
             group.Children.Add(transform);
             return dep => new PropertyPath(
                 $"RenderTransform.Children[{index}].{dep.Name}");
+        }
+
+        public ViewController CreateImage(BitmapSource source)
+        {
+            var image = new Image { Source = source };
+            return new ViewController(_region, image);
+        }
+
+        public BitmapSource CreateSnapshot(
+            double dpiX = 96.0, double dpiY = 96.0)
+        {
+            var bounds = new Rect(_region.RenderSize);
+
+            if (!IsMeasureValid || !IsArrangeValid)
+            {
+                Measure(bounds.Size);
+                Arrange(bounds);
+                UpdateLayout();
+                ApplyTemplate();
+            }
+
+            var snapshot = new RenderTargetBitmap(
+                (int) (bounds.Width * dpiX / 96.0),
+                (int) (bounds.Height * dpiY / 96.0),
+                dpiX, dpiY, PixelFormats.Pbgra32);
+
+            var visualBrush   = new VisualBrush(this);
+            var drawingVisual = new DrawingVisual();
+
+            using (var drawingContext = drawingVisual.RenderOpen())
+            {
+                drawingContext.DrawRectangle(visualBrush, null, bounds);
+            }
+
+            snapshot.Render(drawingVisual);
+            return snapshot;
         }
     }
 }

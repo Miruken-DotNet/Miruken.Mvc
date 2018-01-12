@@ -11,6 +11,16 @@
         {
         }
 
+        public override void Transition(
+            Storyboard storyboard,
+            ViewController fromView, ViewController toView,
+            bool present = true)
+        {
+            Fade(storyboard, Animation.Fade, fromView, toView,
+                present, Animation.Mode ?? Mode.InOut);
+            base.Transition(storyboard, fromView, toView, present);
+        }
+
         public override void Animate(
             Storyboard storyboard, ViewController view,
             bool animateOut, bool present)
@@ -49,23 +59,19 @@
                     break;
             }
 
-            var ease = translate.Behaviors.Find<IEasingFunction>()
-                    ?? new CubicEase();
-
             var property = view.AddTransform(new TranslateTransform());
 
             if (adjustX.HasValue)
             {
                 var translateX = new DoubleAnimation
                 {
-                    From           = animateOut 
-                                   ? 0 
-                                   : view.RegionWidth * adjustX,
-                    To             = animateOut 
-                                   ? view.ActualWidth * adjustX * -1 
-                                   : 0,
-                    Duration       = storyboard.Duration,
-                    EasingFunction = ease
+                    From      = animateOut 
+                              ? 0 
+                              : view.RegionWidth * adjustX,
+                    To        = animateOut 
+                              ? view.ActualWidth * adjustX * -1 
+                              : 0,
+                    Duration = storyboard.Duration,
                 };
                 Configure(translateX, translate, animateOut);
                 storyboard.Children.Add(translateX);
@@ -78,14 +84,13 @@
             {
                 var translateY = new DoubleAnimation
                 {
-                    From           = animateOut 
-                                   ? 0 
-                                   : view.RegionHeight * adjustY,
-                    To             = animateOut 
-                                   ? view.ActualHeight * adjustY * -1
-                                   : 0,
-                    Duration       = storyboard.Duration,
-                    EasingFunction = ease
+                    From     = animateOut 
+                             ? 0 
+                             : view.RegionHeight * adjustY,
+                    To       = animateOut 
+                             ? view.ActualHeight * adjustY * -1
+                             : 0,
+                    Duration = storyboard.Duration,
                 };
                 Configure(translateY, translate, animateOut);
                 storyboard.Children.Add(translateY);

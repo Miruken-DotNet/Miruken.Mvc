@@ -15,13 +15,14 @@
         public override void Transition(
             Storyboard storyboard,
             ViewController fromView, ViewController toView,
-            bool present = true, Mode? defaultMmode = null)
+            bool present = true)
         {
             var wipe     = Animation;
-            var mode     = wipe.Mode ?? defaultMmode ?? Mode.In;
+            var mode     = wipe.Mode ?? Mode.In;
             var duration = storyboard.Duration.TimeSpan;
 
-            Fade(storyboard, wipe.Fade, fromView, toView, present, mode);
+            Fade(storyboard, wipe.Fade, fromView, toView,
+                 present, mode);
 
             var offsetStart = 0;
             ViewController view;
@@ -57,7 +58,6 @@
             var brush = new LinearGradientBrush();
             ConfigureGradients(wipe, brush, offsetStart);
 
-            var opacityMask  = view.OpacityMask;
             view.OpacityMask = brush;
 
             var overlap = wipe.OverlapDuration ?? TimeSpan.FromMilliseconds(50);
@@ -73,8 +73,6 @@
                 Storyboard.SetTargetProperty(animation,
                     new PropertyPath($"OpacityMask.GradientStops[{index}].Offset"));
             }
-
-            storyboard.Completed += (s, _) => view.OpacityMask = opacityMask;
         }
 
         public override void Animate(
@@ -101,7 +99,7 @@
                     break;
                 case Origin.TopRight:
                     brush.StartPoint = new Point(1, 0);
-                    brush.EndPoint = new Point(0, 1);
+                    brush.EndPoint   = new Point(0, 1);
                     break;
                 case Origin.MiddleRight:
                     brush.StartPoint = new Point(1, 0);

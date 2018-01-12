@@ -59,8 +59,6 @@
                 promise = AnimateStory(Animation, fromView, null, hide =>
                 {
                     hide.Duration = middle;
-                    Fade(hide, Animation.Fade, fromView, toView, present,
-                        present ? Mode.Out : Mode.In);
                     Animate(hide, fromView, true, middle, present);
                 }, removeFromView).Then((r, s) =>
                 {
@@ -79,8 +77,6 @@
                             fromView?.HideView();
                         toView.AddViewAbove(fromView);
                         show.Duration = middle;
-                        Fade(show, Animation.Fade, fromView, toView, present,
-                            present ? Mode.In : Mode.Out);
                         Animate(show, toView, false, middle, present);
                     }));
                 if (animateFrom)

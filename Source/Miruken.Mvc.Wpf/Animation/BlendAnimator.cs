@@ -38,11 +38,9 @@
         public virtual void Transition(
             Storyboard storyboard,
             ViewController fromView, ViewController toView,
-            bool present = true, Mode? defaultMmode = null)
+            bool present = true)
         {
-            Fade(storyboard, Animation.Fade, fromView, toView,
-                present, Animation.Mode);
-            switch (Animation.Mode ?? defaultMmode ?? Mode.In)
+            switch (Animation.Mode ?? Mode.InOut)
             {
                 case Mode.In:
                     if (present)
@@ -68,8 +66,8 @@
                 case Mode.InOut:
                     if (present)
                         toView?.AddViewAbove(fromView);
-                    Animate(storyboard, toView, false, present);
                     Animate(storyboard, fromView, true, present);
+                    Animate(storyboard, toView, false, present);
                     break;
             }
         }

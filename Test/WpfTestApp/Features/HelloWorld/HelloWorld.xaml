@@ -19,7 +19,7 @@
         <Button x:Name="button_ErrorAfterView" Content="Error After View" Command="{miruken:Action ErrorAfterView}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="105" Margin="17,75,10,205" Grid.Column="1"/>
         <Button x:Name="button_PushErrorBeforeView" Content="Push Error Before View" Command="{miruken:Action PushErrorBeforeView}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="129" Margin="10,43,29,237" RenderTransformOrigin="-1.149,0.543"/>
         <Button x:Name="button_PushErrorAfterView" Content="Push Error After View" Command="{miruken:Action PushErrorAfterView}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="129" Margin="10,75,29,205" RenderTransformOrigin="-1.149,0.543"/>
-        <Button x:Name="button_Delay" Content="Delay" Command="{miruken:Action Delay}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="105" Margin="10,251,53,29" RenderTransformOrigin="-1.149,0.543"/>
+        <Button x:Name="button_Capture" Content="Capture" HorizontalAlignment="Center" VerticalAlignment="Center" Width="105" Margin="10,251,53,29" RenderTransformOrigin="-1.149,0.543" Click="button_Capture_Click"/>
         <Button x:Name="button_Settings" Content="Settings" Command="{miruken:Action Settings}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="105" Margin="17,251,10,29" RenderTransformOrigin="-1.149,0.543" Grid.Column="1"/>
     </Grid>
 </miruken:View>

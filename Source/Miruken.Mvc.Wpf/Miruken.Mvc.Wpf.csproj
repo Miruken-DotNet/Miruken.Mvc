@@ -62,6 +62,7 @@
     <Compile Include="Animation\Behavior.cs" />
     <Compile Include="Animation\ChainAnimator.cs" />
     <Compile Include="Animation\BlendAnimator.cs" />
+    <Compile Include="Animation\RevealAnimator.cs" />
     <Compile Include="Animation\SpinAnimator.cs" />
     <Compile Include="Animation\WipeRotateAnimator.cs" />
     <Compile Include="Animation\WipeAnimator.cs" />
