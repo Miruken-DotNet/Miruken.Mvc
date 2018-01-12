@@ -17,16 +17,10 @@
             ViewController fromView, ViewController toView,
             bool present = true)
         {
-            var reveal = Animation;
-            var mode   = reveal.Mode ?? Mode.Out;
-
-            var fading = reveal.Fade != null
-                ? new FadeAnimator(reveal.Fade)
-                : null;
-
-            var zooming = reveal.Zoom != null
-                ? new ZoomAnimator(reveal.Zoom)
-                : null;
+            var reveal  = Animation;
+            var mode    = reveal.Mode ?? Mode.Out;
+            var fading  = FadeAnimator.For(reveal);
+            var zooming = ZoomAnimator.For(reveal.Zoom);
 
             switch (mode)
             { 

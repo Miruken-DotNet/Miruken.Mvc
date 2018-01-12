@@ -29,5 +29,15 @@
             Storyboard.SetTarget(animation, view);
             Storyboard.SetTargetProperty(animation, Opacity);
         }
+
+        public static FadeAnimator For(IAnimation animation)
+        {
+            return For(animation?.Fade);
+        }
+
+        public static FadeAnimator For(Fade fade)
+        {
+            return fade != null ? new FadeAnimator(fade) : null;
+        }
     }
 }

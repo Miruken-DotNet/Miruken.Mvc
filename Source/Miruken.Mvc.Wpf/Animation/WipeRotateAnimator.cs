@@ -18,12 +18,8 @@
             bool present = true)
         {
             var wipe    = Animation;
-            var fading  = wipe.Fade != null 
-                        ? new FadeAnimator(wipe.Fade) 
-                        : null;
-            var zooming = wipe.Zoom != null 
-                        ? new ZoomAnimator(wipe.Zoom) 
-                        : null;
+            var fading  = FadeAnimator.For(wipe);
+            var zooming = ZoomAnimator.For(wipe.Zoom);
 
             if (present)
             {

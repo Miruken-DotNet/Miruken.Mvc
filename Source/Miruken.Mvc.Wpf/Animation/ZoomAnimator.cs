@@ -58,5 +58,10 @@
             Storyboard.SetTargetProperty(animationY,
                 property(ScaleTransform.ScaleYProperty));
         }
+
+        public static ZoomAnimator For(Zoom zoom)
+        {
+            return zoom != null ? new ZoomAnimator(zoom) : null;
+        }
     }
 }
