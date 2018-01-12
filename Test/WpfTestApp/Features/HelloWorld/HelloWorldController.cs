@@ -24,17 +24,17 @@
 
         public void Documentation()
         {
+            /*
             Push<DocumentationController>(IO
                 .Accelerate(.9)
                 .OpenPortal(Origin.MiddleLeft))
                 .Index();
-            /*
+            */
             Push<DocumentationController>(IO
                 .Fade()
                 .Accelerate(.9)
                 .FlipInOut(duration:1.5.Sec()))
                 .Index();
-            */
         }
 
         public void About()

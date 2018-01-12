@@ -17,6 +17,11 @@
             ViewController view, bool animateOut,
             TimeSpan duration, bool present)
         {
+            Fade(storyboard, Animation.Fade,
+                animateOut ? view : null,
+                animateOut ? null : view,
+                present);
+
             var angle = 360 * (present ? -1 : 1);
             view.RenderTransformOrigin = new Point(.5, .5);
             var property = view.AddTransform(new RotateTransform());
