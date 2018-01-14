@@ -24,7 +24,7 @@
 
         public void Documentation()
         {
-            Push<DocumentationController>(IO
+            Next<DocumentationController>(IO
                 .Accelerate(.9)
                 .OpenPortal(Origin.MiddleLeft))
                 .Index("Miruken is an application framework that embraces composition, convention, decoration, intention, and aspect-oriented programming. Miru and ken are Japanese words that both mean 'view'. Put them together and you have Miruken. It means 'a view of a view' and alludes to composition.");

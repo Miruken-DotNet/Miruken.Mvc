@@ -89,6 +89,16 @@
                     Translate(storyboard, part1, Origin.TopCenter, animateOut);
                     Translate(storyboard, part2, Origin.BottomCenter, animateOut);
                     break;
+                case Origin.TopLeft:
+                case Origin.BottomRight:
+                    Translate(storyboard, part1, Origin.TopLeft, animateOut);
+                    Translate(storyboard, part2, Origin.BottomRight, animateOut);
+                    break;
+                case Origin.TopRight:
+                case Origin.BottomLeft:
+                    Translate(storyboard, part1, Origin.TopRight, animateOut);
+                    Translate(storyboard, part2, Origin.BottomLeft, animateOut);
+                    break;
             }
         }
 
@@ -107,7 +117,6 @@
             {
                 case Origin.MiddleLeft:
                     size.Width = size.Width / 2;
-                    view.Clip  = new RectangleGeometry(new Rect(size));
                     translateX = new DoubleAnimation(
                         animateOut ? 0 : -size.Width,
                         animateOut ? -size.Width : 0,
@@ -115,16 +124,17 @@
                     break;
                 case Origin.MiddleRight:
                     size.Width = size.Width / 2;
-                    view.Clip  = new RectangleGeometry(new Rect(
-                        new Point(size.Width, 0), size));
                     translateX = new DoubleAnimation(
                         animateOut ? 0 : size.Width,
                         animateOut ? size.Width : 0,
                         duration);
                     break;
+            }
+
+            switch (origin)
+            {
                 case Origin.TopCenter:
                     size.Height = size.Height / 2;
-                    view.Clip   = new RectangleGeometry(new Rect(size));
                     translateY  = new DoubleAnimation(
                         animateOut ? 0 : -size.Height,
                         animateOut ? -size.Height : 0,
@@ -132,12 +142,28 @@
                     break;
                 case Origin.BottomCenter:
                     size.Height = size.Height / 2;
-                    view.Clip   = new RectangleGeometry(new Rect(
-                        new Point(0, size.Height), size));
                     translateY  = new DoubleAnimation(
                         animateOut ? 0 : size.Height,
                         animateOut ? size.Height : 0,
                         duration);
+                    break;
+            }
+
+            switch (origin)
+            {
+                case Origin.MiddleLeft:
+                    view.Clip = new RectangleGeometry(new Rect(size));
+                    break;
+                case Origin.MiddleRight:
+                    view.Clip = new RectangleGeometry(new Rect(
+                        new Point(size.Width, 0), size));
+                    break;
+                case Origin.TopCenter:
+                    view.Clip = new RectangleGeometry(new Rect(size));
+                    break;
+                case Origin.BottomCenter:
+                    view.Clip = new RectangleGeometry(new Rect(
+                        new Point(0, size.Height), size));
                     break;
             }
 
