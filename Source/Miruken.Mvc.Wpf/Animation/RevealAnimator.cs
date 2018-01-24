@@ -1,5 +1,7 @@
 ﻿namespace Miruken.Mvc.Wpf.Animation
 {
+    using System;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Media;
     using System.Windows.Media.Animation;
@@ -106,8 +108,8 @@
             Storyboard storyboard, ViewController view, 
             Origin origin, bool animateOut)
         {
+            var size     = view.RegionSize;
             var duration = storyboard.Duration;
-            var size     = new Size(view.RegionWidth, view.RegionHeight);
 
             DoubleAnimation translateX = null;
             DoubleAnimation translateY = null;
@@ -115,15 +117,21 @@
 
             switch (origin)
             {
+                case Origin.TopLeft:
                 case Origin.MiddleLeft:
-                    size.Width = size.Width / 2;
+                case Origin.BottomLeft:
+                    if (origin == Origin.MiddleLeft)
+                        size.Width = size.Width / 2;
                     translateX = new DoubleAnimation(
                         animateOut ? 0 : -size.Width,
                         animateOut ? -size.Width : 0,
                         duration);
                     break;
+                case Origin.TopRight:
                 case Origin.MiddleRight:
-                    size.Width = size.Width / 2;
+                case Origin.BottomRight:
+                    if (origin == Origin.MiddleRight)
+                        size.Width = size.Width / 2;
                     translateX = new DoubleAnimation(
                         animateOut ? 0 : size.Width,
                         animateOut ? size.Width : 0,
@@ -133,15 +141,21 @@
 
             switch (origin)
             {
+                case Origin.TopLeft:
+                case Origin.TopRight:
                 case Origin.TopCenter:
-                    size.Height = size.Height / 2;
+                    if (origin == Origin.TopCenter)
+                        size.Height = size.Height / 2;
                     translateY  = new DoubleAnimation(
                         animateOut ? 0 : -size.Height,
                         animateOut ? -size.Height : 0,
                         duration);
                     break;
                 case Origin.BottomCenter:
-                    size.Height = size.Height / 2;
+                case Origin.BottomRight:
+                case Origin.BottomLeft:
+                    if (origin == Origin.BottomCenter)
+                        size.Height = size.Height / 2;
                     translateY  = new DoubleAnimation(
                         animateOut ? 0 : size.Height,
                         animateOut ? size.Height : 0,
@@ -165,6 +179,30 @@
                     view.Clip = new RectangleGeometry(new Rect(
                         new Point(0, size.Height), size));
                     break;
+                case Origin.TopLeft:
+                    view.Clip = CreatePath(
+                        new Point(0, size.Height),
+                        new Point(0, 0),
+                        new Point(size.Width, 0));
+                    break;
+                case Origin.TopRight:
+                    view.Clip = CreatePath(
+                        new Point(0, 0),
+                        new Point(size.Width, 0),
+                        new Point(size.Width, size.Height));
+                    break;
+                case Origin.BottomRight:
+                    view.Clip = CreatePath(
+                        new Point(size.Width, 0),
+                        new Point(size.Width, size.Height),
+                        new Point(0, size.Height));
+                    break;
+                case Origin.BottomLeft:
+                    view.Clip = CreatePath(
+                        new Point(0, 0),
+                        new Point(0, size.Height),
+                        new Point(size.Width, size.Height));
+                    break;
             }
 
             if (translateX != null)
@@ -187,6 +225,21 @@
 
             WhenComplete(storyboard, () => view.RemoveView());
             view.AddView();
+        }
+
+        private static PathGeometry CreatePath(params Point[] points)
+        {
+            return points.Length >= 3 
+                 ? new PathGeometry(new PathFigureCollection
+                 {
+                     new PathFigure
+                     {
+                         StartPoint = points[0],
+                         Segments   = new PathSegmentCollection(
+                             points.Skip(1).Select(p => new LineSegment(p, false)))
+
+                     }
+                 }) : null;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace Miruken.Mvc
 {
     using System;
+    using System.Globalization;
     using System.Reflection;
     using System.Runtime.Remoting;
     using System.Runtime.Remoting.Messaging;
@@ -64,7 +65,7 @@
                     m = RuntimeHelper.SelectMethod(method, controller.GetType());
                 return m.Invoke(controller,
                     BindingFlags.Instance | BindingFlags.Public,
-                    null, args, null);
+                    null, args, CultureInfo.InvariantCulture);
             };
 
             try

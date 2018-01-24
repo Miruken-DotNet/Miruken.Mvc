@@ -15,22 +15,26 @@
             AddHandlers(mainRegion);
         }
 
-        object INavigate.Next<C>(Func<C, object> action)
+        object INavigate.Next<C>(Func<C, object> action,
+            Func<IHandler, IHandler> configureIO)
         {
-            return Navigate(action, NavigationStyle.Next);
+            return Navigate(action, NavigationStyle.Next, configureIO);
         }
 
-        object INavigate.Push<C>(Func<C, object> action)
+        object INavigate.Push<C>(Func<C, object> action,
+            Func<IHandler, IHandler> configureIO)
         {
-            return Navigate(action, NavigationStyle.Push);
+            return Navigate(action, NavigationStyle.Push, configureIO);
         }
 
-        object INavigate.Navigate<C>(Func<C, object> action, NavigationStyle style)
+        object INavigate.Navigate<C>(Func<C, object> action,
+            NavigationStyle style, Func<IHandler, IHandler> configureIO)
         {
-            return Navigate(action, style);
+            return Navigate(action, style, configureIO);
         }
 
-        private static object Navigate<C>(Func<C, object> action, NavigationStyle style)
+        private static object Navigate<C>(Func<C, object> action,
+            NavigationStyle style, Func<IHandler, IHandler> configureIO)
             where C : class, IController
         {
             if (action == null)
@@ -79,20 +83,13 @@
                     }
                 }
 
-                var oldIo = ctrl?._io;
-
                 if (ctrl != null)
                 {
                     // Propogate composer options
                     var io = ReferenceEquals(context, ctx)
                            ? composer : ctx.Self().Chain(composer);
-                    var prepare = Controller.GlobalPrepare;
-                    if (prepare != null)
-                    {
-                        io = prepare.GetInvocationList().Cast<FilterBuilder>()
-                            .Aggregate(io, (cur, b) => b(cur) ?? cur);
-                    }
-                    ctrl._io = io;
+                    io = configureIO?.Invoke(io) ?? io;
+                    BindIO(io, ctrl);
                 }
 
                 try
@@ -101,7 +98,7 @@
                 }
                 finally
                 {
-                    if (ctrl != null) ctrl._io = oldIo;
+                    BindIO(null, ctrl);
                     if (initiator != null && initiator.Context == ctx &&
                         initiator != controller)
                     {
@@ -125,6 +122,20 @@
             var composer   = Composer;
             var controller = composer?.Resolve<Controller>();
             return controller?._retryAction?.Invoke(composer);
+        }
+
+        private static void BindIO(IHandler io, Controller controller)
+        {
+            if (controller == null) return;
+            var prepare = Controller.GlobalPrepare;
+            if (prepare != null)
+            {
+                io = prepare.GetInvocationList()
+                    .Cast<FilterBuilder>()
+                    .Aggregate(io ?? controller.Context,
+                        (cur, b) => b(cur) ?? cur);
+            }
+            controller._io = io;
         }
 
         private static IController ResolveController(IContext context, Type type)
