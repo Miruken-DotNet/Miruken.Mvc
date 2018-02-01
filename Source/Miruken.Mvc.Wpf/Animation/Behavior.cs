@@ -51,6 +51,17 @@
             return handler.Behavior(easing);
         }
 
+        public static IHandler Bounce(this IHandler handler,
+            double? bounciness = null, int? bounces = null)
+        {
+            var bounce = new BounceEase();
+            if (bounciness.HasValue)
+                bounce.Bounciness = bounciness.Value;
+            if (bounces.HasValue)
+                bounce.Bounces = bounces.Value;
+            return handler.Ease(bounce);
+        }
+
         public static IHandler Timeline(
             this IHandler handler, TimelineBehavior timeline)
         {

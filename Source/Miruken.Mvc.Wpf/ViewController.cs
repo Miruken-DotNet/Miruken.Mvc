@@ -141,7 +141,7 @@
                 $"RenderTransform.Children[{index}].{dep.Name}");
         }
 
-        public ViewController CreateImage(BitmapSource source)
+        public ViewController CreateImageView(BitmapSource source)
         {
             var image = new Image { Source = source };
             return new ViewController(_region, image);

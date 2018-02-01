@@ -5,6 +5,7 @@
     using Callback;
     using Container;
     using Context;
+    using Error;
     using Options;
     using Views;
 
@@ -107,13 +108,13 @@
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 if (style != NavigationStyle.Next)
                     ctx.End();
                 else if (initiator != null && initiator.Context == ctx)
                     controller.DependsOn(initiator);
-                throw;
+                return ctrl._io.Proxy<IErrors>().HandleException(ex);
             }
         }
 

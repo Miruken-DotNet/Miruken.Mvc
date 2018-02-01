@@ -64,8 +64,8 @@
             bool animateOut, bool present)
         {
             var snapshot = view.CreateSnapshot();
-            var part1    = view.CreateImage(snapshot);
-            var part2    = view.CreateImage(snapshot);
+            var part1    = view.CreateImageView(snapshot);
+            var part2    = view.CreateImageView(snapshot);
             animateOut   = !(animateOut ^ present);
 
             view.HideView();
