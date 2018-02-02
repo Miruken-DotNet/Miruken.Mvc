@@ -46,19 +46,20 @@
       <HintPath>..\..\packages\Castle.Windsor.4.1.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken, Version=1.10.1.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.1.10.1.1-prerelease\lib\net461\Miruken.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Miruken, Version=1.11.25.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.1.11.25-Alpha.0\lib\net461\Miruken.dll</HintPath>
     </Reference>
-    <Reference Include="Miruken.Castle, Version=1.10.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Castle.1.10.0.1\lib\net461\Miruken.Castle.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Miruken.Castle, Version=1.11.25.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Castle.1.11.25-Alpha.0\lib\net461\Miruken.Castle.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -98,10 +99,6 @@
     <ProjectReference Include="..\..\Source\Miruken.Mvc.Console\Miruken.Mvc.Console.csproj">
       <Project>{96930b8d-3ca9-4506-853c-87e974dc546d}</Project>
       <Name>Miruken.Mvc.Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Source\Miruken.Mvc.Wpf\Miruken.Mvc.Wpf.csproj">
-      <Project>{657afca9-9eb0-48fd-9648-fd9d96d1ef14}</Project>
-      <Name>Miruken.Mvc.Wpf</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Source\Miruken.Mvc\Miruken.Mvc.csproj">
       <Project>{531ce161-7133-449d-86f6-60b72cb3047a}</Project>
