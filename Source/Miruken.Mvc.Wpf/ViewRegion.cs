@@ -84,7 +84,11 @@
                 var pop     = overlay ? PushOverlay() : PushLayer();
                 var context = composer.Resolve<IContext>();
                 if (context != null)
-                    context.ContextEnding += _ => pop.Dispose();
+                    context.ContextEnding += _ =>
+                    {
+                        if (Layers.Count > 1)
+                            pop.Dispose();
+                    };
             }
 
             if (layer == null) layer = ActiveLayer;
@@ -286,7 +290,7 @@
             var activeView = ActiveView;
             var animation  = options?.Animation;
 
-            if (animation != null)
+            if (animation != null && animation != NoAnimation.Instance)
             {
                 var animator = composer.BestEffort().Resolve()
                     .Proxy<IMapping>().Map<IAnimator>(animation);
@@ -320,7 +324,7 @@
                     IAnimation, IHandler, Promise>(RemoveView)
                     , fromView, composer);
 
-            if (animation != null)
+            if (animation != null && animation != NoAnimation.Instance)
             {
                 var animator = composer.BestEffort().Resolve()
                     .Proxy<IMapping>().Map<IAnimator>(animation);

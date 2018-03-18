@@ -89,6 +89,16 @@
             return Region(handler).Show(init);
         }
 
+        protected IViewLayer Show(IView view)
+        {
+            return Show(IO, view);
+        }
+
+        protected IViewLayer Show(IHandler handler, IView view)
+        {
+            return view.Display(Region(handler));
+        }
+
         protected IViewLayer Overlay<V>(Action<V> init = null)
             where V : IView
         {

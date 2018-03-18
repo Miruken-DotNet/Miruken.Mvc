@@ -33,25 +33,11 @@ namespace Miruken.Mvc
             return controller;
         }
 
-        public static IController DoestNotDependOn(this IController controller, IView dependency)
-        {
-            if (controller?.Policy != null && dependency != null)
-                controller.Policy.RemoveDependency(dependency.Policy);
-            return controller;
-        }
-
         public static IController DependsOn(this IController controller, IController dependency)
         {
             if (controller?.Policy != null && dependency != null)
                 controller.Policy.AddDependency(dependency.Policy);
             return controller;
-        }
-
-        public static bool DoesDependOn(this IController controller, IView dependency)
-        {
-            if (controller?.Policy != null && dependency != null)
-                return controller.Policy.IsDependency(dependency.Policy);
-            return false;
         }
 
         public static IHandler PublishFromRoot(this IHandler handler)

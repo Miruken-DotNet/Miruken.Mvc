@@ -1,6 +1,9 @@
 ﻿namespace WpfTestApp.Features.Settings
 {
+    using About;
     using Miruken.Mvc;
+    using Miruken.Mvc.Animation;
+    using Miruken.Mvc.Options;
 
     public class SettingsController : Controller
     {
@@ -10,6 +13,11 @@
         {
             Name = name;
             Show<Settings>();
+        }
+
+        public void About()
+        {
+            Push<AboutController>(IO.OpenPortal()).About();
         }
 
         public void Back()

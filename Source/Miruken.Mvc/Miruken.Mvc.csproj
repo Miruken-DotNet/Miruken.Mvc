@@ -57,6 +57,7 @@
     </Compile>
     <Compile Include="Animation\Animation.cs" />
     <Compile Include="Animation\Mode.cs" />
+    <Compile Include="Animation\NoAnimation.cs" />
     <Compile Include="Animation\Origin.cs" />
     <Compile Include="Animation\Flip.cs" />
     <Compile Include="Animation\Reveal.cs" />

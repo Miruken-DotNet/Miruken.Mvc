@@ -1,44 +1,10 @@
-﻿using System;
-using Miruken.Callback;
-using Miruken.Context;
-
-namespace Miruken.Mvc.Views
+﻿namespace Miruken.Mvc.Views
 {
-    internal abstract class RegionViewAdapter : ViewAdapter
-    {
-        /// <summary>
-        /// Region Adapter to capture the controllers <see cref="IView"/>
-        /// and display it in the newly created <see cref="IViewStackView"/>.
-        /// That stack view is then displayed in the actual region.
-        /// </summary>
-        protected class ViewStackAdapter : RegionAdapter, IViewStack
-        {
-            private readonly IViewStackView _stack;
-
-            public ViewStackAdapter(IViewRegion region, IViewStackView stack)
-				: base(region)
-			{
-			    _stack = stack;
-			}
-
-            public override IViewLayer Show(IView view)
-            {
-                var layer = view.Display(_stack);
-				_stack.Display(Inner);
-				return layer;
-			}
-
-            IDisposable IViewStack.PushLayer()
-            {
-                return _stack.PushLayer();
-            }
-
-            void IViewStack.UnwindLayers()
-            {
-                _stack.UnwindLayers();
-            }
-        }
-    }
+    using System;
+    using Animation;
+    using Callback;
+    using Context;
+    using Options;
 
     /// <summary>
     /// View adapter that installs a new <see cref="IViewRegion"/>
@@ -46,7 +12,7 @@ namespace Miruken.Mvc.Views
     /// new <see cref="C"/>controller on to the stack.
     /// </summary>
     /// <typeparam name="C">Concrete controller</typeparam>
-    internal class RegionView<C> : RegionViewAdapter 
+    internal class RegionView<C> : ViewAdapter 
         where C : class, IController
     {
         private readonly Action<C> _action;
@@ -68,15 +34,18 @@ namespace Miruken.Mvc.Views
         /// <returns>The layer representing the new controller</returns>
         public override IViewLayer Display(IViewRegion region)
         {
-            var stack = _composer.Proxy<IViewRegion>().View<IViewStackView>();
-            var stackAdapter = new ViewStackAdapter(region, stack);
-            // Temporarily install the stack region adapter.
-            var controller = new HandlerAdapter(stackAdapter).Chain(_composer).Push<C>();
-            var context    = controller.Context;
-            context.AddHandlers(stack);
-            _action(controller);
-            stackAdapter.ViewLayer.Disposed += (s,e) => context.End();
-            return Layer = stackAdapter.ViewLayer;
+            var stack = region.View<IViewStackView>();
+            return _composer.NoAnimation().Proxy<INavigate>()
+                .Push((C controller) =>
+                {
+                    var context = controller.Context;
+                    context.AddHandlers(stack);
+                    _action(controller);
+                    var layer = stack.Display(_composer.PushLayer().Proxy<IViewRegion>());
+                    layer.Disposed += (s, e) => context.End();
+                    context.ContextEnded += ctx => layer.Dispose();
+                    return layer;
+                }) as IViewLayer;
         }
     }
 

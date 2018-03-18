@@ -16,26 +16,22 @@
             AddHandlers(mainRegion);
         }
 
-        object INavigate.Next<C>(Func<C, object> action,
-            Func<IHandler, IHandler> configureIO)
+        object INavigate.Next<C>(Func<C, object> action)
         {
-            return Navigate(action, NavigationStyle.Next, configureIO);
+            return Navigate(action, NavigationStyle.Next);
         }
 
-        object INavigate.Push<C>(Func<C, object> action,
-            Func<IHandler, IHandler> configureIO)
+        object INavigate.Push<C>(Func<C, object> action)
         {
-            return Navigate(action, NavigationStyle.Push, configureIO);
+            return Navigate(action, NavigationStyle.Push);
         }
 
-        object INavigate.Navigate<C>(Func<C, object> action,
-            NavigationStyle style, Func<IHandler, IHandler> configureIO)
+        object INavigate.Navigate<C>(Func<C, object> action, NavigationStyle style)
         {
-            return Navigate(action, style, configureIO);
+            return Navigate(action, style);
         }
 
-        private static object Navigate<C>(Func<C, object> action,
-            NavigationStyle style, Func<IHandler, IHandler> configureIO)
+        private static object Navigate<C>(Func<C, object> action, NavigationStyle style)
             where C : class, IController
         {
             if (action == null)
@@ -86,10 +82,9 @@
 
                 if (ctrl != null)
                 {
-                    // Propogate composer options
+                    // Propagate composer options
                     var io = ReferenceEquals(context, ctx)
                            ? composer : ctx.Self().Chain(composer);
-                    io = configureIO?.Invoke(io) ?? io;
                     BindIO(io, ctrl);
                 }
 
@@ -114,7 +109,7 @@
                     ctx.End();
                 else if (initiator != null && initiator.Context == ctx)
                     controller.DependsOn(initiator);
-                return ctrl._io.Proxy<IErrors>().HandleException(ex);
+                return ctrl?._io.Proxy<IErrors>().HandleException(ex);
             }
         }
 
