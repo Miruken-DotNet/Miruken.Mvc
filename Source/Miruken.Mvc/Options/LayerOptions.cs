@@ -8,11 +8,8 @@ namespace Miruken.Mvc.Options
     public class LayerOptions : Options<LayerOptions>
     {
         public bool? Push      { get; set; }
-
         public bool? Overlay   { get; set; }
-
         public bool? Unload    { get; set; }
-
         public bool? Immediate { get; set; }
 
         public Func<IViewLayer[], IViewLayer> Selector { get; set; }

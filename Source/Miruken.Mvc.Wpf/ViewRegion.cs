@@ -86,7 +86,7 @@
                 if (context != null)
                     context.ContextEnding += _ =>
                     {
-                        if (Layers.Count > 1)
+                        if (Layers.Count > 1) // allows ending animation
                             pop.Dispose();
                     };
             }
@@ -109,13 +109,14 @@
                 navigation = EnsureCompatibleNavigation(composer);
                 region     = new ViewRegion();
             }
+            IContext context = null;
             var window = CreateWindow(owner, options, region);
             IHandler handler = null;
             if (ReferenceEquals(region, this))
                 handler = composer;
             else if (navigation?.Style == NavigationStyle.Push)
             {
-                var context = composer.Resolve<IContext>();
+                context = composer.Resolve<IContext>();
                 context.AddHandlers(region);
                 handler = composer;
             }
@@ -129,6 +130,8 @@
                 else
                     window.Dispatcher.Invoke(new ThreadStart(window.Close));
             };
+            if (context != null)
+                context.ContextEnding += _ => layer.Dispose();
             window.Closed += (s, e) => layer.Dispose();
             switch (options.FillScreen)
             {

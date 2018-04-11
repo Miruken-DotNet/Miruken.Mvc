@@ -62,7 +62,7 @@ namespace Miruken.Mvc
                 var handled = proceed();
                 if (handled)
                 {
-                  var cb = callback as ICallback;
+                    var cb = callback as ICallback;
                     var promise = cb?.Result as Promise;
                     if (promise != null)
                     {
