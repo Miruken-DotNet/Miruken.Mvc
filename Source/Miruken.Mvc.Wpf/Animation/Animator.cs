@@ -63,13 +63,12 @@
 
         protected static void WhenComplete(Storyboard storyboard, Action action)
         {
-            EventHandler completed = null;
-            completed = (s, e) =>
+            void Completed(object s, EventArgs e)
             {
-                storyboard.Completed -= completed;
+                storyboard.Completed -= Completed;
                 action?.Invoke();
-            };
-            storyboard.Completed += completed;
+            }
+            storyboard.Completed += Completed;
         }
 
         protected void Fade(

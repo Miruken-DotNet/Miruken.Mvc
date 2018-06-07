@@ -17,8 +17,8 @@ namespace Miruken.Mvc.Wpf
          DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public object ViewModel
         {
-            get { return DataContext; }
-            set { DataContext = value; }
+            get => DataContext;
+            set => DataContext = value;
         }
 
         public virtual IViewLayer Display(IViewRegion region)

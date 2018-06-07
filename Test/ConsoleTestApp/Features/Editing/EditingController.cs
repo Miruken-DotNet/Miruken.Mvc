@@ -1,6 +1,5 @@
 ﻿namespace ConsoleTestApp.Features.Editing
 {
-    using Hello;
     using Miruken.Concurrency;
 
     public class EditingController : FeatureController

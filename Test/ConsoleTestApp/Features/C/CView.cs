@@ -6,7 +6,7 @@
 
     public class CView : View<CController>
     {
-        private Menu menu;
+        private readonly Menu menu;
 
         public CView()
         {

@@ -56,17 +56,16 @@
             var method     = (MethodInfo)methodCall.MethodBase;
             var args       = methodCall.Args;
 
-            Func<C, object> action = controller =>
+            object Action(C controller)
             {
                 var m = method;
                 if (_controller == null)
                     _controller = controller;
                 else if (controller != _controller)
                     m = RuntimeHelper.SelectMethod(method, controller.GetType());
-                return m.Invoke(controller,
-                    BindingFlags.Instance | BindingFlags.Public,
-                    null, args, CultureInfo.InvariantCulture);
-            };
+                return m.Invoke(controller, BindingFlags.Instance 
+                     | BindingFlags.Public, null, args, CultureInfo.InvariantCulture);
+            }
 
             try
             {
@@ -75,10 +74,10 @@
                 {
                     var request = new NavigationRequest(typeof(C), method, args, _style);
                     result = _handler.Provide(request).Proxy<INavigate>()
-                        .Navigate(action, _style);
+                        .Navigate((Func<C, object>) Action, _style);
                 }
                 else
-                    result = action(_controller);
+                    result = Action(_controller);
 
                 return new ReturnMessage(result, args, methodCall.ArgCount,
                     methodCall.LogicalCallContext, methodCall);

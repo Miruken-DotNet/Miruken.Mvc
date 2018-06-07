@@ -296,7 +296,7 @@
             if (animation != null && animation != NoAnimation.Instance)
             {
                 var animator = composer.BestEffort().Resolve()
-                    .Proxy<IMapping>().Map<IAnimator>(animation);
+                    .Map<IAnimator>(animation);
                 if (animator != null)
                     return animator.Present(fromView, view, removeFromView);
             }
@@ -330,7 +330,7 @@
             if (animation != null && animation != NoAnimation.Instance)
             {
                 var animator = composer.BestEffort().Resolve()
-                    .Proxy<IMapping>().Map<IAnimator>(animation);
+                    .Map<IAnimator>(animation);
                 if (animator != null)
                     return animator.Dismiss(fromView, toView);
             }
@@ -370,7 +370,7 @@
 
             public ViewController View
             {
-                get { return _view; }
+                get => _view;
                 private set
                 {
                     var view = (IView)_view?.Content;
@@ -390,8 +390,8 @@
 
             public event EventHandler Transitioned
             {
-                add { Events.AddHandler(TransitionedEvent, value); }
-                remove { Events.RemoveHandler(TransitionedEvent, value); }
+                add => Events.AddHandler(TransitionedEvent, value);
+                remove => Events.RemoveHandler(TransitionedEvent, value);
             } protected static readonly object TransitionedEvent = new object();
 
             public event EventHandler Disposed
@@ -403,7 +403,7 @@
                     else
                         Events.AddHandler(DisposedEvent, value);
                 }
-                remove { Events.RemoveHandler(DisposedEvent, value); }
+                remove => Events.RemoveHandler(DisposedEvent, value);
             } protected static readonly object DisposedEvent = new object();
 
             public IViewLayer TransitionTo(IView view,
@@ -470,21 +470,22 @@
                     return Region.Dispatcher.Invoke(() => Duration(duration, complete));
 
                 DispatcherTimer timer = null;
-                Action<bool, Action<bool>> stopTimer = (cancelled, c) =>
+
+                void StopTimer(bool cancelled, Action<bool> c)
                 {
                     var t = timer;
                     if (t == null) return;
                     timer = null;
                     t.IsEnabled = false;
                     c?.Invoke(cancelled);
-                };
+                }
 
                 EventHandler transitioned = null;
                 EventHandler disposed = null;
 
                 transitioned = (s, a) =>
                 {
-                    stopTimer(true, null);
+                    StopTimer(true, null);
                     Transitioned -= transitioned;
                     Disposed -= disposed;
                 };
@@ -492,7 +493,7 @@
 
                 disposed = (s, a) =>
                 {
-                    stopTimer(false, null);
+                    StopTimer(false, null);
                     Disposed -= disposed;
                     Transitioned -= transitioned;
                 };
@@ -502,10 +503,10 @@
                 {
                     Interval = TimeSpan.FromMilliseconds(duration.TotalMilliseconds)
                 };
-                timer.Tick += (_, e) => stopTimer(false, complete);
+                timer.Tick += (_, e) => StopTimer(false, complete);
                 timer.IsEnabled = true;
 
-                return new DisposableAction(() => stopTimer(true, complete));
+                return new DisposableAction(() => StopTimer(true, complete));
             }
 
             public void Dispose()

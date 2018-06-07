@@ -1,6 +1,5 @@
 ﻿namespace Miruken.Mvc.Wpf.Animation
 {
-    using System;
     using System.Linq;
     using System.Windows;
     using System.Windows.Media;

@@ -1,9 +1,7 @@
 ﻿namespace Miruken.Mvc.Wpf.Tests
 {
     using System;
-    using System.Linq.Expressions;
     using System.Text.RegularExpressions;
-    using System.Windows;
     using ExpressionEvaluator;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 

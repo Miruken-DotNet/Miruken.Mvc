@@ -19,10 +19,7 @@
         private decimal _percent;
         public decimal Percent
         {
-            get
-            {
-                return _percent;
-            }
+            get => _percent;
             set
             {
                 if(value < 0 || value > 100)

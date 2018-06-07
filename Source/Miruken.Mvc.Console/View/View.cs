@@ -10,8 +10,8 @@
 
         public ViewPolicy Policy
         {
-            get { return _policy ?? (_policy = new ViewPolicy(this)); }
-            set { _policy = value; }
+            get => _policy ?? (_policy = new ViewPolicy(this));
+            set => _policy = value;
         }
 
         public object ViewModel  { get; set; }

@@ -1,6 +1,5 @@
 ﻿namespace Miruken.Mvc.Console.Test
 {
-    using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Buffer = Console.Buffer;
 
@@ -8,7 +7,7 @@
     public class ViewTests : TestBase
     {
         private View _view;
-        private char[][] _expected = {
+        private readonly char[][] _expected = {
             new [] {'-','-','-','-','-','-','-','-','-','-'},
             new [] {'-','-','-','-','-','-','-','-','-','-'},
             new [] {'|','|','H','e','a','d','e','r','|','|'},

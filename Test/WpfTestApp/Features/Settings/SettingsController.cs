@@ -3,7 +3,6 @@
     using About;
     using Miruken.Mvc;
     using Miruken.Mvc.Animation;
-    using Miruken.Mvc.Options;
 
     public class SettingsController : Controller
     {

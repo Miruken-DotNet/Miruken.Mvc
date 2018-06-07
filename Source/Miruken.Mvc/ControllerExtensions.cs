@@ -63,8 +63,7 @@ namespace Miruken.Mvc
                 if (handled)
                 {
                     var cb = callback as ICallback;
-                    var promise = cb?.Result as Promise;
-                    if (promise != null)
+                    if (cb?.Result is Promise promise)
                     {
                         var dependency = new PromisePolicy(promise).AutoRelease();
                         parentPolicy.AddDependency(dependency);

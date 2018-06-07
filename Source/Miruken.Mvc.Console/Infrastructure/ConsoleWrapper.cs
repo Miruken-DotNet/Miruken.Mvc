@@ -11,14 +11,14 @@
 
         public int CursorLeft
         {
-            get { return Console.CursorLeft; }
-            set { Console.CursorLeft = value; }
+            get => Console.CursorLeft;
+            set => Console.CursorLeft = value;
         }
 
         public bool CursorVisible
         {
-            get { return Console.CursorVisible; }
-            set { Console.CursorVisible = value; }
+            get => Console.CursorVisible;
+            set => Console.CursorVisible = value;
         }
 
         public ConsoleKeyInfo ReadKey(bool intercept)
@@ -43,14 +43,14 @@
 
         public int WindowHeight
         {
-            get { return Console.WindowHeight; }
-            set { Console.WindowHeight = value; }
+            get => Console.WindowHeight;
+            set => Console.WindowHeight = value;
         }
 
         public int WindowWidth
         {
-            get { return Console.WindowWidth; }
-            set { Console.WindowWidth = value; }
+            get => Console.WindowWidth;
+            set => Console.WindowWidth = value;
         }
 
         public void Write(string value)

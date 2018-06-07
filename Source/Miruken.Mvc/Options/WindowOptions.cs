@@ -180,8 +180,7 @@
                 {
                     var composition   = cb as Composition;
                     cb = composition?.Callback ?? cb;
-                    var regionOptions = cb as RegionOptions;
-                    if (regionOptions != null)
+                    if (cb is RegionOptions regionOptions)
                         regionOptions.Window = null;
                 }
                 return handled;

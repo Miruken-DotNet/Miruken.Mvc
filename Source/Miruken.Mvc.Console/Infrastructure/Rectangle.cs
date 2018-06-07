@@ -18,10 +18,7 @@
 
         public Size Size
         {
-            get
-            {
-                return new Size(Width, Height);
-            }
+            get => new Size(Width, Height);
             set
             {
                 Height = value.Height;

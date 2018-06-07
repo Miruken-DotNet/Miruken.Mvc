@@ -117,8 +117,8 @@
 
             public event EventHandler CanExecuteChanged
             {
-                add { _action.CanExecuteChanged?.AddEventHandler(_scope.c, value); }
-                remove { _action.CanExecuteChanged?.RemoveEventHandler(_scope.c, value); }
+                add => _action.CanExecuteChanged?.AddEventHandler(_scope.c, value);
+                remove => _action.CanExecuteChanged?.RemoveEventHandler(_scope.c, value);
             }
 
             public bool CanExecute(object parameter)
@@ -156,8 +156,7 @@
 
                 var executeExpr = $"(({controllerKey})c).{action}";
 
-                ActionBinding binding;
-                if (!_actionCache.TryGetValue(executeExpr, out binding))
+                if (!_actionCache.TryGetValue(executeExpr, out var binding))
                 {
                     var types = new TypeRegistry();
                     types.RegisterType(controllerKey, controllerType);
