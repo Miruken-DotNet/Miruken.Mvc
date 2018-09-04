@@ -76,7 +76,7 @@
             if (push)
             {
                 var pop     = overlay ? PushOverlay() : PushLayer();
-                var context = composer.Resolve<IContext>();
+                var context = composer.Resolve<Context>();
                 if (context != null)
                     context.ContextEnding += _ => pop.Dispose();
             }

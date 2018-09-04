@@ -57,7 +57,7 @@
             return new RegionView<C>(action, handler);
         }
 
-        public static IContext AddRegion(this IContext context, IViewRegion region)
+        public static Context AddRegion(this Context context, IViewRegion region)
         {
             var child = context.CreateChild();
             child.AddHandlers(region);

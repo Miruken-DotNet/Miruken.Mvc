@@ -13,7 +13,7 @@
     [TestClass]
     public class MvcFeatureTests
     {
-        protected IContext _rootContext;
+        protected Context _rootContext;
         protected WindsorHandler _container;
 
         public class HelloView : IView

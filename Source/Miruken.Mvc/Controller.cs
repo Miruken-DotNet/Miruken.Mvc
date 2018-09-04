@@ -42,7 +42,7 @@
 
         protected void EndCallingContext()
         {
-            var context = Composer.Resolve<IContext>();
+            var context = Composer.Resolve<Context>();
             if ((context != null) && (context != Context))
                 context.End();
         }
@@ -116,7 +116,7 @@
             return Proxy<IViewRegion>(handler);
         }
 
-        protected IContext AddRegion(IViewRegion region, Action<IViewRegion> init = null)
+        protected Context AddRegion(IViewRegion region, Action<IViewRegion> init = null)
         {
             var context = Context.AddRegion(region);
             init?.Invoke(Region(context));

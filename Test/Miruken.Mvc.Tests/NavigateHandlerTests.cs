@@ -10,7 +10,7 @@
     [TestClass]
     public class NavigateHandlerTests
     {
-        private IContext _rootContext;
+        private Context _rootContext;
         private NavigateHandler _navigate;
 
         public class HelloController : Controller

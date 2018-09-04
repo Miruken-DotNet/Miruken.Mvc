@@ -38,7 +38,7 @@
                 throw new ArgumentNullException(nameof(action));
 
             var composer = Composer;
-            var context  = composer?.Resolve<IContext>();
+            var context  = composer?.Resolve<Context>();
             if (context == null)
                 throw new InvalidOperationException(
                     "A context is required for controller navigation");
@@ -134,7 +134,7 @@
             controller._io = io;
         }
 
-        private static IController ResolveController(IContext context, Type type)
+        private static IController ResolveController(Context context, Type type)
         {
             var controller = (IController)context.Proxy<IContainer>().Resolve(type);
             if (controller == null)

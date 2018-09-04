@@ -1,11 +1,12 @@
 ﻿using Miruken.Callback;
 using Miruken.Concurrency;
-using Miruken.Context;
 using Miruken.Mvc.Policy;
 using Miruken.Mvc.Views;
 
 namespace Miruken.Mvc
 {
+    using Context = Context.Context;
+
     public static class ControllerExtensions
     {
         public static IController Track(this IController controller)
@@ -42,7 +43,7 @@ namespace Miruken.Mvc
 
         public static IHandler PublishFromRoot(this IHandler handler)
         {
-            var context = handler.Resolve<IContext>();
+            var context = handler.Resolve<Context>();
             return context != null ? context.Root.Publish() : handler;
         }
 

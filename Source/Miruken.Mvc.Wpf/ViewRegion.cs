@@ -82,7 +82,7 @@
             if (push)
             {
                 var pop     = overlay ? PushOverlay() : PushLayer();
-                var context = composer.Resolve<IContext>();
+                var context = composer.Resolve<Context>();
                 if (context != null)
                     context.ContextEnding += _ =>
                     {
@@ -109,14 +109,14 @@
                 navigation = EnsureCompatibleNavigation(composer);
                 region     = new ViewRegion();
             }
-            IContext context = null;
+            Context context = null;
             var window = CreateWindow(owner, options, region);
             IHandler handler = null;
             if (ReferenceEquals(region, this))
                 handler = composer;
             else if (navigation?.Style == NavigationStyle.Push)
             {
-                context = composer.Resolve<IContext>();
+                context = composer.Resolve<Context>();
                 context.AddHandlers(region);
                 handler = composer;
             }
@@ -295,7 +295,7 @@
 
             if (animation != null && animation != NoAnimation.Instance)
             {
-                var animator = composer.BestEffort().Resolve()
+                var animator = composer.BestEffort().Infer()
                     .Map<IAnimator>(animation);
                 if (animator != null)
                     return animator.Present(fromView, view, removeFromView);
@@ -329,7 +329,7 @@
 
             if (animation != null && animation != NoAnimation.Instance)
             {
-                var animator = composer.BestEffort().Resolve()
+                var animator = composer.BestEffort().Infer()
                     .Map<IAnimator>(animation);
                 if (animator != null)
                     return animator.Dismiss(fromView, toView);
