@@ -1,5 +1,4 @@
 ﻿using System;
-using Miruken.Container;
 using Miruken.Mvc.Policy;
 
 namespace Miruken.Mvc
@@ -24,8 +23,7 @@ namespace Miruken.Mvc
             {
                 var controller = Controller;
                 if (controller == null) return;
-                var context = controller.Context;
-                context?.Proxy<IContainer>().Release(controller);
+                //var context = controller.Context;
             });
             return this;
         }

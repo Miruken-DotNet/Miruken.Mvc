@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using Callback;
-    using Container;
     using Context;
     using Error;
     using Options;
@@ -136,12 +135,13 @@
 
         private static IController ResolveController(Context context, Type type)
         {
-            var controller = (IController)context.Proxy<IContainer>().Resolve(type);
+            var controller = (IController)context.Resolve(type);
             if (controller == null)
-                throw new NotSupportedException($"Controller {type.FullName} could not be resolved");
+                throw new NotSupportedException(
+                    $"Controller {type.FullName} could not be resolved");
             context.ContextEnded += _ => controller.Release();
-            controller.Policy.AutoRelease();
             controller.Context = context;
+            controller.Policy.AutoRelease();
             return controller;
         }
     }

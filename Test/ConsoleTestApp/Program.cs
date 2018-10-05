@@ -27,9 +27,9 @@
             Console.Title = "Console Test App";
             Console.CursorVisible = false;
             var appContext = new Context();
-            appContext
-                .AddHandlers(windsorHandler, new NavigateHandler(Window.Region))
-                .AddHandler<IError>();
+            appContext.AddHandlers(windsorHandler,
+                new NavigateHandler(Window.Region),
+                new ErrorHandler());
 
             appContext.Proxy<INavigate>().Next<AController>(x =>
             {

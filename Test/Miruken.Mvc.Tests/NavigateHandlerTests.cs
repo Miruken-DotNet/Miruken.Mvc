@@ -4,6 +4,7 @@
     using Animation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Callback;
+    using Callback.Policy;
     using Context;
     using Mvc.Options;
 
@@ -13,8 +14,18 @@
         private Context _rootContext;
         private NavigateHandler _navigate;
 
+        static NavigateHandlerTests()
+        {
+            HandlerDescriptor.GetDescriptor<HelloController>();
+        }
+
         public class HelloController : Controller
         {
+            [Provides, Contextual]
+            public HelloController()
+            {           
+            }
+
             public RegionOptions SayHello()
             {
                 Console.WriteLine("Hello");
@@ -28,7 +39,7 @@
         {
             _rootContext = new Context();
             _navigate    = new NavigateHandler(new TestViewRegion());
-            _rootContext.AddHandlers(_navigate, new TestContainer());
+            _rootContext.AddHandlers(new StaticHandler(), _navigate);
         }
 
         [TestCleanup]
