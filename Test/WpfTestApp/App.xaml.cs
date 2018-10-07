@@ -7,6 +7,7 @@
     using Features.HelloWorld;
     using Miruken.Castle;
     using Miruken.Context;
+    using Miruken.Error;
     using Miruken.Mvc;
     using Miruken.Mvc.Castle;
     using Miruken.Mvc.Options;
@@ -30,6 +31,7 @@
             });
             appContext.ContextEnded += _ => windsorHandler.Dispose();
 
+            Controller.GlobalPrepare += h => h.Recover();
             appContext.AddHandlers(windsorHandler, new NavigateHandler(new ViewRegion()));
             appContext.NewWindow().Next<HelloWorldController>().Greet();
         }

@@ -53,7 +53,9 @@
         {
             var controller = _rootContext.Next<HelloController>();
             controller.SayHello();
-            Assert.AreEqual(_rootContext, controller.Context);
+            Assert.AreEqual(_rootContext, controller.Context.Parent);
+            _rootContext.Next<HelloController>().SayHello();
+            Assert.IsNull(controller.Context);
         }
 
         [TestMethod]

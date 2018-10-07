@@ -4,7 +4,6 @@
     using Castle.MicroKernel.Registration;
     using Features.A;
     using Features.Errors;
-    using Miruken;
     using Miruken.Castle;
     using Miruken.Context;
     using Miruken.Mvc;
@@ -31,7 +30,7 @@
                 new NavigateHandler(Window.Region),
                 new ErrorHandler());
 
-            appContext.Proxy<INavigate>().Next<AController>(x =>
+            appContext.Next<AController>(x =>
             {
                 x.ShowAView();
                 return true;

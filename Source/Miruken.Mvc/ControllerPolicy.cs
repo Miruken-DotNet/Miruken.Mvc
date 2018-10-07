@@ -16,16 +16,5 @@ namespace Miruken.Mvc
         }
 
         public IController Controller => _controller.Target as IController;
-
-        public ControllerPolicy AutoRelease()
-        {
-            AutoRelease(() =>
-            {
-                var controller = Controller;
-                if (controller == null) return;
-                //var context = controller.Context;
-            });
-            return this;
-        }
     }
 }

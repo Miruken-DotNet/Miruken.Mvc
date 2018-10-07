@@ -4,122 +4,99 @@
     using System.Linq;
     using Callback;
     using Context;
-    using Error;
     using Options;
     using Views;
 
-    public class NavigateHandler : CompositeHandler, INavigate
+    public class NavigateHandler : CompositeHandler
     {
         public NavigateHandler(IViewRegion mainRegion)
         {
             AddHandlers(mainRegion);
         }
 
-        object INavigate.Next<C>(Func<C, object> action)
+        [Handles]
+        public object Navigate(Navigation navigation, IHandler composer)
         {
-            return Navigate(action, NavigationStyle.Next);
-        }
-
-        object INavigate.Push<C>(Func<C, object> action)
-        {
-            return Navigate(action, NavigationStyle.Push);
-        }
-
-        object INavigate.Navigate<C>(Func<C, object> action, NavigationStyle style)
-        {
-            return Navigate(action, style);
-        }
-
-        private static object Navigate<C>(Func<C, object> action, NavigationStyle style)
-            where C : class, IController
-        {
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
-
-            var composer = Composer;
             var context  = composer?.Resolve<Context>();
             if (context == null)
+            {
                 throw new InvalidOperationException(
                     "A context is required for controller navigation");
+            }
 
-            var initiator = composer.Resolve<IController>();
+            var style            = navigation.Style;
+            var initiator        = context.SelfOrChild().Resolve<Navigation>();
+            var initiatorContext = initiator?.Controller?.Context;
+            var parentContext    = context;
 
-            var ctx = style != NavigationStyle.Next
-                    ? context.CreateChild()
-                    : context;
+            if (initiator != null && style == NavigationStyle.Next)
+            {
+                parentContext = initiatorContext?.Parent;
+                if (parentContext == null) return null;
+            }
 
-            C controller;
+            IController controller = null;
+            var childContext = parentContext.CreateChild();
             try
             {
-                controller = (C)ResolveController(ctx, typeof(C));
-                if (initiator != null && initiator != controller &&
-                    initiator.Context != ctx)
-                    initiator.DependsOn(controller);
+                controller = GetController(childContext, navigation.ControllerType);
             }
             catch
             {
-                if (style != NavigationStyle.Next) ctx.End();
-                throw;
+                return null;
+            }
+            finally
+            {
+                if (controller == null)
+                    childContext.End();
             }
 
-            var ctrl = controller as Controller;
+            childContext.AddHandlers(navigation);
+
+            if (initiator != null && style == NavigationStyle.Next)
+                initiatorContext?.End();
 
             try
             {
                 if (style == NavigationStyle.Push)
                     composer = composer.PushLayer();
                 else
-                {
-                    var init = initiator as Controller;
-                    if (ctrl != null)
-                    {
-                        ctrl._lastAction  = h => h.Proxy<INavigate>().Next(action);
-                        if (init != null)
-                            ctrl._retryAction = init._lastAction;
-                    }
-                }
+                    navigation.Back = initiator;
 
-                if (ctrl != null)
-                {
-                    // Propagate composer options
-                    var io = ReferenceEquals(context, ctx)
-                           ? composer : ctx.Self().Chain(composer);
-                    BindIO(io, ctrl);
-                }
+                // Propagate composer options
+                var io = childContext.Self().Chain(composer);
+                BindIO(io, controller);
 
                 try
                 {
-                    return action(controller);
+                    navigation.InvokeOn(controller);
                 }
                 finally
                 {
-                    BindIO(null, ctrl);
-                    if (initiator != null && initiator.Context == ctx &&
-                        initiator != controller)
-                    {
-                        initiator.Release();
-                        initiator.Context = null;
-                    }
+                    BindIO(null, controller);
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                if (style != NavigationStyle.Next)
-                    ctx.End();
-                else if (initiator != null && initiator.Context == ctx)
-                    controller.DependsOn(initiator);
-                return ctrl?._io.Proxy<IErrors>().HandleException(ex);
+                childContext.End();
             }
+
+            return true;
         }
 
-        object INavigate.GoBack()
+        [Handles]
+        public object GoBack(GoBack goBack, IHandler composer)
         {
-            var composer   = Composer;
-            var controller = composer?.Resolve<Controller>();
-            return controller?._retryAction?.Invoke(composer);
+            var back = composer.Resolve<Navigation>()?.Back;
+            if (back != null && composer.Handle(back))
+            {
+                goBack.SetResult(back.ClearResult());
+                return true;
+            }
+            return null;
         }
 
-        private static void BindIO(IHandler io, Controller controller)
+        private static void BindIO(IHandler io, IController controller)
         {
             if (controller == null) return;
             var prepare = Controller.GlobalPrepare;
@@ -130,18 +107,15 @@
                     .Aggregate(io ?? controller.Context,
                         (cur, b) => b(cur) ?? cur);
             }
-            controller._io = io;
+            controller.IO = io;
         }
 
-        private static IController ResolveController(Context context, Type type)
+        private static IController GetController(Context context, Type type)
         {
             var controller = (IController)context.Resolve(type);
-            if (controller == null)
-                throw new NotSupportedException(
-                    $"Controller {type.FullName} could not be resolved");
+            if (controller == null) return null;
             context.ContextEnded += _ => controller.Release();
             controller.Context = context;
-            controller.Policy.AutoRelease();
             return controller;
         }
     }

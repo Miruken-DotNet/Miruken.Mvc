@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,11 +34,11 @@
     <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FluentValidation.8.0.100\lib\net45\FluentValidation.dll</HintPath>
     </Reference>
-    <Reference Include="Miruken, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.2.0.4\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=2.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.2.0.5\lib\net461\Miruken.dll</HintPath>
     </Reference>
-    <Reference Include="Miruken.Validate, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Validate.2.0.4\lib\net461\Miruken.Validate.dll</HintPath>
+    <Reference Include="Miruken.Validate, Version=2.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Validate.2.0.5\lib\net461\Miruken.Validate.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -77,12 +78,13 @@
     <Compile Include="Controller.cs" />
     <Compile Include="ControllerExtensions.cs" />
     <Compile Include="ControllerPolicy.cs" />
+    <Compile Include="GoBack.cs" />
     <Compile Include="Handler.Navigate.cs" />
     <Compile Include="IController.cs" />
-    <Compile Include="INavigate.cs" />
     <Compile Include="NavigateHandler.cs" />
     <Compile Include="NavigateInterceptor.cs" />
     <Compile Include="Animation\Translate.cs" />
+    <Compile Include="Navigation.cs" />
     <Compile Include="Options\LayerOptions.cs" />
     <Compile Include="Options\RegionOptions.cs" />
     <Compile Include="Options\WindowBuilder.cs" />

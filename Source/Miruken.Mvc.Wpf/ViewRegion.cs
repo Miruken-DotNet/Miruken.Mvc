@@ -99,7 +99,7 @@
             WindowOptions options, IView content, IHandler composer)
         {
             ViewRegion        region;
-            NavigationRequest navigation = null;
+            Navigation navigation = null;
 
             var owner = Window.GetWindow(this);
             if (owner == null)  // adopt region
@@ -209,12 +209,12 @@
             return window;
         }
 
-        private static NavigationRequest EnsureCompatibleNavigation(IHandler composer)
+        private static Navigation EnsureCompatibleNavigation(IHandler composer)
         {
-            var navigation = composer.Resolve<NavigationRequest>();
+            var navigation = composer.Resolve<Navigation>();
             if (navigation?.Style == NavigationStyle.Next)
                 throw new InvalidOperationException(
-                    $"{navigation.ControllerType.FullName}::{navigation.Action.Name} is presenting a new Window, but has no matching context.  Did you do a Next instead of a Push?");
+                    $"{navigation.ControllerType.FullName} is presenting a new Window, but has no matching context.  Did you do a Next instead of a Push?");
             return navigation;
         }
 

@@ -47,8 +47,7 @@
 
             init?.Invoke(view);
 
-            var element = view as View;
-            if (element != null)
+            if (view is View element)
             {
                 if (element.ViewModel == null)
                     element.ViewModel = composer.Resolve<IController>();

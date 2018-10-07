@@ -11,23 +11,23 @@
     using Views;
 
     public delegate IHandler FilterBuilder(IHandler handler);
-    internal delegate object MemorizeAction(IHandler handler);
 
     public class Controller : ContextualHandler,
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
     {
-        internal IHandler _io;
+        private IHandler _io;
         private ControllerPolicy _policy;
-        internal MemorizeAction _lastAction;
-        internal MemorizeAction _retryAction;
         protected bool _disposed;
 
         public static FilterBuilder GlobalPrepare;
-        public static FilterBuilder GlobalExecute;
 
         #region Context
 
-        protected IHandler IO => _io ?? Context;
+        public IHandler IO
+        {
+            get => _io ?? Context;
+            set => _io = value;
+        }
 
         protected void EndContext()
         {
@@ -229,10 +229,9 @@
         protected virtual void Dispose(bool disposing)
         {
             _policy?.Release();
-            _policy     = null;
-            Context     = null;
-            _io         = null;
-            _lastAction = _retryAction = null;
+            _policy      = null;
+            Context      = null;
+            _io          = null;
         }
 
         ~Controller()

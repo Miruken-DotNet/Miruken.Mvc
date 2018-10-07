@@ -44,6 +44,11 @@
             Push<AboutController>(IO.Modal()).About();
         }
 
+        public void AboutBack()
+        {
+            Next<AboutController>(IO.Push()).AboutBack();
+        }
+
         public void CtorError()
         {
             Push<CtorErrorController>().DoNothing();

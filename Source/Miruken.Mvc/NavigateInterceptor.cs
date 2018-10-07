@@ -9,22 +9,6 @@
     using Callback;
     using Infrastructure;
 
-    public class NavigationRequest
-    {
-        public NavigationRequest(Type controllerType, MethodInfo action,
-                                 object[] args, NavigationStyle style)
-        {
-            ControllerType = controllerType;
-            Action         = action;
-            Args           = args;
-            Style          = style;
-        }
-        public Type            ControllerType { get; }
-        public MethodInfo      Action         { get; }
-        public object[]        Args           { get; }
-        public NavigationStyle Style          { get; }
-    }
-
     public class NavigateInterceptor<C> : RealProxy, IRemotingTypeInfo
         where C : class, IController
     {
@@ -60,26 +44,26 @@
             {
                 var m = method;
                 if (_controller == null)
+                {
                     _controller = controller;
+                }
                 else if (controller != _controller)
+                {
                     m = RuntimeHelper.SelectMethod(method, controller.GetType());
-                return m.Invoke(controller, BindingFlags.Instance 
+                }
+
+                return m.Invoke(controller, BindingFlags.Instance
                      | BindingFlags.Public, null, args, CultureInfo.InvariantCulture);
             }
 
             try
             {
-                object result;
-                if (_controller == null)
-                {
-                    var request = new NavigationRequest(typeof(C), method, args, _style);
-                    result = _handler.Provide(request).Proxy<INavigate>()
-                        .Navigate((Func<C, object>) Action, _style);
-                }
-                else
-                    result = Action(_controller);
+                var result = _controller == null
+                           ? _handler.Navigate((Func<C, object>) Action, _style) 
+                           : Action(_controller);
 
-                return new ReturnMessage(result, args, methodCall.ArgCount,
+                return new ReturnMessage(
+                    result, args, methodCall.ArgCount,
                     methodCall.LogicalCallContext, methodCall);
             }
             catch (TargetInvocationException tex)
@@ -90,8 +74,7 @@
 
         private static void EnsureValidAction(IMessage msg)
         {
-            var methodCall = msg as IMethodCallMessage;
-            if (methodCall == null)
+            if (!(msg is IMethodCallMessage methodCall))
                 throw new InvalidOperationException(
                     "Initial action must be done on a method");
 

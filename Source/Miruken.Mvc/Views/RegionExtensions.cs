@@ -8,7 +8,7 @@
 
     /// <summary>
     /// View adapter that installs a new <see cref="IViewRegion"/>
-    /// stack in a new child <see cref="IContext"/> and pushes a
+    /// stack in a new child <see cref="Context"/> and pushes a
     /// new <see cref="C"/>controller on to the stack.
     /// </summary>
     /// <typeparam name="C">Concrete controller</typeparam>
@@ -35,8 +35,7 @@
         public override IViewLayer Display(IViewRegion region)
         {
             var stack = region.View<IViewStackView>();
-            return _composer.NoAnimation().Proxy<INavigate>()
-                .Push((C controller) =>
+            return _composer.NoAnimation().Push((C controller) =>
                 {
                     var context = controller.Context;
                     context.AddHandlers(stack);

@@ -65,13 +65,15 @@
 
             init?.Invoke(view);
 
-            var element = view as FrameworkElement;
-            if (element != null)
+            if (view is FrameworkElement element)
             {
                 if (element.DataContext == null)
-                    element.DataContext = composer.Resolve<IController>();
+                {
+                    var navigation = composer.Resolve<Navigation>();
+                    element.DataContext = navigation?.Controller;
+                }
                 var controller = element.DataContext as IController;
-                controller.DependsOn(view);
+                controller?.DependsOn(view);
             }
 
             view.Policy.Track();
