@@ -4,7 +4,6 @@
     using System.Linq;
     using Callback;
     using Context;
-    using Options;
     using Views;
 
     public class NavigateHandler : CompositeHandler
@@ -54,15 +53,13 @@
             childContext.AddHandlers(navigation);
 
             if (initiator != null && style == NavigationStyle.Next)
+            {
+                navigation.Back = initiator;
                 initiatorContext?.End();
+            }
 
             try
             {
-                if (style == NavigationStyle.Push)
-                    composer = composer.PushLayer();
-                else
-                    navigation.Back = initiator;
-
                 // Propagate composer options
                 var io = childContext.Self().Chain(composer);
                 BindIO(io, controller);
@@ -100,14 +97,10 @@
         {
             if (controller == null) return;
             var prepare = Controller.GlobalPrepare;
-            if (prepare != null)
-            {
-                io = prepare.GetInvocationList()
-                    .Cast<FilterBuilder>()
-                    .Aggregate(io ?? controller.Context,
-                        (cur, b) => b(cur) ?? cur);
-            }
-            controller.IO = io;
+            controller.IO = prepare?.GetInvocationList()
+                .Cast<FilterBuilder>()
+                .Aggregate(io ?? controller.Context,
+                    (cur, b) => b(cur) ?? cur);
         }
 
         private static IController GetController(Context context, Type type)

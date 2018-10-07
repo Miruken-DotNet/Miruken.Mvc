@@ -2,6 +2,7 @@
 {
     using System;
     using Callback;
+    using Options;
 
     public static class HandlerNavigateExtensions
     {
@@ -51,6 +52,8 @@
         public static C Navigate<C>(this IHandler handler, NavigationStyle style)
             where C : class, IController
         {
+            if (style == NavigationStyle.Push)
+                handler = handler.PushLayer();
             return (C)new NavigateInterceptor<C>(handler, style)
                 .GetTransparentProxy();
         }
