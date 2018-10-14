@@ -75,7 +75,7 @@
         }
 
         [TestMethod]
-        public void Should_Propogate_Next_Options()
+        public void Should_Propagate_Next_Options()
         {
             var controller = 
                 _rootContext.Push(Origin.MiddleLeft)
@@ -89,7 +89,7 @@
         }
 
         [TestMethod]
-        public void Should_Propogate_Push_Options()
+        public void Should_Propagate_Push_Options()
         {
             var controller =
                 _rootContext.SlideIn(Origin.MiddleRight)

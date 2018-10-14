@@ -100,7 +100,8 @@
             controller.IO = prepare?.GetInvocationList()
                 .Cast<FilterBuilder>()
                 .Aggregate(io ?? controller.Context,
-                    (cur, b) => b(cur) ?? cur);
+                    (cur, b) => b(cur) ?? cur)
+                ?? io;
         }
 
         private static IController GetController(Context context, Type type)
