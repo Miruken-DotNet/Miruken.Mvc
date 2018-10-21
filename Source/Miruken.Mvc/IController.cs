@@ -7,6 +7,6 @@ namespace Miruken.Mvc
 
     public interface IController : IContextual, IPolicyOwner<ControllerPolicy>
     {
-        IHandler IO { get; set; }
+        IHandler IO { set; }
     }
 }

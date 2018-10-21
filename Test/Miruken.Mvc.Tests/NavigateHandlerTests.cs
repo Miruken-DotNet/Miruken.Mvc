@@ -12,11 +12,12 @@
     public class NavigateHandlerTests
     {
         private Context _rootContext;
-        private NavigateHandler _navigate;
+        private Navigator _navigate;
 
         static NavigateHandlerTests()
         {
             HandlerDescriptor.GetDescriptor<HelloController>();
+            HandlerDescriptor.GetDescriptor<GoodbyeController>();
         }
 
         public class HelloController : Controller
@@ -26,11 +27,26 @@
             {           
             }
 
-            public RegionOptions SayHello()
+            public RegionOptions SayHello(string name)
             {
-                Console.WriteLine("Hello");
+                Console.WriteLine($"Hello {name}");
+                Push<GoodbyeController>().SayGoodbye(name);
                 var options = new RegionOptions();
                 return IO.Handle(options, true) ? options : null;
+            }
+        }
+
+        public class GoodbyeController : Controller
+        {
+            [Provides, Contextual]
+            public GoodbyeController()
+            {             
+            }
+
+            public string SayGoodbye(string name)
+            {
+                EndContext();
+                return $"Goodbye {name}";
             }
         }
 
@@ -38,7 +54,7 @@
         public void TestInitialize()
         {
             _rootContext = new Context();
-            _navigate    = new NavigateHandler(new TestViewRegion());
+            _navigate    = new Navigator(new TestViewRegion());
             _rootContext.AddHandlers(new StaticHandler(), _navigate);
         }
 
@@ -52,9 +68,9 @@
         public void Should_Navigate_Next()
         {
             var controller = _rootContext.Next<HelloController>();
-            controller.SayHello();
+            controller.SayHello("Brenda");
             Assert.AreEqual(_rootContext, controller.Context.Parent);
-            _rootContext.Next<HelloController>().SayHello();
+            _rootContext.Next<HelloController>().SayHello("Matthew");
             Assert.IsNull(controller.Context);
         }
 
@@ -62,7 +78,7 @@
         public void Should_Navigate_Push()
         {
             var controller = _rootContext.Push<HelloController>();
-            controller.SayHello();
+            controller.SayHello("Craig");
             Assert.AreEqual(_rootContext, controller.Context.Parent);
         }
 
@@ -80,7 +96,7 @@
             var controller = 
                 _rootContext.Push(Origin.MiddleLeft)
                 .Next<HelloController>();
-            var options = controller.SayHello();
+            var options = controller.SayHello("Kaitlyn");
             Assert.IsNotNull(options);
             var translation = options.Animation as Translate;
             Assert.IsNotNull(translation);
@@ -94,7 +110,7 @@
             var controller =
                 _rootContext.SlideIn(Origin.MiddleRight)
                 .Push<HelloController>();
-            var options = controller.SayHello();
+            var options = controller.SayHello("Lauren");
             Assert.IsNotNull(options);
             var translation = options.Animation as Translate;
             Assert.IsNotNull(translation);
@@ -107,7 +123,7 @@
             "A context is required for navigation")]
         public void Should_Fail_If_Context_Missing()
         {
-            _navigate.Next<HelloController>().SayHello();
+            _navigate.Next<HelloController>().SayHello("Patches");
         }
     }
 }

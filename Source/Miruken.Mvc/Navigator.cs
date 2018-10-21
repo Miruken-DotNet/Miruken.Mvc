@@ -6,9 +6,9 @@
     using Context;
     using Views;
 
-    public class NavigateHandler : CompositeHandler
+    public class Navigator : CompositeHandler
     {
-        public NavigateHandler(IViewRegion mainRegion)
+        public Navigator(IViewRegion mainRegion)
         {
             AddHandlers(mainRegion);
         }
@@ -39,6 +39,7 @@
             try
             {
                 controller = GetController(childContext, navigation.ControllerType);
+                if (controller == null) return null;
             }
             catch
             {

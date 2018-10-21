@@ -45,11 +45,11 @@
       <HintPath>..\..\packages\Castle.Windsor.4.1.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken, Version=2.0.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.2.0.9\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=2.0.13.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.2.0.13-Alpha.1\lib\net461\Miruken.dll</HintPath>
     </Reference>
-    <Reference Include="Miruken.Castle, Version=2.0.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Castle.2.0.9\lib\net461\Miruken.Castle.dll</HintPath>
+    <Reference Include="Miruken.Castle, Version=2.0.13.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Castle.2.0.13-Alpha.1\lib\net461\Miruken.Castle.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>

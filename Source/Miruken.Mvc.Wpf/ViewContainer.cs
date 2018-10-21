@@ -2,7 +2,6 @@
 {
     using System;
     using System.ComponentModel;
-    using System.Windows;
     using System.Windows.Controls;
     using Callback;
     using Views;
@@ -65,16 +64,13 @@
 
             init?.Invoke(view);
 
-            if (view is FrameworkElement element)
+            if (view.ViewModel == null)
             {
-                if (element.DataContext == null)
-                {
-                    var navigation = composer.Resolve<Navigation>();
-                    element.DataContext = navigation?.Controller;
-                }
-                var controller = element.DataContext as IController;
-                controller?.DependsOn(view);
+                var navigation = composer.Resolve<Navigation>();
+                view.ViewModel = navigation?.Controller;
             }
+            var controller = view.ViewModel as IController;
+            controller?.DependsOn(view);
 
             view.Policy.Track();
             return view;

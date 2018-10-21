@@ -27,7 +27,7 @@
             Console.CursorVisible = false;
             var appContext = new Context();
             appContext.AddHandlers(windsorHandler,
-                new NavigateHandler(Window.Region),
+                new Navigator(Window.Region),
                 new ErrorHandler());
 
             appContext.Next<AController>(x =>

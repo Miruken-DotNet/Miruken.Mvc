@@ -32,7 +32,7 @@
             appContext.ContextEnded += _ => windsorHandler.Dispose();
 
             Controller.GlobalPrepare += h => h.Recover();
-            appContext.AddHandlers(windsorHandler, new NavigateHandler(new ViewRegion()));
+            appContext.AddHandlers(windsorHandler, new Navigator(new ViewRegion()));
             appContext.NewWindow().Next<HelloWorldController>().Greet();
         }
 

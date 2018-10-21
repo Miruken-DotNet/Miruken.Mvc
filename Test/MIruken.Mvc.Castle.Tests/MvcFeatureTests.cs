@@ -45,7 +45,7 @@
                 container.Install(
                     new FeaturesInstaller(
                         new MvcFeature()).Use(Classes.FromThisAssembly())));
-            _rootContext.AddHandlers(_container, new NavigateHandler(new TestViewRegion()));
+            _rootContext.AddHandlers(_container, new Navigator(new TestViewRegion()));
         }
 
         [TestCleanup]

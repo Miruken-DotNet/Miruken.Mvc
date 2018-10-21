@@ -41,12 +41,6 @@ namespace Miruken.Mvc
             return controller;
         }
 
-        public static IHandler PublishFromRoot(this IHandler handler)
-        {
-            var context = handler.Resolve<Context>();
-            return context != null ? context.Root.Publish() : handler;
-        }
-
         public static IHandler TrackPromise<P>(
             this IHandler handler, IPolicyOwner<P> policyOwner)
             where P : IPolicy

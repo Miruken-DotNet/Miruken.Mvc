@@ -12,7 +12,7 @@
 
     public delegate IHandler FilterBuilder(IHandler handler);
 
-    public class Controller : ContextualHandler,
+    public abstract class Controller : ContextualHandler,
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
     {
         private IHandler _io;
@@ -25,7 +25,9 @@
 
         public IHandler IO
         {
-            get => _io ?? Context;
+            protected get => _io ?? Context
+                ?? throw new InvalidOperationException(
+                    $"{GetType().FullName} is not bound to a context");
             set => _io = value;
         }
 
@@ -38,18 +40,6 @@
         protected void EndContext(object sender, EventArgs e)
         {
             EndContext();
-        }
-
-        protected void EndCallingContext()
-        {
-            var context = Composer.Resolve<Context>();
-            if ((context != null) && (context != Context))
-                context.End();
-        }
-
-        protected void EndCallingContext(object sender, EventArgs e)
-        {
-            EndCallingContext();
         }
 
         #endregion
