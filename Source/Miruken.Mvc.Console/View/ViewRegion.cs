@@ -11,14 +11,18 @@
     using Options;
     using Views;
 
-    public class ViewRegion : ViewContainer, IViewStackView
+    public class ViewRegion : ViewContainer, IViewStackView, IDisposable
     {
         private bool _unwinding;
 
         public ViewRegion()
         {
             Layers = new List<ViewLayer>();
-            Policy.OnRelease(UnwindLayers);
+        }
+
+        void IDisposable.Dispose()
+        {
+            UnwindLayers();
         }
 
         private List<ViewLayer> Layers { get; }
@@ -169,7 +173,6 @@
         public class ViewLayer : IViewLayer
         {
             private readonly bool _overlay;
-            private View _element;
             protected bool _disposed;
 
             public ViewLayer(ViewRegion region, bool overlay)
@@ -182,25 +185,7 @@
             protected ViewRegion       Region { get; }
             protected EventHandlerList Events { get; }
 
-            public View Element
-            {
-                get => _element;
-                set
-                {
-                    if (ReferenceEquals(_element, value))
-                        return;
-                    var view = (IView)_element;
-                    if (Region.DoesDependOn(view))
-                        view.Release();
-                    _element = value;
-                    if (_element != null)
-                    {
-                        var elementView = (IView)_element;
-                        if (elementView.Policy.Parent == null)
-                            Region.DependsOn(elementView);
-                    }
-                }
-            }
+            public View Element { get; set; }
 
             public int Index => Region.GetLayerIndex(this);
 

@@ -16,7 +16,6 @@
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
     {
         private IHandler _io;
-        private ControllerPolicy _policy;
         protected bool _disposed;
 
         public static FilterBuilder GlobalPrepare;
@@ -41,13 +40,6 @@
         {
             EndContext();
         }
-
-        #endregion
-
-        #region Policy
-
-        public ControllerPolicy Policy => 
-            _policy ?? (_policy = new ControllerPolicy(this));
 
         #endregion
 
@@ -218,10 +210,8 @@
 
         protected virtual void Dispose(bool disposing)
         {
-            _policy?.Release();
-            _policy      = null;
-            Context      = null;
-            _io          = null;
+            Context  = null;
+            _io      = null;
         }
 
         ~Controller()

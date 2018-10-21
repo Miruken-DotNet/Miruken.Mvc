@@ -6,14 +6,6 @@
     {
         #region IView
 
-        private ViewPolicy _policy;
-
-        public ViewPolicy Policy
-        {
-            get => _policy ?? (_policy = new ViewPolicy(this));
-            set => _policy = value;
-        }
-
         public object ViewModel  { get; set; }
 
         public virtual IViewLayer Display(IViewRegion region)

@@ -1,9 +1,8 @@
 ﻿using System;
-using Miruken.Mvc.Policy;
 
 namespace Miruken.Mvc.Views
 {
-    public interface IView : IPolicyOwner<ViewPolicy>
+    public interface IView
     {
         object ViewModel { get; set; }
 

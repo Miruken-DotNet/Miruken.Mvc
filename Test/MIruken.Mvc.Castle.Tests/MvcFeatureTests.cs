@@ -19,7 +19,6 @@
         public class HelloView : IView
         {
             public object      ViewModel  { get; set; }
-            public ViewPolicy  Policy     { get; set; }
             public IViewLayer  Layer      { get; set; }
             public IController Controller { get; set; }
 

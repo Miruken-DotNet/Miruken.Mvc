@@ -76,8 +76,6 @@
     <Compile Include="Animation\Fade.cs" />
     <Compile Include="Animation\Roll.cs" />
     <Compile Include="Controller.cs" />
-    <Compile Include="ControllerExtensions.cs" />
-    <Compile Include="ControllerPolicy.cs" />
     <Compile Include="GoBack.cs" />
     <Compile Include="Handler.Navigate.cs" />
     <Compile Include="IController.cs" />
@@ -89,9 +87,6 @@
     <Compile Include="Options\RegionOptions.cs" />
     <Compile Include="Options\WindowBuilder.cs" />
     <Compile Include="Options\WindowOptions.cs" />
-    <Compile Include="Policy\DefaultPolicy.cs" />
-    <Compile Include="Policy\IPolicy.cs" />
-    <Compile Include="Policy\PromisePolicy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Animation\Split.cs" />
     <Compile Include="Views\IView.cs" />
@@ -99,9 +94,7 @@
     <Compile Include="Views\IViewStack.cs" />
     <Compile Include="Views\RegionExtensions.cs" />
     <Compile Include="Views\ViewAdapter.cs" />
-    <Compile Include="Views\ViewExtensions.cs" />
     <Compile Include="ViewModel.cs" />
-    <Compile Include="Views\ViewPolicy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

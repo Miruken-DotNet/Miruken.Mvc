@@ -2,18 +2,11 @@
 {
     using System;
     using Callback;
+    using Context;
     using Views;
 
     public abstract class ViewContainer : StackPanel, IViewRegion, IView
     {
-        private ViewPolicy _policy;
-
-        public ViewPolicy Policy
-        {
-            get => _policy ?? (_policy = new ViewPolicy(this));
-            set => _policy = value;
-        }
-
         public object ViewModel { get; set; }
 
         public virtual IViewLayer Display(IViewRegion region)
@@ -46,16 +39,6 @@
                 view = Activator.CreateInstance<V>();
 
             init?.Invoke(view);
-
-            if (view is View element)
-            {
-                if (element.ViewModel == null)
-                    element.ViewModel = composer.Resolve<IController>();
-                var controller = element.ViewModel as IController;
-                controller.DependsOn(view);
-            }
-
-            view.Policy.Track();
             return view;
         }
 
@@ -73,9 +56,25 @@
 
         public IViewLayer Show(IView view)
         {
-            return Show(view, HandleMethod.RequireComposer());
+            var composer = HandleMethod.RequireComposer();
+            return Show(BindView(view, composer), composer);
         }
 
         protected abstract IViewLayer Show(IView view, IHandler composer);
+
+        private static IView BindView(IView view, IHandler composer)
+        {
+            if (view.ViewModel == null)
+            {
+                var navigation = composer.Resolve<Navigation>();
+                var controller = navigation?.Controller;
+                if (controller != null)
+                {
+                    view.ViewModel = controller;
+                    controller.Context?.Dispose(view as IDisposable);
+                }
+            }
+            return view;
+        }
     }
 }

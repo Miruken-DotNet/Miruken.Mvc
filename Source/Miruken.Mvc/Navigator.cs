@@ -109,7 +109,6 @@
         {
             var controller = (IController)context.Resolve(type);
             if (controller == null) return null;
-            context.ContextEnded += _ => controller.Release();
             controller.Context = context;
             return controller;
         }

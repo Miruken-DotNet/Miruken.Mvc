@@ -4,20 +4,11 @@
     using System.ComponentModel;
     using System.Windows.Controls;
     using Callback;
+    using Context;
     using Views;
 
     public abstract class ViewContainer : Grid, IViewRegion, IView
     {
-        private ViewPolicy _policy;
-
-        [EditorBrowsable(EditorBrowsableState.Never),
-         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ViewPolicy Policy
-        {
-            get => _policy ?? (_policy = new ViewPolicy(this));
-            set => _policy = value;
-        }
-
         [EditorBrowsable(EditorBrowsableState.Never),
          DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public object ViewModel
@@ -63,16 +54,6 @@
                 view = Activator.CreateInstance<V>();
 
             init?.Invoke(view);
-
-            if (view.ViewModel == null)
-            {
-                var navigation = composer.Resolve<Navigation>();
-                view.ViewModel = navigation?.Controller;
-            }
-            var controller = view.ViewModel as IController;
-            controller?.DependsOn(view);
-
-            view.Policy.Track();
             return view;
         }
 
@@ -88,8 +69,9 @@
         {
             var composer = HandleMethod.RequireComposer();
             return Dispatcher.CheckAccess()
-                 ? Show(View(init, composer), composer)
-                 : Dispatcher.Invoke(() => Show(View(init, composer), composer));
+                 ? Show(BindView(View(init, composer), composer))
+                 : Dispatcher.Invoke(() => 
+                    Show(BindView(View(init, composer), composer)));
         }
 
         public IViewLayer Show(IView view)
@@ -98,5 +80,20 @@
         }
         
         protected abstract IViewLayer Show(IView view, IHandler composer);
+
+        private static IView BindView(IView view, IHandler composer)
+        {
+            if (view.ViewModel == null)
+            {
+                var navigation = composer.Resolve<Navigation>();
+                var controller = navigation?.Controller;
+                if (controller != null)
+                {
+                    view.ViewModel = controller;
+                    controller.Context?.Dispose(view as IDisposable);
+                }
+            }
+            return view;
+        }
     }
 }
