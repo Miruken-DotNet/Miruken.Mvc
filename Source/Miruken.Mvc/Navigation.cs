@@ -5,7 +5,8 @@
     public enum NavigationStyle
     {
         Next,
-        Push
+        Push,
+        Partial
     }
 
     public class Navigation
@@ -51,6 +52,23 @@
                     $"{controller} is not a {ControllerType.FullName}");
             _controller = new WeakReference<IController>(controller);
             return _result = _action(controller);
+        }
+    }
+
+    public class GoBack
+    {
+        private object _result;
+
+        public void SetResult(object result)
+        {
+            _result = result;
+        }
+
+        public object ClearResult()
+        {
+            var result = _result;
+            _result = null;
+            return result;
         }
     }
 }

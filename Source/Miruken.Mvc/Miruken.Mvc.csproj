@@ -76,7 +76,6 @@
     <Compile Include="Animation\Fade.cs" />
     <Compile Include="Animation\Roll.cs" />
     <Compile Include="Controller.cs" />
-    <Compile Include="GoBack.cs" />
     <Compile Include="Handler.Navigate.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="Navigator.cs" />

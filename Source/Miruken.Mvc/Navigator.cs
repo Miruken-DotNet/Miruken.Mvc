@@ -14,21 +14,16 @@
         }
 
         [Handles]
-        public object Navigate(Navigation navigation, IHandler composer)
+        public object Navigate(
+            Navigation navigation,
+            [Optional] Navigation initiator,
+            Context context, IHandler composer)
         {
-            var context  = composer?.Resolve<Context>();
-            if (context == null)
-            {
-                throw new InvalidOperationException(
-                    "A context is required for controller navigation");
-            }
-
             var style            = navigation.Style;
-            var initiator        = context.SelfOrChild().Resolve<Navigation>();
             var initiatorContext = initiator?.Controller?.Context;
             var parentContext    = context;
 
-            if (initiator != null && style == NavigationStyle.Next)
+            if (initiator != null && style != NavigationStyle.Push)
             {
                 parentContext = initiatorContext?.Parent;
                 if (parentContext == null) return null;
@@ -51,32 +46,33 @@
                     childContext.End();
             }
 
-            childContext.AddHandlers(navigation);
-
             if (initiator != null && style == NavigationStyle.Next)
             {
                 navigation.Back = initiator;
                 initiatorContext?.End();
             }
 
+            // Propagate options (i.e. animation)
+            var io = childContext.Self().Chain(composer);
+            if (style == NavigationStyle.Partial)
+                io = io.Provide(navigation);
+            else
+                childContext.AddHandlers(navigation);
+
+            BindIO(io, controller);
+
             try
             {
-                // Propagate composer options
-                var io = childContext.Self().Chain(composer);
-                BindIO(io, controller);
-
-                try
-                {
-                    navigation.InvokeOn(controller);
-                }
-                finally
-                {
-                    BindIO(null, controller);
-                }
+                navigation.InvokeOn(controller);
             }
             catch
             {
                 childContext.End();
+                throw;
+            }
+            finally
+            {
+                BindIO(null, controller);
             }
 
             return true;
@@ -101,13 +97,12 @@
             controller.IO = prepare?.GetInvocationList()
                 .Cast<FilterBuilder>()
                 .Aggregate(io ?? controller.Context,
-                    (cur, b) => b(cur) ?? cur)
-                ?? io;
+                    (cur, b) => b(cur) ?? cur) ?? io;
         }
 
         private static IController GetController(Context context, Type type)
         {
-            var controller = (IController)context.Resolve(type);
+            var controller = (IController)context.Infer().Resolve(type);
             if (controller == null) return null;
             controller.Context = context;
             return controller;

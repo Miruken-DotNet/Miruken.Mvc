@@ -32,6 +32,19 @@
             return Navigate<C>(handler, NavigationStyle.Push);
         }
 
+        public static object Partial<C>(
+            this IHandler handler, Func<C, object> action)
+            where C : IController
+        {
+            return Navigate(handler, action, NavigationStyle.Partial);
+        }
+
+        public static C Partial<C>(this IHandler handler)
+            where C : class, IController
+        {
+            return Navigate<C>(handler, NavigationStyle.Partial);
+        }
+
         public static object Navigate<C>(
             this IHandler handler, Func<C, object> action,
             NavigationStyle style)

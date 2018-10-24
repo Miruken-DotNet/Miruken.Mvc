@@ -34,6 +34,23 @@
                 var options = new RegionOptions();
                 return IO.Handle(options, true) ? options : null;
             }
+
+            public void Partial()
+            {
+                var navigation = IO.Resolve<Navigation>();
+                Assert.IsNotNull(navigation);
+                Assert.AreSame(this, navigation.Controller);
+                Assert.IsNull(Context.Resolve<Navigation>());
+            }
+
+            public void Render()
+            {
+                Assert.IsNotNull(Show<TestView>());
+                var navigation = IO.Resolve<Navigation>();
+                Assert.IsNotNull(navigation);
+                Assert.AreSame(this, navigation.Controller);
+                Assert.AreSame(navigation, Context.Resolve<Navigation>());
+            }
         }
 
         public class GoodbyeController : Controller
@@ -70,8 +87,6 @@
             var controller = _rootContext.Next<HelloController>();
             controller.SayHello("Brenda");
             Assert.AreEqual(_rootContext, controller.Context.Parent);
-            _rootContext.Next<HelloController>().SayHello("Matthew");
-            Assert.IsNull(controller.Context);
         }
 
         [TestMethod]
@@ -79,6 +94,14 @@
         {
             var controller = _rootContext.Push<HelloController>();
             controller.SayHello("Craig");
+            Assert.AreEqual(_rootContext, controller.Context.Parent);
+        }
+
+        [TestMethod]
+        public void Should_Navigate_Partial()
+        {
+            var controller = _rootContext.Partial<HelloController>();
+            controller.Partial();
             Assert.AreEqual(_rootContext, controller.Context.Parent);
         }
 
@@ -118,9 +141,14 @@
             Assert.AreEqual(translation.Start, Origin.MiddleRight);
         }
 
+        [TestMethod]
+        public void Should_Render_A_View()
+        {
+            _rootContext.Next<HelloController>().Render();
+        }
+
         [TestMethod, 
-         ExpectedException(typeof(InvalidOperationException),
-            "A context is required for navigation")]
+         ExpectedException(typeof(NotSupportedException))]
         public void Should_Fail_If_Context_Missing()
         {
             _navigate.Next<HelloController>().SayHello("Patches");

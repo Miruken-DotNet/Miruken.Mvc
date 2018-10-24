@@ -77,6 +77,7 @@
     <Compile Include="NavigateHandlerTests.cs" />
     <Compile Include="Options\WindowOptionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestView.cs" />
     <Compile Include="TestViewRegion.cs" />
   </ItemGroup>
   <ItemGroup>
