@@ -33,7 +33,7 @@
         protected void EndContext()
         {
             var context = Context;
-            context?.End();
+            context?.End(this);
         }
 
         protected void EndContext(object sender, EventArgs e)
@@ -111,7 +111,7 @@
 
         protected C Next<C>() where C : class, IController
         {
-            return Next<C>(IO);
+            return Next<C>(Context);
         }
 
         protected C Next<C>(IHandler handler) 
@@ -123,7 +123,7 @@
         protected C Push<C>()
             where C : class, IController
         {
-            return Push<C>(IO);
+            return Push<C>(Context);
         }
 
         protected C Push<C>(IHandler handler) 
@@ -135,7 +135,7 @@
         protected C Navigate<C>(NavigationStyle style) 
             where C : class, IController
         {
-            return Push<C>(IO);
+            return Push<C>(Context);
         }
 
         protected C Navigate<C>(IHandler handler, NavigationStyle style)
@@ -144,15 +144,9 @@
             return handler.Navigate<C>(style);
         }
 
-        public object GoBack()
-        {
-            return GoBack(IO);
-        }
+        public void GoBack() => GoBack(Context);
 
-        protected object GoBack(IHandler handler)
-        {
-            return handler.GoBack();
-        }
+        protected void GoBack(IHandler handler) => handler.GoBack();
 
         #endregion
 

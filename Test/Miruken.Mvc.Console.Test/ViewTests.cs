@@ -1,7 +1,7 @@
 ﻿namespace Miruken.Mvc.Console.Test
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Buffer = Console.Buffer;
+    using Buffer = Buffer;
 
     [TestClass]
     public class ViewTests : TestBase

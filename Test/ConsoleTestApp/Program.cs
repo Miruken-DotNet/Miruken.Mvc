@@ -30,11 +30,7 @@
                 new Navigator(Window.Region),
                 new ErrorHandler());
 
-            appContext.Next<AController>(x =>
-            {
-                x.ShowAView();
-                return true;
-            });
+            appContext.Next<AController>(x => x.ShowAView());
 
             while (!Window.Quit)
             {

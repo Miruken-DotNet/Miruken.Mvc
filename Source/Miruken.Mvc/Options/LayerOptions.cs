@@ -21,6 +21,8 @@ namespace Miruken.Mvc.Options
 
         public override void MergeInto(LayerOptions other)
         {
+            if (other == null) return;
+
             if (Push.HasValue && !other.Push.HasValue)
                 other.Push = Push;
 

@@ -15,8 +15,11 @@
     {
         public void Greet()
         {
+            Description = "Hello World!!";
             Show<HelloWorld>();
         }
+
+        public string Description { get; set; }
 
         public bool CanDocumentation()
         {

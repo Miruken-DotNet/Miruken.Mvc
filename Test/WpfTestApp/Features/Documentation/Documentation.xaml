@@ -7,23 +7,24 @@
              xmlns:miruken="clr-namespace:Miruken.Mvc.Wpf;assembly=Miruken.Mvc.Wpf"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="300">
-    <Grid Background="White">
+    <Grid Background="#FFE5E5E5">
         <TabControl x:Name="tabControl" Margin="10,10,10,42">
-            <TabItem Header="Core">
-                <Grid Background="#FFE5E5E5" Margin="0,0,0,2"/>
+            <TabItem Header="Partial">
+                <Grid Background="White" Margin="0,0,0,2" ClipToBounds="True">
+                    <miruken:ViewRegion x:Name="PartialRegion"/>
+                </Grid>
             </TabItem>
-            <TabItem Header="Callback">
-                <Grid Background="#FFE5E5E5"/>
+            <TabItem Header="Next">
+                <Grid Background="White" ClipToBounds="True">
+                    <miruken:ViewRegion x:Name="NextRegion"/>
+                </Grid>
             </TabItem>
-            <TabItem Header="Context" Margin="0,0,-4,-2">
-                <Grid Background="#FFE5E5E5"/>
+            <TabItem Header="Push" Margin="0,0,-4,-2">
+                <Grid Background="White" ClipToBounds="True">
+                    <miruken:ViewRegion x:Name="PushRegion"/>
+                </Grid>
             </TabItem>
         </TabControl>
-        <Grid Name="Container">
-            <TextBlock x:Name="label" Text="{Binding Path=Description}" TextWrapping="Wrap" 
-                       HorizontalAlignment="Center" Margin="30,0,30,0" FontSize="20" 
-                       Foreground="#FF666666" VerticalAlignment="Center"/>
-        </Grid>
         <Button x:Name="button" Command="{miruken:Action Done}" Content="Done" Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="61"/>
     </Grid>
 </miruken:View>

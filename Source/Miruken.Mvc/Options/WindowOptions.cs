@@ -34,6 +34,8 @@
 
         public override void MergeInto(WindowOptions other)
         {
+            if (other == null) return;
+
             if (Name != null && other.Name == null)
                 other.Name = Name;
 
@@ -169,22 +171,6 @@
                 build(builder);
             }
             return new RegionOptions { Window = window }.Decorate(handler);
-        }
-
-        public static IHandler SuppressWindows(this IHandler handler)
-        {
-            return handler.Filter((cb, compposer, proceed) =>
-            {
-                var handled = proceed();
-                if (handled)
-                {
-                    var composition   = cb as Composition;
-                    cb = composition?.Callback ?? cb;
-                    if (cb is RegionOptions regionOptions)
-                        regionOptions.Window = null;
-                }
-                return handled;
-            }, true);
         }
     }
 }

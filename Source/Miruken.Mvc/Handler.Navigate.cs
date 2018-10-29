@@ -6,11 +6,11 @@
 
     public static class HandlerNavigateExtensions
     {
-        public static object Next<C>(
-            this IHandler handler, Func<C, object> action)
+        public static void Next<C>(
+            this IHandler handler, Action<C> action)
             where C : IController
         {
-            return Navigate(handler, action, NavigationStyle.Next);
+            Navigate(handler, action, NavigationStyle.Next);
         }
 
         public static C Next<C>(this IHandler handler)
@@ -19,11 +19,11 @@
             return Navigate<C>(handler, NavigationStyle.Next);
         }
 
-        public static object Push<C>(
-            this IHandler handler, Func<C, object> action)
+        public static void Push<C>(
+            this IHandler handler, Action<C> action)
             where C : IController
         {
-            return Navigate(handler, action, NavigationStyle.Push);
+            Navigate(handler, action, NavigationStyle.Push);
         }
 
         public static C Push<C>(this IHandler handler)
@@ -32,11 +32,11 @@
             return Navigate<C>(handler, NavigationStyle.Push);
         }
 
-        public static object Partial<C>(
-            this IHandler handler, Func<C, object> action)
+        public static void Partial<C>(
+            this IHandler handler, Action<C> action)
             where C : IController
         {
-            return Navigate(handler, action, NavigationStyle.Partial);
+            Navigate(handler, action, NavigationStyle.Partial);
         }
 
         public static C Partial<C>(this IHandler handler)
@@ -45,42 +45,52 @@
             return Navigate<C>(handler, NavigationStyle.Partial);
         }
 
-        public static object Navigate<C>(
-            this IHandler handler, Func<C, object> action,
+        public static void Navigate<C>(
+            this IHandler handler, Action<C> action,
             NavigationStyle style)
             where C : IController
         {
             if (handler == null)
                 throw new ArgumentNullException(nameof(handler));
 
+            var options = GetRegionOptions(handler);
+
             var navigation = new Navigation(typeof(C),
-                ctrl => action((C)ctrl), style);
+                ctrl => action((C)ctrl), style, options);
 
             if (!handler.Handle(navigation))
                 throw new NotSupportedException(
                     $"Navigation to {navigation.ControllerType} not handled");
-            return navigation.ClearResult();
         }
 
         public static C Navigate<C>(this IHandler handler, NavigationStyle style)
             where C : class, IController
         {
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
+
             if (style == NavigationStyle.Push)
                 handler = handler.PushLayer();
+
             return (C)new NavigateInterceptor<C>(handler, style)
                 .GetTransparentProxy();
         }
 
-        public static object GoBack(this IHandler handler)
+        public static void GoBack(this IHandler handler)
         {
             if (handler == null)
                 throw new ArgumentNullException(nameof(handler));
 
-            var goBack = new GoBack();
-            if (!handler.Handle(goBack))
+            if (!handler.Handle(new Navigation.GoBack(GetRegionOptions(handler))))
                 throw new NotSupportedException(
                     "Navigation backwards not handled");
-            return goBack.ClearResult();
+        }
+
+        private static RegionOptions GetRegionOptions(IHandler composer)
+        {
+            if (composer == null) return null;
+            var options = new RegionOptions();
+            return composer.Handle(options, true) ? options : null;
         }
     }
 }

@@ -1,14 +1,14 @@
-﻿namespace MIruken.Mvc.Castle.Tests
+﻿namespace Miruken.Mvc.Castle.Tests
 {
     using global::Castle.Core;
     using global::Castle.MicroKernel.Registration;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Miruken.Callback;
+    using Callback;
     using Miruken.Castle;
-    using Miruken.Context;
-    using Miruken.Mvc;
-    using Miruken.Mvc.Castle;
-    using Miruken.Mvc.Views;
+    using Context;
+    using Mvc;
+    using Castle;
+    using Views;
 
     [TestClass]
     public class MvcFeatureTests

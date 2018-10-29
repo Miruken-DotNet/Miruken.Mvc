@@ -3,8 +3,15 @@ using Miruken.Mvc.Views;
 
 namespace Miruken.Mvc.Tests
 {
-    public class TestViewRegion : IViewRegion
+    public class TestViewRegion : IViewStackView
     {
+        public object ViewModel { get; set; }
+
+        public IViewStackView CreateViewStack()
+        {
+            return new TestViewRegion();
+        }
+
         V IViewRegion.View<V>(Action<V> init)
         {
             var view =  Activator.CreateInstance<V>();
@@ -45,6 +52,20 @@ namespace Miruken.Mvc.Tests
             {
                 throw new NotImplementedException();
             }
+        }
+
+        public IDisposable PushLayer()
+        {
+            return null;
+        }
+
+        public void UnwindLayers()
+        {
+        }
+
+        public IViewLayer Display(IViewRegion region)
+        {
+            return null;
         }
     }
 }

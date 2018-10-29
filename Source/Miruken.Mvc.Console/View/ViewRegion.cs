@@ -41,10 +41,14 @@
             if (view == null)
                 throw new ArgumentNullException(nameof(view));
 
-            var element = view as View;
-            return element == null
+            return !(view is View element)
                  ? Handler.Unhandled<IViewLayer>()
                  : TransitionTo(element, Handler.Composer);
+        }
+
+        public override IViewStackView CreateViewStack()
+        {
+            return new ViewRegion();
         }
 
         private IViewLayer TransitionTo(View element, IHandler composer)
@@ -82,7 +86,7 @@
                 var pop     = overlay ? PushOverlay() : PushLayer();
                 var context = composer.Resolve<Context>();
                 if (context != null)
-                    context.ContextEnding += _ => pop.Dispose();
+                    context.ContextEnding += (c, _) => pop.Dispose();
             }
 
             if (layer == null) layer = ActiveLayer;

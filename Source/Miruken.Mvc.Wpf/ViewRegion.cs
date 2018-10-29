@@ -32,6 +32,8 @@
             UnwindLayers();
         }
 
+        private bool IsChild { get; set; }
+
         private List<ViewLayer> Layers { get; }
 
         private ViewController ActiveView
@@ -43,19 +45,28 @@
             }
         }
 
+        public override IViewStackView CreateViewStack()
+        {
+            return new ViewRegion { IsChild = true };
+        }
+
         protected override IViewLayer Show(IView view, IHandler composer)
         {
             if (view == null)
                 throw new ArgumentNullException(nameof(view));
-            return TransitionTo(view, composer);
+            return TransitionTo(view, composer, false);
         }
 
-        private IViewLayer TransitionTo(IView view, IHandler composer)
+        private IViewLayer TransitionTo(IView view, IHandler composer, bool noWindow)
         {
+            var navigation    = composer.Resolve<Navigation>();
             var options       = GetRegionOptions(composer);
+            navigation.Options?.MergeInto(options);
+            options = options ?? navigation.Options;
+
             var windowOptions = options?.Window;
-            if (windowOptions != null)
-                return CreateWindow(windowOptions, view, composer);
+            if (!(noWindow || windowOptions == null))
+                return CreateWindow(windowOptions, view, navigation, composer);
 
             var       push    = false;
             var       overlay = false;
@@ -85,48 +96,40 @@
 
             if (push)
             {
-                var pop     = overlay ? PushOverlay() : PushLayer();
-                var context = composer.Resolve<Context>();
-                if (context != null)
-                    context.ContextEnding += _ =>
-                    {
-                        if (Layers.Count > 1) // allows ending animation
-                            pop.Dispose();
-                    };
+                if (overlay)
+                    PushOverlay();
+                else
+                    PushLayer();
             }
 
             if (layer == null) layer = ActiveLayer;
+            BindView(view, layer, navigation);
             return layer.TransitionTo(view, options, composer);
         }
 
         protected virtual IViewLayer CreateWindow(
-            WindowOptions options, IView content, IHandler composer)
+            WindowOptions options, IView content, Navigation navigation,
+            IHandler composer)
         {
-            ViewRegion        region;
-            Navigation navigation = null;
+            ViewRegion region;
 
             var owner = Window.GetWindow(this);
             if (owner == null)  // adopt region
+            {
                 region = this;
+            }
             else
             {
-                navigation = EnsureCompatibleNavigation(composer);
-                region     = new ViewRegion();
+                EnsureCompatibleNavigation(navigation);
+                region = new ViewRegion();
             }
-            Context context = null;
+            var context = navigation.Controller.Context;
             var window = CreateWindow(owner, options, region);
-            IHandler handler = null;
-            if (ReferenceEquals(region, this))
-                handler = composer;
-            else if (navigation?.Style == NavigationStyle.Push)
+            if (!ReferenceEquals(region, this) && navigation.Style == NavigationStyle.Push)
             {
-                context = composer.Resolve<Context>();
                 context.AddHandlers(region);
-                handler = composer;
             }
-            if (handler == null)
-                handler = new HandlerAdapter(region).Chain(composer);
-            var layer = handler.SuppressWindows().Proxy<IViewRegion>().Show(content);
+            var layer = region.TransitionTo(content, context, true);
             layer.Disposed += (s, e) =>
             {
                 if (window.Dispatcher.CheckAccess())
@@ -134,9 +137,8 @@
                 else
                     window.Dispatcher.Invoke(new ThreadStart(window.Close));
             };
-            if (context != null)
-                context.ContextEnding += _ => layer.Dispose();
             window.Closed += (s, e) => layer.Dispose();
+
             switch (options.FillScreen)
             {
                 case ScreenFill.FullScreen:
@@ -213,13 +215,11 @@
             return window;
         }
 
-        private static Navigation EnsureCompatibleNavigation(IHandler composer)
+        private static void EnsureCompatibleNavigation(Navigation navigation)
         {
-            var navigation = composer.Resolve<Navigation>();
             if (navigation?.Style == NavigationStyle.Next)
                 throw new InvalidOperationException(
                     $"{navigation.ControllerType.FullName} is presenting a new Window, but has no matching context.  Did you do a Next instead of a Push?");
-            return navigation;
         }
 
         #region Layer Methods
@@ -328,8 +328,8 @@
             if (!Dispatcher.CheckAccess())
                 return (Promise)Dispatcher.Invoke(
                     new Func<ViewController, ViewController,
-                    IAnimation, IHandler, Promise>(RemoveView)
-                    , fromView, composer);
+                    IAnimation, IHandler, Promise>(RemoveView),
+                    fromView, composer);
 
             if (animation != null && animation != NoAnimation.Instance)
             {
@@ -341,6 +341,32 @@
 
             fromView.RemoveView();
             return Promise.Empty;
+        }
+
+        private void BindView(IView view, IViewLayer layer, Navigation navigation)
+        {
+            if (view.ViewModel == null)
+            {
+                var controller = navigation?.Controller;
+                if (controller != null)
+                {
+                    view.ViewModel = controller;
+                    var context = controller.Context;
+                    if (context != null) 
+                    {
+                        void DisposeLayer(Context ctx, object reason)
+                        {
+                            // allows ending animation
+                            if ((Layers.Count > 1 || !IsChild) &&
+                                !(reason is Navigation))
+                                layer.Dispose();
+
+                            context.ContextEnded -= DisposeLayer;
+                        }
+                        context.ContextEnded += DisposeLayer;
+                    }
+                }
+            }
         }
 
         private static RegionOptions GetRegionOptions(IHandler composer)
@@ -512,6 +538,7 @@
                 finally
                 {
                     _disposed = true;
+                    _composer = null;
                     Events.Raise(this, DisposedEvent);
                     Events.Dispose();
                 }

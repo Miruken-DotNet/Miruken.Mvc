@@ -36,11 +36,12 @@
             if (_controller == null)
                 EnsureValidAction(msg);
 
+            object result  = null;
             var methodCall = (IMethodCallMessage)msg;
             var method     = (MethodInfo)methodCall.MethodBase;
             var args       = methodCall.Args;
 
-            object Action(C controller)
+            void Dispatch(C controller)
             {
                 var m = method;
                 if (_controller == null)
@@ -52,15 +53,16 @@
                     m = RuntimeHelper.SelectMethod(method, controller.GetType());
                 }
 
-                return m.Invoke(controller, BindingFlags.Instance
+                result = m.Invoke(controller, BindingFlags.Instance
                      | BindingFlags.Public, null, args, CultureInfo.InvariantCulture);
             }
 
             try
             {
-                var result = _controller == null
-                           ? _handler.Navigate((Func<C, object>) Action, _style) 
-                           : Action(_controller);
+                if (_controller == null)
+                    _handler.Navigate((Action<C>) Dispatch, _style);
+                else
+                    Dispatch(_controller);
 
                 return new ReturnMessage(
                     result, args, methodCall.ArgCount,

@@ -4,7 +4,6 @@
     using System.ComponentModel;
     using System.Windows.Controls;
     using Callback;
-    using Context;
     using Views;
 
     public abstract class ViewContainer : Grid, IViewRegion, IView
@@ -37,63 +36,36 @@
         {
             if (!Dispatcher.CheckAccess())
             {
-                return (V) Dispatcher.Invoke(
+                return (V)Dispatcher.Invoke(
                     new Func<Action<V>, Handler, V>(View),
                     init, composer);
             }
 
-            V view;
-            if (typeof(V).IsInterface)
-            {
-                var type = GetType();
-                if (!typeof(V).IsAssignableFrom(type))
-                    return Handler.Unhandled<V>();
-                view = (V)Activator.CreateInstance(type);
-            }
-            else
-                view = Activator.CreateInstance<V>();
+            var viewType = typeof(V);
+            if (viewType.IsInterface || viewType.IsAbstract)
+                return Handler.Unhandled<V>();
 
+            var view = Activator.CreateInstance<V>();
             init?.Invoke(view);
             return view;
         }
 
-        public IViewLayer Show<V>() where V : IView
+        public IViewLayer Show<V>(Action<V> init = null) where V : IView
         {
             var composer = HandleMethod.RequireComposer();
             return Dispatcher.CheckAccess()
-                 ? Show(View<V>(null, composer), composer)
-                 : Dispatcher.Invoke(() => Show(View<V>(null, composer), composer));
-        }
-
-        public IViewLayer Show<V>(Action<V> init) where V : IView
-        {
-            var composer = HandleMethod.RequireComposer();
-            return Dispatcher.CheckAccess()
-                 ? Show(BindView(View(init, composer), composer))
+                 ? Show(View(init, composer), composer)
                  : Dispatcher.Invoke(() => 
-                    Show(BindView(View(init, composer), composer)));
+                    Show(View(init, composer), composer));
         }
 
         public IViewLayer Show(IView view)
         {
             return Show(view, HandleMethod.RequireComposer());
         }
-        
-        protected abstract IViewLayer Show(IView view, IHandler composer);
 
-        private static IView BindView(IView view, IHandler composer)
-        {
-            if (view.ViewModel == null)
-            {
-                var navigation = composer.Resolve<Navigation>();
-                var controller = navigation?.Controller;
-                if (controller != null)
-                {
-                    view.ViewModel = controller;
-                    controller.Context?.Dispose(view as IDisposable);
-                }
-            }
-            return view;
-        }
+        public abstract IViewStackView CreateViewStack();
+
+        protected abstract IViewLayer Show(IView view, IHandler composer);
     }
 }

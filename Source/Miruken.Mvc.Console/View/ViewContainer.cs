@@ -62,6 +62,8 @@
 
         protected abstract IViewLayer Show(IView view, IHandler composer);
 
+        public abstract IViewStackView CreateViewStack();
+
         private static IView BindView(IView view, IHandler composer)
         {
             if (view.ViewModel == null)

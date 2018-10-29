@@ -60,14 +60,16 @@
                     else
                     {
                         toView?.AddViewAbove(fromView);
-                        Animate(storyboard, toView, false, false);
+                        if (toView != null)
+                            Animate(storyboard, toView, false, false);
                     }
                     break;
                 case Mode.InOut:
                     if (present)
                         toView?.AddViewAbove(fromView);
                     Animate(storyboard, fromView, true, present);
-                    Animate(storyboard, toView, false, present);
+                    if (toView != null)
+                        Animate(storyboard, toView, false, present);
                     break;
             }
         }

@@ -34,17 +34,18 @@
         /// <returns>The layer representing the new controller</returns>
         public override IViewLayer Display(IViewRegion region)
         {
-            var stack = region.View<IViewStackView>();
-            return _composer.NoAnimation().Push((C controller) =>
-                {
-                    var context = controller.Context;
-                    context.AddHandlers(stack);
-                    _action(controller);
-                    var layer = stack.Display(_composer.PushLayer().Proxy<IViewRegion>());
-                    layer.Disposed += (s, e) => context.End();
-                    context.ContextEnded += ctx => layer.Dispose();
-                    return layer;
-                }) as IViewLayer;
+            IViewLayer layer = null;
+            var stack = region.CreateViewStack();
+            _composer.Push<C>((C controller) =>
+            {
+                var context = controller.Context;
+                context.AddHandlers(stack);
+                _action(controller);
+                layer = stack.Display(_composer.PushLayer().Proxy<IViewRegion>());
+                layer.Disposed += (s, e) => context.End();
+                context.ContextEnded += (ctx, _) => layer.Dispose();
+            });
+            return layer;
         }
     }
 

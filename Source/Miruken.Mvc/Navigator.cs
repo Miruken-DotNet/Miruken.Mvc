@@ -4,6 +4,7 @@
     using System.Linq;
     using Callback;
     using Context;
+    using Graph;
     using Views;
 
     public class Navigator : CompositeHandler
@@ -14,26 +15,35 @@
         }
 
         [Handles]
-        public object Navigate(
-            Navigation navigation,
-            [Optional] Navigation initiator,
+        public object Navigate(Navigation navigation,
             Context context, IHandler composer)
         {
-            var style            = navigation.Style;
-            var initiatorContext = initiator?.Controller?.Context;
-            var parentContext    = context;
+            var style     = navigation.Style;
+            var initiator = context.Self().Resolve<Navigation>();
+            var parent    = context;
 
-            if (initiator != null && style != NavigationStyle.Push)
+            if (initiator != null)
             {
-                parentContext = initiatorContext?.Parent;
-                if (parentContext == null) return null;
+                if (initiator.Style == NavigationStyle.Partial &&
+                    navigation.Style != NavigationStyle.Partial)
+                {
+                    parent = FindNearest(context, out initiator);
+                    if (parent == null)
+                    {
+                        throw new InvalidOperationException(
+                            "Navigation from a partial requires a parent");
+                    }
+                }
+
+                if (navigation.Style != NavigationStyle.Push)
+                    parent = parent.Parent;
             }
 
             IController controller = null;
-            var childContext = parentContext.CreateChild();
+            var child = parent.CreateChild();
             try
             {
-                controller = GetController(childContext, navigation.ControllerType);
+                controller = GetController(child, navigation.ControllerType);
                 if (controller == null) return null;
             }
             catch
@@ -43,31 +53,24 @@
             finally
             {
                 if (controller == null)
-                    childContext.End();
+                    child.End();
             }
 
-            if (initiator != null && style == NavigationStyle.Next)
-            {
+            if (style == NavigationStyle.Next)
                 navigation.Back = initiator;
-                initiatorContext?.End();
-            }
 
-            // Propagate options (i.e. animation)
-            var io = childContext.Self().Chain(composer);
-            if (style == NavigationStyle.Partial)
-                io = io.Provide(navigation);
-            else
-                childContext.AddHandlers(navigation);
-
-            BindIO(io, controller);
+            BindIO(child, controller);
 
             try
             {
+                child.AddHandlers(navigation);
                 navigation.InvokeOn(controller);
+                if (style != NavigationStyle.Push)
+                    initiator?.Controller?.Context?.End(initiator);
             }
             catch
             {
-                childContext.End();
+                child.End();
                 throw;
             }
             finally
@@ -79,13 +82,15 @@
         }
 
         [Handles]
-        public object GoBack(GoBack goBack, IHandler composer)
+        public object GoBack(Navigation.GoBack goBack, IHandler composer)
         {
             var back = composer.Resolve<Navigation>()?.Back;
-            if (back != null && composer.Handle(back))
+            if (back != null)
             {
-                goBack.SetResult(back.ClearResult());
-                return true;
+                var navigation = new Navigation(
+                    back.ControllerType, back.Action, back.Style,
+                    goBack.Options);
+                return composer.Handle(navigation);
             }
             return null;
         }
@@ -106,6 +111,24 @@
             if (controller == null) return null;
             controller.Context = context;
             return controller;
+        }
+
+        private static Context FindNearest(Context context, out Navigation initiator)
+        {
+            Context nearest = null;
+            Navigation navigation = null;
+            context.Traverse(TraversingAxis.Ancestor, node =>
+            {
+                var ctx = (Context)node;
+                var nav = ctx.Self().Resolve<Navigation>();
+                if (nav == null || nav.Controller?.Context != ctx ||
+                    nav.Style == NavigationStyle.Partial) return false;
+                navigation = nav;
+                nearest    = ctx;
+                return true;
+            });
+            initiator = navigation;
+            return nearest;
         }
     }
 }

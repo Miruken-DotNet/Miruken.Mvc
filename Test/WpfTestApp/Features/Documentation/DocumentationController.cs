@@ -3,15 +3,18 @@
     using HelloWorld;
     using Miruken.Mvc;
     using Miruken.Mvc.Animation;
+    using Settings;
 
     public class DocumentationController: Controller
     {
-        public string Description { get; set; }
-
         public void Index(string description)
         {
-            Description = description;
-            Show<Documentation>(/*IO.RollOut()*/);
+            Show<Documentation>(/*IO.RollOut(),*/ view =>
+            {
+                AddRegion(view.PartialRegion).Partial<HelloWorldController>().Greet();
+                AddRegion(view.NextRegion).Next<HelloWorldController>().Greet();
+                AddRegion(view.PushRegion).Push<SettingsController>().Configure("Hello");
+            });
         }
 
         public void Done()

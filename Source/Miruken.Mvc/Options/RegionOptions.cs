@@ -13,6 +13,8 @@ namespace Miruken.Mvc.Options
 
         public override void MergeInto(RegionOptions other)
         {
+            if (other == null) return;
+
             if (Layer != null)
             {
                 var l = other.Layer ?? new LayerOptions();

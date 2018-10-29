@@ -29,7 +29,7 @@
                         .Use(Classes.FromThisAssembly(),
                              Classes.FromAssemblyContaining<StandardAnimations>()));
             });
-            appContext.ContextEnded += _ => windsorHandler.Dispose();
+            appContext.ContextEnded += (c, _) => windsorHandler.Dispose();
 
             Controller.GlobalPrepare += h => h.Recover();
             appContext.AddHandlers(windsorHandler, new Navigator(new ViewRegion()));
