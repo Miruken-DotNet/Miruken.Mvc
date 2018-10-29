@@ -30,9 +30,9 @@
             public RegionOptions SayHello(string name)
             {
                 Console.WriteLine($"Hello {name}");
+                var navigation = IO.Resolve<Navigation>();
                 Push<GoodbyeController>().SayGoodbye(name);
-                var options = new RegionOptions();
-                return IO.Handle(options, true) ? options : null;
+                return navigation?.Options;
             }
 
             public void Partial()
@@ -40,7 +40,8 @@
                 var navigation = IO.Resolve<Navigation>();
                 Assert.IsNotNull(navigation);
                 Assert.AreSame(this, navigation.Controller);
-                Assert.IsNull(Context.Resolve<Navigation>());
+                Assert.AreEqual(NavigationStyle.Partial, navigation.Style);
+                Assert.AreSame(navigation, Context.Resolve<Navigation>());
             }
 
             public void Render()

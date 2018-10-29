@@ -50,7 +50,6 @@ namespace Miruken.Mvc.Tests
 
             public void Dispose()
             {
-                throw new NotImplementedException();
             }
         }
 
