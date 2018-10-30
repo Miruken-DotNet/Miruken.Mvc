@@ -29,6 +29,20 @@ namespace Miruken.Mvc.Tests
             return new Layer(view);
         }
 
+        public IDisposable PushLayer()
+        {
+            return new Layer(null);
+        }
+
+        public void UnwindLayers()
+        {
+        }
+
+        public IViewLayer Display(IViewRegion region)
+        {
+            return region.Show(this);
+        }
+
         public class Layer : IViewLayer
         {
             public Layer(IView view)
@@ -51,20 +65,6 @@ namespace Miruken.Mvc.Tests
             public void Dispose()
             {
             }
-        }
-
-        public IDisposable PushLayer()
-        {
-            return null;
-        }
-
-        public void UnwindLayers()
-        {
-        }
-
-        public IViewLayer Display(IViewRegion region)
-        {
-            return null;
         }
     }
 }

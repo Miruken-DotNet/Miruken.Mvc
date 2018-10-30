@@ -38,4 +38,13 @@ namespace Miruken.Mvc.Options
             }
         }
     }
+
+    public static class RegionOptionsExtensions
+    {
+        public static IHandler RegionOptions(
+            this IHandler handler, RegionOptions options)
+        {
+            return options.Decorate(handler);
+        }
+    }
 }

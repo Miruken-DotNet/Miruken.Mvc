@@ -36,7 +36,7 @@
         {
             IViewLayer layer = null;
             var stack = region.CreateViewStack();
-            _composer.Push<C>((C controller) =>
+            _composer.Push((C controller) =>
             {
                 var context = controller.Context;
                 context.AddHandlers(stack);

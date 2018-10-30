@@ -79,20 +79,20 @@
 
         public void Settings()
         {
+            /*
             Show(IO
                 .Fade()
                 .Accelerate(.9)
                 .SpinInOut(1.5.Sec())
                 .Region<SettingsController>(
                     ctrl => ctrl.Configure("Notifications") ));
+*/
 
-            /*
             Push<SettingsController>(IO
                 .Fade()
                 .Accelerate(.9)
                 .SpinInOut(1.5.Sec()))
                 .Configure("Notifications");
-                */
         }
     }
 }

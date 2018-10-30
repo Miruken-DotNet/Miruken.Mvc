@@ -59,10 +59,8 @@
 
         private IViewLayer TransitionTo(IView view, IHandler composer, bool noWindow)
         {
-            var navigation    = composer.Resolve<Navigation>();
-            var options       = GetRegionOptions(composer);
-            navigation.Options?.MergeInto(options);
-            options = options ?? navigation.Options;
+            var options    = GetRegionOptions(composer);
+            var navigation = composer.Resolve<Navigation>();
 
             var windowOptions = options?.Window;
             if (!(noWindow || windowOptions == null))
@@ -103,7 +101,7 @@
             }
 
             if (layer == null) layer = ActiveLayer;
-            BindView(view, layer, navigation);
+            BindController(view, layer, navigation);
             return layer.TransitionTo(view, options, composer);
         }
 
@@ -343,7 +341,7 @@
             return Promise.Empty;
         }
 
-        private void BindView(IView view, IViewLayer layer, Navigation navigation)
+        private void BindController(IView view, IViewLayer layer, Navigation navigation)
         {
             if (view.ViewModel == null)
             {
@@ -357,8 +355,7 @@
                         void DisposeLayer(Context ctx, object reason)
                         {
                             // allows ending animation
-                            if ((Layers.Count > 1 || !IsChild) &&
-                                !(reason is Navigation))
+                            if ((Layers.Count > 1 || !IsChild) && !(reason is Navigation))
                                 layer.Dispose();
 
                             context.ContextEnded -= DisposeLayer;

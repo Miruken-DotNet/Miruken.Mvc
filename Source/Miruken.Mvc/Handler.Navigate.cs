@@ -2,7 +2,6 @@
 {
     using System;
     using Callback;
-    using Options;
 
     public static class HandlerNavigateExtensions
     {
@@ -53,10 +52,8 @@
             if (handler == null)
                 throw new ArgumentNullException(nameof(handler));
 
-            var options = GetRegionOptions(handler);
-
             var navigation = new Navigation(typeof(C),
-                ctrl => action((C)ctrl), style, options);
+                ctrl => action((C)ctrl), style);
 
             if (!handler.Handle(navigation))
                 throw new NotSupportedException(
@@ -69,9 +66,6 @@
             if (handler == null)
                 throw new ArgumentNullException(nameof(handler));
 
-            if (style == NavigationStyle.Push)
-                handler = handler.PushLayer();
-
             return (C)new NavigateInterceptor<C>(handler, style)
                 .GetTransparentProxy();
         }
@@ -81,16 +75,9 @@
             if (handler == null)
                 throw new ArgumentNullException(nameof(handler));
 
-            if (!handler.Handle(new Navigation.GoBack(GetRegionOptions(handler))))
+            if (!handler.Handle(new Navigation.GoBack()))
                 throw new NotSupportedException(
                     "Navigation backwards not handled");
-        }
-
-        private static RegionOptions GetRegionOptions(IHandler composer)
-        {
-            if (composer == null) return null;
-            var options = new RegionOptions();
-            return composer.Handle(options, true) ? options : null;
         }
     }
 }

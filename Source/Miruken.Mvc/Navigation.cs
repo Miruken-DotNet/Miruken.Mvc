@@ -1,7 +1,6 @@
 ﻿namespace Miruken.Mvc
 {
     using System;
-    using Options;
 
     public enum NavigationStyle
     {
@@ -17,22 +16,17 @@
         public Navigation(
             Type controllerType,
             Action<IController> action,
-            NavigationStyle style,
-            RegionOptions options = null)
+            NavigationStyle style)
         {
             ControllerType = controllerType
                 ?? throw new ArgumentNullException(nameof(controllerType));
-            Action = action;
-            Action         = action
-                ?? throw new ArgumentNullException(nameof(action));
-            Style          = style;
-            Options        = options;
+            Action  = action ?? throw new ArgumentNullException(nameof(action));
+            Style   = style;
         }
 
         public Type                ControllerType { get; }
         public Action<IController> Action         { get; }
         public NavigationStyle     Style          { get; }
-        public RegionOptions       Options        { get; }
         public Navigation          Back           { get; set; }
 
         public IController Controller => 
@@ -51,14 +45,6 @@
             Action(controller);
         }
 
-        public class GoBack
-        {
-            public GoBack(RegionOptions options = null)
-            {
-                Options = options;
-            }
-
-            public RegionOptions Options { get; }
-        }
+        public class GoBack { }
     }
 }

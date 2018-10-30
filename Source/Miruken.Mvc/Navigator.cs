@@ -5,6 +5,7 @@
     using Callback;
     using Context;
     using Graph;
+    using Options;
     using Views;
 
     public class Navigator : CompositeHandler
@@ -35,8 +36,9 @@
                     }
                 }
 
-                if (navigation.Style != NavigationStyle.Push)
-                    parent = parent.Parent;
+                if (style != NavigationStyle.Push)
+                    parent = parent.Parent ?? throw new InvalidOperationException(
+                                 "Navigation seems to be in a bad state");
             }
 
             IController controller = null;
@@ -59,11 +61,12 @@
             if (style == NavigationStyle.Next)
                 navigation.Back = initiator;
 
-            BindIO(child, controller);
+            BindIO(child, controller, style, composer);
+            child.AddHandlers(navigation);
 
             try
             {
-                child.AddHandlers(navigation);
+
                 navigation.InvokeOn(controller);
                 if (style != NavigationStyle.Push)
                     initiator?.Controller?.Context?.End(initiator);
@@ -75,7 +78,7 @@
             }
             finally
             {
-                BindIO(null, controller);
+                BindIO(null, controller, style, null);
             }
 
             return true;
@@ -85,24 +88,31 @@
         public object GoBack(Navigation.GoBack goBack, IHandler composer)
         {
             var back = composer.Resolve<Navigation>()?.Back;
-            if (back != null)
-            {
-                var navigation = new Navigation(
-                    back.ControllerType, back.Action, back.Style,
-                    goBack.Options);
-                return composer.Handle(navigation);
-            }
-            return null;
+            return back != null ? composer.Handle(back) : (object)null;
         }
 
-        private static void BindIO(IHandler io, IController controller)
+        private static void BindIO(IHandler io, 
+            IController controller, NavigationStyle style,
+            IHandler composer)
         {
-            if (controller == null) return;
             var prepare = Controller.GlobalPrepare;
-            controller.IO = prepare?.GetInvocationList()
+            io = prepare?.GetInvocationList()
                 .Cast<FilterBuilder>()
                 .Aggregate(io ?? controller.Context,
                     (cur, b) => b(cur) ?? cur) ?? io;
+            if (composer != null)
+            {
+                var options = new RegionOptions();
+                if (composer.Handle(options, true) ||
+                    style == NavigationStyle.Push)
+                {
+                    if (style == NavigationStyle.Push)
+                        (options.Layer ?? (options.Layer = new LayerOptions()))
+                            .Push = true;
+                    io = io.Break().RegionOptions(options);
+                }
+            }
+            controller.IO = io;
         }
 
         private static IController GetController(Context context, Type type)

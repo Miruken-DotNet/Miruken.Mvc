@@ -31,8 +31,11 @@
             {
                 Console.WriteLine($"Hello {name}");
                 var navigation = IO.Resolve<Navigation>();
+                Assert.IsNotNull(navigation);
+                Assert.AreSame(this, navigation.Controller);
                 Push<GoodbyeController>().SayGoodbye(name);
-                return navigation?.Options;
+                var options = new RegionOptions();
+                return IO.Handle(options, true) ? options : null;
             }
 
             public void Partial()
