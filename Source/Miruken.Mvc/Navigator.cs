@@ -87,8 +87,22 @@
         [Handles]
         public object GoBack(Navigation.GoBack goBack, IHandler composer)
         {
-            var back = composer.Resolve<Navigation>()?.Back;
-            return back != null ? composer.Handle(back) : (object)null;
+            var navigation = composer.Resolve<Navigation>();
+            if (navigation != null)
+            {
+                if (navigation.Back != null)
+                    return composer.Handle(navigation.Back);
+                if (navigation.Style == NavigationStyle.Push)
+                {
+                    var controller = navigation.Controller;
+                    if (controller != null)
+                    {
+                        controller.Context?.End(controller);
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private static void BindIO(IHandler io, 

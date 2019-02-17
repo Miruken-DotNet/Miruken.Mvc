@@ -23,7 +23,7 @@
             if (_back)
                 GoBack(IO.Push(Origin.MiddleRight));
             else
-                EndContext();
+                GoBack();
         }
     }
 }

@@ -21,13 +21,10 @@
 
         public void Back()
         {
-            EndContext();
-            /*
             GoBack(IO
                 .Zoom()
                 .Fade()
-                .RollIn(Position.BottomLeft));
-                */
+                .RollIn(Origin.BottomLeft));
         }
     }
 }

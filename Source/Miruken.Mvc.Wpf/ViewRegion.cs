@@ -479,34 +479,25 @@
                 if (!Region.Dispatcher.CheckAccess())
                     return Region.Dispatcher.Invoke(() => Duration(duration, complete));
 
-                DispatcherTimer timer = null;
+                DispatcherTimer timer     = null;
+                EventHandler transitioned = null;
+                EventHandler disposed     = null;
 
                 void StopTimer(bool cancelled, Action<bool> c)
                 {
                     var t = timer;
                     if (t == null) return;
                     timer = null;
+                    Transitioned -= transitioned;
+                    Disposed -= disposed;
                     t.IsEnabled = false;
                     c?.Invoke(cancelled);
                 }
 
-                EventHandler transitioned = null;
-                EventHandler disposed = null;
-
-                transitioned = (s, a) =>
-                {
-                    StopTimer(true, null);
-                    Transitioned -= transitioned;
-                    Disposed -= disposed;
-                };
+                transitioned = (s, a) => StopTimer(true, null);
                 Transitioned += transitioned;
 
-                disposed = (s, a) =>
-                {
-                    StopTimer(false, null);
-                    Disposed -= disposed;
-                    Transitioned -= transitioned;
-                };
+                disposed = (s, a) => StopTimer(false, null);
                 Disposed += disposed;
 
                 timer = new DispatcherTimer

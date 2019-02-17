@@ -204,8 +204,8 @@
 
         protected virtual void Dispose(bool disposing)
         {
-            Context  = null;
-            _io      = null;
+            Context = null;
+            _io     = null;
         }
 
         ~Controller()
