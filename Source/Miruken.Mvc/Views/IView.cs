@@ -2,6 +2,8 @@
 
 namespace Miruken.Mvc.Views
 {
+    using Concurrency;
+
     public interface IView
     {
         object ViewModel { get; set; }
@@ -16,6 +18,6 @@ namespace Miruken.Mvc.Views
 
         int Index { get; }
 
-        IDisposable Duration(TimeSpan duration, Action<bool> complete);
+        Promise Duration(TimeSpan duration);
     }
 }

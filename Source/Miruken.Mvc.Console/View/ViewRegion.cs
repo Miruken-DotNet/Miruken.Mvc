@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Windows.Threading;
     using Callback;
+    using Concurrency;
     using Context;
     using Infrastructure;
     using Options;
@@ -250,46 +251,49 @@
                 Element = null;
             }
 
-            public IDisposable Duration(TimeSpan duration, Action<bool> complete)
+            public Promise Duration(TimeSpan duration)
             {
-                DispatcherTimer timer = null;
-
-                void StopTimer(bool cancelled, Action<bool> c)
+                return new Promise<bool>(ChildCancelMode.Any, (resolve, reject, onCancel) =>
                 {
-                    var t = timer;
-                    if (t == null) return;
-                    timer = null;
-                    t.IsEnabled = false;
-                    c?.Invoke(cancelled);
-                }
+                    DispatcherTimer timer = null;
 
-                EventHandler transitioned = null;
-                EventHandler disposed = null;
+                    void StopTimer(bool cancelled, bool complete)
+                    {
+                        var t = timer;
+                        if (t == null) return;
+                        timer = null;
+                        t.IsEnabled = false;
+                        if (complete) resolve(cancelled, false);
+                    }
 
-                transitioned = (s, a) =>
-                {
-                    StopTimer(true, null);
-                    Transitioned -= transitioned;
-                    Disposed -= disposed;
-                };
-                Transitioned += transitioned;
+                    onCancel(() => StopTimer(true, true));
 
-                disposed = (s, a) =>
-                {
-                    StopTimer(false, null);
-                    Disposed -= disposed;
-                    Transitioned -= transitioned;
-                };
-                Disposed += disposed;
+                    EventHandler transitioned = null;
+                    EventHandler disposed = null;
 
-                timer = new DispatcherTimer
-                {
-                    Interval = TimeSpan.FromMilliseconds(duration.TotalMilliseconds)
-                };
-                timer.Tick += (_, e) => StopTimer(false, complete);
-                timer.IsEnabled = true;
+                    transitioned = (s, a) =>
+                    {
+                        StopTimer(true, false);
+                        Transitioned -= transitioned;
+                        Disposed -= disposed;
+                    };
+                    Transitioned += transitioned;
 
-                return new DisposableAction(() => StopTimer(true, complete));
+                    disposed = (s, a) =>
+                    {
+                        StopTimer(false, false);
+                        Disposed -= disposed;
+                        Transitioned -= transitioned;
+                    };
+                    Disposed += disposed;
+
+                    timer = new DispatcherTimer
+                    {
+                        Interval = TimeSpan.FromMilliseconds(duration.TotalMilliseconds)
+                    };
+                    timer.Tick += (_, e) => StopTimer(false, true);
+                    timer.IsEnabled = true;
+                });
             }
 
             public void Dispose()

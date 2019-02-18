@@ -3,6 +3,8 @@ using Miruken.Mvc.Views;
 
 namespace Miruken.Mvc.Tests
 {
+    using Concurrency;
+
     public class TestViewRegion : IViewStackView
     {
         public object ViewModel { get; set; }
@@ -57,9 +59,9 @@ namespace Miruken.Mvc.Tests
             public event EventHandler Transitioned;
             public event EventHandler Disposed;
 
-            public IDisposable Duration(TimeSpan duration, Action<bool> complete)
+            public Promise Duration(TimeSpan duration)
             {
-                return null;
+                return Promise.Empty;
             }
 
             public void Dispose()
