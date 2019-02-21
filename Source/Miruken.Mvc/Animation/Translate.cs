@@ -18,7 +18,7 @@
         {
             if (translate == null)
                 throw new ArgumentNullException(nameof(translate));
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = translate
             }.Decorate(handler);

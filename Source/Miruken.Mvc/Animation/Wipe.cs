@@ -31,7 +31,7 @@
         {
             if (wipe == null)
                 throw new ArgumentNullException(nameof(Wipe));
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = wipe
             }.Decorate(handler);
@@ -84,7 +84,7 @@
         {
             if (wipe == null)
                 throw new ArgumentNullException(nameof(Wipe));
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = wipe
             }.Decorate(handler);

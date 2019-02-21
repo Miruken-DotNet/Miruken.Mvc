@@ -25,7 +25,7 @@
         {
             if (roll == null)
                 throw new ArgumentNullException(nameof(roll));
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = roll
             }.Decorate(handler);

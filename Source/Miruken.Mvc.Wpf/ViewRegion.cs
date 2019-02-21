@@ -59,36 +59,36 @@
 
         private IViewLayer TransitionTo(IView view, IHandler composer, bool noWindow)
         {
-            var options    = GetRegionOptions(composer);
-            var navigation = composer.Resolve<Navigation>();
+            var push        = false;
+            var overlay     = false;
+            ViewLayer layer = null;
+
+            var navigation  = composer.Resolve<Navigation>();
+            var options     = composer.GetOptions(new NavigationOptions());
 
             var windowOptions = options?.Window;
             if (!(noWindow || windowOptions == null))
                 return CreateWindow(windowOptions, view, navigation, composer);
 
-            var       push    = false;
-            var       overlay = false;
-            ViewLayer layer   = null;
-
-            var layerOptions = options?.Layer;
+            var regionOptions = options?.Region;
 
             if (Layers.Count == 0)
                 push = true;
-            else if (layerOptions != null)
+            else if (regionOptions != null)
             {
-                if (layerOptions.Push == true)
+                if (regionOptions.Push == true)
                     push = true;
-                else if (layerOptions.Overlay == true)
+                else if (regionOptions.Overlay == true)
                 {
                     push = overlay = true;
                 }
-                else if (layerOptions.Unload == true)
+                else if (regionOptions.Unload == true)
                 {
                     UnwindLayers();
                     push = true;
                 }
                 else
-                    layer = (ViewLayer) layerOptions.Choose(
+                    layer = (ViewLayer) regionOptions.Choose(
                         Layers.Cast<IViewLayer>().ToArray());
             }
 
@@ -99,8 +99,12 @@
                 else
                     PushLayer();
             }
+            else if (layer == null && navigation?.ViewLayer is ViewLayer myLayer)
+                layer = myLayer;
 
             if (layer == null) layer = ActiveLayer;
+            if (navigation != null && navigation.ViewLayer == null)
+                navigation.ViewLayer = layer;
             BindController(view, layer, navigation);
             return layer.TransitionTo(view, options, composer);
         }
@@ -217,7 +221,7 @@
         {
             if (navigation?.Style == NavigationStyle.Next)
                 throw new InvalidOperationException(
-                    $"{navigation.ControllerType.FullName} is presenting a new Window, but has no matching context.  Did you do a Next instead of a Push?");
+                    $"{navigation.ControllerKey} is presenting a new Window, but has no matching context.  Did you do a Next instead of a Push?");
         }
 
         #region Layer Methods
@@ -280,13 +284,13 @@
         #region Helper Methods
 
         private Promise AddView(ViewController fromView,
-            ViewController view, RegionOptions options,
+            ViewController view, NavigationOptions options,
             bool removeFromView, IHandler composer)
         {
             if (!Dispatcher.CheckAccess())
                 return (Promise)Dispatcher.Invoke(
                     new Func<ViewController, ViewController,
-                    RegionOptions, bool, IHandler, Promise>(AddView),
+                    NavigationOptions, bool, IHandler, Promise>(AddView),
                     fromView, view, options, removeFromView, composer);
 
             if (_unwinding || Children.Contains(view))
@@ -366,13 +370,6 @@
             }
         }
 
-        private static RegionOptions GetRegionOptions(IHandler composer)
-        {
-            if (composer == null) return null;
-            var options = new RegionOptions();
-            return composer.Handle(options, true) ? options : null;
-        }
-
         #endregion
 
         #region ViewLayer
@@ -417,7 +414,7 @@
             } protected static readonly object DisposedEvent = new object();
 
             public IViewLayer TransitionTo(IView view,
-                RegionOptions options, IHandler composer)
+                NavigationOptions options, IHandler composer)
             {
                 _composer = composer;
 

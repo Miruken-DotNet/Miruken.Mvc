@@ -17,7 +17,7 @@
         {
             if (split == null)
                 throw new ArgumentNullException(nameof(split));
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = split
             }.Decorate(handler);

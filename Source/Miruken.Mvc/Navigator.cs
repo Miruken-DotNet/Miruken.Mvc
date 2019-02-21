@@ -3,6 +3,8 @@
     using System;
     using System.Linq;
     using Callback;
+    using Callback.Policy.Bindings;
+    using Concurrency;
     using Context;
     using Graph;
     using Options;
@@ -16,7 +18,7 @@
         }
 
         [Handles]
-        public object Navigate(Navigation navigation,
+        public Promise<Context> Navigate(Navigation navigation,
             Context context, IHandler composer)
         {
             var style     = navigation.Style;
@@ -37,15 +39,29 @@
                 }
 
                 if (style != NavigationStyle.Push)
+                {
                     parent = parent.Parent ?? throw new InvalidOperationException(
                                  "Navigation seems to be in a bad state");
+                    navigation.ViewLayer = initiator.ViewLayer;
+                }
             }
 
             IController controller = null;
             var child = parent.CreateChild();
+
+            if (style == NavigationStyle.Push)
+            {
+                child.ChildContextEnded += (ctx, reason) =>
+                {
+                    if (!(reason is Navigation))
+                        ctx.Parent?.End(reason);
+                };
+                child = child.CreateChild();
+            }
+
             try
             {
-                controller = GetController(child, navigation.ControllerType);
+                controller = GetController(child, navigation.ControllerKey, composer);
                 if (controller == null) return null;
             }
             catch
@@ -58,80 +74,114 @@
                     child.End();
             }
 
+            var options = composer.GetOptions(new NavigationOptions());
+
+            navigation.NoBack = options?.NoBack == true;
+            if (!navigation.NoBack && navigation.Back == null && initiator != null &&
+                style == NavigationStyle.Next)
+            {
+                navigation.Back = initiator;
+            }
+
             if (style == NavigationStyle.Next)
                 navigation.Back = initiator;
 
-            BindIO(child, controller, style, composer);
+            BindIO(child, controller, style, options, composer);
             child.AddHandlers(navigation);
 
-            try
+            return new Promise<Context>(ChildCancelMode.Any, (resolve, reject) =>
             {
-
-                navigation.InvokeOn(controller);
-                if (style != NavigationStyle.Push)
-                    initiator?.Controller?.Context?.End(initiator);
-            }
-            catch
-            {
-                child.End();
-                throw;
-            }
-            finally
-            {
-                BindIO(null, controller, style, null);
-            }
-
-            return true;
+                try
+                {
+                    child.ContextEnding += (ctx, reason) =>
+                    {
+                        if (!(reason is Navigation))
+                            resolve(ctx, true);
+                    };
+                    if (!navigation.InvokeOn(controller))
+                    {
+                        reject(new InvalidOperationException(
+                            "Navigation could not be performed.  The most likely cause is missing dependencies."),
+                            true);
+                        child.End();
+                    }
+                    if (style != NavigationStyle.Push)
+                        initiator?.Context?.End(initiator);
+                }
+                catch (Exception ex)
+                {
+                    reject(ex, true);
+                    child.End();
+                }
+                finally
+                {
+                    BindIO(null, controller, style);
+                }
+            });
         }
 
         [Handles]
-        public object GoBack(Navigation.GoBack goBack, IHandler composer)
+        public Promise<Context> GoBack(Navigation.GoBack goBack, IHandler composer)
         {
             var navigation = composer.Resolve<Navigation>();
             if (navigation != null)
             {
+                if (navigation.NoBack) return null;
+                if (navigation.Style == NavigationStyle.Partial)
+                {
+                    if (navigation.Context != null)
+                        FindNearest(navigation.Context, out navigation);
+                }
+
+                if (navigation == null) return null;
+
                 if (navigation.Back != null)
-                    return composer.Handle(navigation.Back);
+                    return composer.NoBack().CommandAsync<Context>(navigation.Back);
+
                 if (navigation.Style == NavigationStyle.Push)
                 {
-                    var controller = navigation.Controller;
-                    if (controller != null)
+                    var context = navigation.Context;
+                    if (context != null)
                     {
-                        controller.Context?.End(controller);
-                        return true;
+                        context.End();
+                        return Promise.Resolved(context);
                     }
                 }
             }
-            return false;
+
+            return null;
         }
 
-        private static void BindIO(IHandler io, 
-            IController controller, NavigationStyle style,
-            IHandler composer)
+        private static void BindIO(IHandler io,  IController controller,
+            NavigationStyle style, NavigationOptions options = null,
+            IHandler composer = null)
         {
-            var prepare = Controller.GlobalPrepare;
+            var prepare = Navigation.GlobalPrepare;
             io = prepare?.GetInvocationList()
-                .Cast<FilterBuilder>()
+                .Cast<Navigation.Prepare>()
                 .Aggregate(io ?? controller.Context,
                     (cur, b) => b(cur) ?? cur) ?? io;
             if (composer != null)
             {
-                var options = new RegionOptions();
-                if (composer.Handle(options, true) ||
-                    style == NavigationStyle.Push)
+                if (style == NavigationStyle.Push)
                 {
+                    if (options == null) options = new NavigationOptions();
                     if (style == NavigationStyle.Push)
-                        (options.Layer ?? (options.Layer = new LayerOptions()))
+                        (options.Region ?? (options.Region = new RegionOptions()))
                             .Push = true;
-                    io = io.Break().RegionOptions(options);
                 }
+                if (options != null)
+                    io = io.Break().NavigationOptions(options);
             }
             controller.IO = io;
         }
 
-        private static IController GetController(Context context, Type type)
+        private static IController GetController(
+            Context context, object key, IHandler composer)
         {
-            var controller = (IController)context.Infer().Resolve(type);
+            var controller = (IController)context.Self()
+                .Chain(composer).Infer().Resolve(key, constraints =>
+                    constraints.Require(Qualifier.Of<ContextualAttribute>()));
             if (controller == null) return null;
             controller.Context = context;
             return controller;

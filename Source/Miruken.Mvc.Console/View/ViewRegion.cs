@@ -7,7 +7,6 @@
     using System.Windows.Threading;
     using Callback;
     using Concurrency;
-    using Context;
     using Infrastructure;
     using Options;
     using Views;
@@ -54,43 +53,47 @@
 
         private IViewLayer TransitionTo(View element, IHandler composer)
         {
-            var options = GetRegionOptions(composer);
-
             var       push    = false;
             var       overlay = false;
             ViewLayer layer   = null;
 
-            var layerOptions = options?.Layer;
+            var navigation = composer.Resolve<Navigation>();
+            var options    = composer.GetOptions<NavigationOptions>();
+
+            var regionOptions = options?.Region;
 
             if (Layers.Count == 0)
                 push = true;
-            else if (layerOptions != null)
+            else if (regionOptions != null)
             {
-                if (layerOptions.Push == true)
+                if (regionOptions.Push == true)
                     push = true;
-                else if (layerOptions.Overlay == true)
+                else if (regionOptions.Overlay == true)
                 {
                     push = overlay = true;
                 }
-                else if (layerOptions.Unload == true)
+                else if (regionOptions.Unload == true)
                 {
                     UnwindLayers();
                     push = true;
                 }
                 else
-                    layer = (ViewLayer) layerOptions.Choose(
+                    layer = (ViewLayer) regionOptions.Choose(
                         Layers.Cast<IViewLayer>().ToArray());
             }
-
             if (push)
             {
-                var pop     = overlay ? PushOverlay() : PushLayer();
-                var context = composer.Resolve<Context>();
-                if (context != null)
-                    context.ContextEnding += (c, _) => pop.Dispose();
+                if (overlay)
+                    PushOverlay();
+                else
+                    PushLayer();
             }
+            else if (layer == null && navigation?.ViewLayer is ViewLayer myLayer)
+                layer = myLayer;
 
             if (layer == null) layer = ActiveLayer;
+            if (navigation != null && navigation.ViewLayer == null)
+                navigation.ViewLayer = layer;
             return layer.TransitionTo(element, options);
         }
 
@@ -147,8 +150,7 @@
 
         #region Helper Methods
 
-        private void AddView(
-            View fromView, View view, RegionOptions options)
+        private void AddView(View fromView, View view, NavigationOptions options)
         {
             if (_unwinding || Children.Contains(view)) return;
             Add(view);
@@ -162,13 +164,6 @@
             var activeView = ActiveView;
             if (activeView == null) return;
             Window.ElementUnloaded(view);
-        }
-
-        private static RegionOptions GetRegionOptions(IHandler composer)
-        {
-            if (composer == null) return null;
-            var options = new RegionOptions();
-            return composer.Handle(options, true) ? options : null;
         }
 
         #endregion
@@ -214,7 +209,7 @@
 
             protected static readonly object DisposedEvent = new object();
 
-            public IViewLayer TransitionTo(View element, RegionOptions options)
+            public IViewLayer TransitionTo(View element, NavigationOptions options)
             {
                 if (ReferenceEquals(Element, element))
                     return this;

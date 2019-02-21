@@ -60,7 +60,7 @@
             try
             {
                 if (_controller == null)
-                    _handler.Navigate((Action<C>) Dispatch, _style);
+                    _handler.Navigate(_style, (Action<C>) Dispatch);
                 else
                     Dispatch(_controller);
 

@@ -15,7 +15,7 @@
         {
             if (spin == null)
                 throw new ArgumentNullException(nameof(spin));
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = spin
             }.Decorate(handler);

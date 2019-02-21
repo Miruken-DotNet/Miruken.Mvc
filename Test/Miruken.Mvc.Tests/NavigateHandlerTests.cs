@@ -7,17 +7,19 @@
     using Callback.Policy;
     using Context;
     using Mvc.Options;
+    using Views;
 
     [TestClass]
     public class NavigateHandlerTests
     {
         private Context _rootContext;
-        private Navigator _navigate;
+        private Navigator _navigator;
 
         static NavigateHandlerTests()
         {
             HandlerDescriptor.GetDescriptor<HelloController>();
             HandlerDescriptor.GetDescriptor<GoodbyeController>();
+            HandlerDescriptor.GetDescriptor<PartialController>();
         }
 
         public class HelloController : Controller
@@ -27,24 +29,26 @@
             {           
             }
 
-            public RegionOptions SayHello(string name)
+            public NavigationOptions SayHello(string name)
             {
                 Console.WriteLine($"Hello {name}");
                 var navigation = IO.Resolve<Navigation>();
                 Assert.IsNotNull(navigation);
                 Assert.AreSame(this, navigation.Controller);
                 Push<GoodbyeController>().SayGoodbye(name);
-                var options = new RegionOptions();
-                return IO.Handle(options, true) ? options : null;
+                return IO.GetOptions<NavigationOptions>();
             }
 
-            public void Partial()
+            public NavigationOptions SayHelloRegion(string name)
             {
-                var navigation = IO.Resolve<Navigation>();
-                Assert.IsNotNull(navigation);
-                Assert.AreSame(this, navigation.Controller);
-                Assert.AreEqual(NavigationStyle.Partial, navigation.Style);
-                Assert.AreSame(navigation, Context.Resolve<Navigation>());
+                Console.WriteLine($"Hello region {name}");
+                Show(Context.Region<GoodbyeController>(ctrl => ctrl.SayGoodbye($"region {name}")));
+                return IO.GetOptions<NavigationOptions>();
+            }
+
+            public void Compose()
+            {
+                Partial<PartialController>().Render();
             }
 
             public void Render()
@@ -55,6 +59,11 @@
                 Assert.AreSame(this, navigation.Controller);
                 Assert.AreSame(navigation, Context.Resolve<Navigation>());
             }
+
+            public void NextEnd()
+            {
+                Next<GoodbyeController>(ctrl => ctrl.Context.End());
+            }
         }
 
         public class GoodbyeController : Controller
@@ -64,10 +73,26 @@
             {             
             }
 
-            public string SayGoodbye(string name)
+            public void SayGoodbye(string name)
             {
-                EndContext();
-                return $"Goodbye {name}";
+                Console.WriteLine($"Goodbye {name}");
+            }
+        }
+
+        public class PartialController : Controller
+        {
+            [Provides, Contextual]
+            public PartialController()
+            {             
+            }
+
+            public void Render()
+            {
+                var navigation = IO.Resolve<Navigation>();
+                Assert.AreSame(this, navigation.Controller);
+                Assert.IsNotNull(navigation);
+                var initiator = Context.Resolve<Navigation>();
+                Assert.AreSame(this, initiator.Controller);
             }
         }
 
@@ -75,8 +100,8 @@
         public void TestInitialize()
         {
             _rootContext = new Context();
-            _navigate    = new Navigator(new TestViewRegion());
-            _rootContext.AddHandlers(new StaticHandler(), _navigate);
+            _navigator    = new Navigator(new TestViewRegion());
+            _rootContext.AddHandlers(new StaticHandler(), _navigator);
         }
 
         [TestCleanup]
@@ -86,44 +111,98 @@
         }
 
         [TestMethod]
+        public void Should_Fail_Navigation_Without_Context()
+        {
+            var called = false;
+            _navigator.Next<HelloController>(ctrl => ctrl.SayHello("hi"))
+                .Catch((ex, _) =>
+                {
+                    Assert.IsInstanceOfType(ex, typeof(NotSupportedException));
+                    called = true;
+                });
+            Assert.IsTrue(called);
+        }
+
+        [TestMethod]
         public void Should_Navigate_Next()
         {
-            var controller = _rootContext.Next<HelloController>();
-            controller.SayHello("Brenda");
-            Assert.AreEqual(_rootContext, controller.Context.Parent);
+            var ctrl = _rootContext.Next<HelloController>();
+            ctrl.SayHello("Brenda");
+            Assert.AreEqual(_rootContext, ctrl.Context.Parent);
         }
 
         [TestMethod]
         public void Should_Navigate_Push()
         {
-            var controller = _rootContext.Push<HelloController>();
-            controller.SayHello("Craig");
-            Assert.AreEqual(_rootContext, controller.Context.Parent);
+            var ctrl = _rootContext.Push<HelloController>();
+            ctrl.SayHello("Craig");
+            Assert.AreEqual(_rootContext, ctrl.Context.Parent.Parent);
+        }
+
+        [TestMethod]
+        public void Should_Navigate_Next_And_Push_Region()
+        {
+            _rootContext.Next<HelloController>(ctrl =>
+            {
+                ctrl.SayHelloRegion("Brenda");
+                Assert.AreEqual(_rootContext, ctrl.Context.Parent);
+            });
+        }
+
+        [TestMethod]
+        public void Should_Navigate_Push_And_Join()
+        {
+            var called = false;
+            _rootContext.Push<HelloController>(ctrl =>
+            {
+                ctrl.Context.End();
+                Assert.IsNull(ctrl.Context);
+            }).Then((ctx, _) =>
+            {
+                Assert.AreEqual(_rootContext, ctx.Parent.Parent);
+                called = true;
+            });
+            Assert.IsTrue(called);
+        }
+
+        [TestMethod]
+        public void Should_Navigate_Push_Next_And_Join()
+        {
+            var called = false;
+            _rootContext.Push<HelloController>(ctrl =>
+            {
+                ctrl.NextEnd();
+                Assert.IsNull(ctrl.Context);
+            }).Then((ctx, _) =>
+            {
+                Assert.AreEqual(_rootContext, ctx.Parent.Parent);
+                called = true;
+            });
+            Assert.IsTrue(called);
         }
 
         [TestMethod]
         public void Should_Navigate_Partial()
         {
-            var controller = _rootContext.Partial<HelloController>();
-            controller.Partial();
-            Assert.AreEqual(_rootContext, controller.Context.Parent);
+            var ctrl = _rootContext.Partial<HelloController>();
+            ctrl.Compose();
+            Assert.IsNull(ctrl.Context);
         }
 
         [TestMethod, 
          ExpectedException(typeof(InvalidOperationException))]
         public void Should_Reject_Initial_Property_Navigation()
         {
-            var controller = _rootContext.Next<HelloController>();
-            Assert.AreEqual(_rootContext, controller.Context);
+            var ctrl = _rootContext.Next<HelloController>();
+            Assert.AreEqual(_rootContext, ctrl.Context);
         }
 
         [TestMethod]
         public void Should_Propagate_Next_Options()
         {
-            var controller = 
-                _rootContext.Push(Origin.MiddleLeft)
+            var ctrl = _rootContext.Push(Origin.MiddleLeft)
                 .Next<HelloController>();
-            var options = controller.SayHello("Kaitlyn");
+            var options = ctrl.SayHello("Kaitlyn");
             Assert.IsNotNull(options);
             var translation = options.Animation as Translate;
             Assert.IsNotNull(translation);
@@ -134,10 +213,9 @@
         [TestMethod]
         public void Should_Propagate_Push_Options()
         {
-            var controller =
-                _rootContext.SlideIn(Origin.MiddleRight)
+            var ctrl = _rootContext.SlideIn(Origin.MiddleRight)
                 .Push<HelloController>();
-            var options = controller.SayHello("Lauren");
+            var options = ctrl.SayHello("Lauren");
             Assert.IsNotNull(options);
             var translation = options.Animation as Translate;
             Assert.IsNotNull(translation);
@@ -149,13 +227,6 @@
         public void Should_Render_A_View()
         {
             _rootContext.Next<HelloController>().Render();
-        }
-
-        [TestMethod, 
-         ExpectedException(typeof(NotSupportedException))]
-        public void Should_Fail_If_Context_Missing()
-        {
-            _navigate.Next<HelloController>().SayHello("Patches");
         }
     }
 }

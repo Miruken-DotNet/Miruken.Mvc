@@ -23,7 +23,7 @@
         {
             if (reveal == null)
                 throw new ArgumentNullException(nameof(reveal));
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = reveal
             }.Decorate(handler);

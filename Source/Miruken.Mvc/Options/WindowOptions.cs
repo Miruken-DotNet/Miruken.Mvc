@@ -120,7 +120,7 @@
     {
         public static IHandler NewWindow(this IHandler handler, WindowOptions options = null)
         {
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Window = options ?? new WindowOptions()
             }.Decorate(handler);
@@ -134,14 +134,14 @@
                 var builder = new WindowBuilder(window);
                 build(builder);
             }
-            return new RegionOptions { Window = window }.Decorate(handler);
+            return new NavigationOptions { Window = window }.Decorate(handler);
         }
 
         public static IHandler Modal(this IHandler handler, WindowOptions window = null)
         {
             window = window ?? new WindowOptions();
             window.Modal = true;
-            return new RegionOptions { Window = window }.Decorate(handler);
+            return new NavigationOptions { Window = window }.Decorate(handler);
         }
 
         public static IHandler Modal(this IHandler handler, Action<WindowBuilder> build)
@@ -152,14 +152,14 @@
                 var builder = new WindowBuilder(window);
                 build(builder);
             }
-            return new RegionOptions { Window = window }.Decorate(handler);
+            return new NavigationOptions { Window = window }.Decorate(handler);
         }
 
         public static IHandler Standalone(this IHandler handler, WindowOptions window = null)
         {
             window = window ?? new WindowOptions();
             window.Standalone = true;
-            return new RegionOptions { Window = window }.Decorate(handler);
+            return new NavigationOptions { Window = window }.Decorate(handler);
         }
 
         public static IHandler Standalone(this IHandler handler, Action<WindowBuilder> build)
@@ -170,7 +170,7 @@
                 var builder = new WindowBuilder(window);
                 build(builder);
             }
-            return new RegionOptions { Window = window }.Decorate(handler);
+            return new NavigationOptions { Window = window }.Decorate(handler);
         }
     }
 }

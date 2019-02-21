@@ -16,7 +16,7 @@
         {
             if (flip == null)
                 throw new ArgumentNullException(nameof(flip));
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = flip
             }.Decorate(handler);

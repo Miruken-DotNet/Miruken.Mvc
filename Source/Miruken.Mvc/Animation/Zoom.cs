@@ -19,7 +19,7 @@
         {
             if (zoom == null)
                 throw new ArgumentNullException(nameof(zoom));
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = zoom
             }.Decorate(handler);

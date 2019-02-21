@@ -22,7 +22,7 @@
         public static IHandler Behavior(
             this IHandler handler, object behavior)
         {
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = new Behavior
                 {

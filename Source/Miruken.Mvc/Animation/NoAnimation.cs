@@ -16,7 +16,7 @@
     {
         public static IHandler NoAnimation(this IHandler handler)
         {
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = Mvc.Animation.NoAnimation.Instance
             }.Decorate(handler);

@@ -19,7 +19,7 @@
         {
             if (fade == null)
                 throw new ArgumentNullException(nameof(fade));
-            return new RegionOptions
+            return new NavigationOptions
             {
                 Animation = fade
             }.Decorate(handler);

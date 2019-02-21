@@ -1,7 +1,6 @@
 ﻿namespace Miruken.Mvc.Views
 {
     using System;
-    using Animation;
     using Callback;
     using Context;
     using Options;

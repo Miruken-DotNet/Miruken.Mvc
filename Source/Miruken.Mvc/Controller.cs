@@ -5,20 +5,17 @@
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
     using Callback;
+    using Concurrency;
     using Context;
     using Infrastructure;
     using Options;
     using Views;
-
-    public delegate IHandler FilterBuilder(IHandler handler);
 
     public abstract class Controller : ContextualHandler,
         IController, ISupportInitialize, INotifyPropertyChanged, IDisposable
     {
         private IHandler _io;
         protected bool _disposed;
-
-        public static FilterBuilder GlobalPrepare;
 
         #region Context
 
@@ -32,14 +29,30 @@
 
         protected void EndContext()
         {
-            var context = Context;
-            context?.End(this);
+            Context?.End(this);
         }
 
         protected void EndContext(object sender, EventArgs e)
         {
             EndContext();
         }
+
+        protected void UnwindContext()
+        {
+            Context?.Unwind(this);
+        }
+
+        protected void Track(Promise promise)
+        {
+            Context?.Track(promise);
+        }
+
+        protected void Dispose(IDisposable disposable)
+        {
+            Context?.Dispose(disposable);
+        }
+
+        protected IHandler Async => Context.Async();
 
         #endregion
 
@@ -120,6 +133,30 @@
             return handler.Next<C>();
         }
 
+        protected Promise<Context> Next<C>(Action<C> action)
+            where C : class, IController
+        {
+            return Next(Context, action);
+        }
+
+        protected Promise<Context> Next<C>(IHandler handler, Action<C> action)
+            where C : class, IController
+        {
+            return handler.Next(action);
+        }
+
+        protected TargetActionBuilder<C, Promise<Context>> NextBlock<C>()
+            where C : IController
+        {
+            return NextBlock<C>(Context);
+        }
+
+        protected TargetActionBuilder<C, Promise<Context>> NextBlock<C>(IHandler handler)
+            where C : IController
+        {
+            return handler.NavigateBlock<C>(NavigationStyle.Next);
+        }
+
         protected C Push<C>()
             where C : class, IController
         {
@@ -132,10 +169,83 @@
             return handler.Push<C>();
         }
 
+        protected Promise<Context> Push<C>(Action<C> action)
+            where C : class, IController
+        {
+            return Push(Context, action);
+        }
+
+        protected Promise<Context> Push<C>(IHandler handler, Action<C> action)
+            where C : class, IController
+        {
+            return handler.Push(action);
+        }
+
+        protected TargetActionBuilder<C, Promise<Context>> PushBlock<C>()
+            where C : IController
+        {
+            return PushBlock<C>(Context);
+        }
+
+        protected TargetActionBuilder<C, Promise<Context>> PushBlock<C>(IHandler handler)
+            where C : IController
+        {
+            return handler.NavigateBlock<C>(NavigationStyle.Push);
+        }
+
+        protected C Partial<C>()
+            where C : class, IController
+        {
+            return Partial<C>(Context);
+        }
+
+        protected C Partial<C>(IHandler handler)
+            where C : class, IController
+        {
+            return handler.Partial<C>();
+        }
+
+        protected Promise<Context> Partial<C>(Action<C> action)
+            where C : class, IController
+        {
+            return Partial(Context, action);
+        }
+
+        protected Promise<Context> Partial<C>(IHandler handler, Action<C> action)
+            where C : class, IController
+        {
+            return handler.Partial(action);
+        }
+
+        protected TargetActionBuilder<C, Promise<Context>> PartialBlock<C>()
+            where C : IController
+        {
+            return PartialBlock<C>(Context);
+        }
+
+        protected TargetActionBuilder<C, Promise<Context>> PartialBlock<C>(IHandler handler)
+            where C : IController
+        {
+            return handler.NavigateBlock<C>(NavigationStyle.Partial);
+        }
+
+        protected Promise<Context> Navigate<C>(NavigationStyle style, Action<C> action)
+            where C : class, IController
+        {
+            return Navigate(Context, style, action);
+        }
+
+        protected Promise<Context> Navigate<C>(
+            IHandler handler, NavigationStyle style, Action<C> action)
+            where C : class, IController
+        {
+            return handler.Navigate(style, action);
+        }
+
         protected C Navigate<C>(NavigationStyle style) 
             where C : class, IController
         {
-            return Push<C>(Context);
+            return Navigate<C>(Context, style);
         }
 
         protected C Navigate<C>(IHandler handler, NavigationStyle style)
@@ -144,9 +254,27 @@
             return handler.Navigate<C>(style);
         }
 
+        protected TargetActionBuilder<C, Promise<Context>> NavigateBlock<C>(
+            NavigationStyle style)
+            where C : class, IController
+        {
+            return NavigateBlock<C>(Context, style);
+        }
+
+        protected TargetActionBuilder<C, Promise<Context>> NavigateBlock<C>(
+            IHandler handler, NavigationStyle style)
+            where C : class, IController
+        {
+            return handler.NavigateBlock<C>(style);
+        }
+
         public void GoBack() => GoBack(Context);
 
         protected void GoBack(IHandler handler) => handler.GoBack();
+
+        #endregion
+
+        #region Workflow
 
         #endregion
 
