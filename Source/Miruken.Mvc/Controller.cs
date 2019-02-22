@@ -276,6 +276,41 @@
 
         #region Workflow
 
+        protected void Finish()
+        {
+            Context?.End(this);
+        }
+
+        protected void Finish<A>(A a)
+        {
+            Context?.Store(a).End(this);
+        }
+
+        protected void Finish<A1,A2>(A1 a1, A2 a2)
+        {
+            Context?.Store(a1).Store(a2).End(this);
+        }
+
+        protected void Finish<A1,A2,A3>(A1 a1, A2 a2, A3 a3)
+        {
+            Context?.Store(a1).Store(a2).Store(a3).End(this);
+        }
+
+        protected void Finish<A1,A2,A3,A4>(A1 a1, A2 a2, A3 a3, A4 a4)
+        {
+            Context?.Store(a1).Store(a2).Store(a3).Store(a4).End(this);
+        }
+    
+        protected void Finish<A1,A2,A3,A4,A5>(A1 a1, A2 a2, A3 a3, A4 a4, A5 a5)
+        {
+            Context?.Store(a1).Store(a2).Store(a3).Store(a4).Store(a5).End(this);
+        }
+
+        protected void Finish<A1,A2,A3,A4,A5,A6>(A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6)
+        {
+            Context?.Store(a1).Store(a2).Store(a3).Store(a4).Store(a5).Store(a6).End(this);
+        }
+
         #endregion
 
         #region Initialize
