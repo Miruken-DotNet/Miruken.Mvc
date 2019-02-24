@@ -60,7 +60,7 @@
                 : new WeakReference<IViewLayer>(value);
         }
 
-        public abstract bool InvokeOn(IController controller);
+        public abstract bool InvokeOn(IController controller, ResolveArgs args);
       
         public static Prepare GlobalPrepare;
         public static Execute GlobalExecute;
@@ -83,20 +83,20 @@
 
         public TargetAction<C> Action { get; }
 
-        public override bool InvokeOn(IController controller)
+        public override bool InvokeOn(IController controller, ResolveArgs args)
         {
             if (controller == null)
                 throw new ArgumentNullException(nameof(controller));
             if (!(controller is C ctrl))
                 throw new ArgumentException(
                     $"{controller} is not a {typeof(C).FullName}");
-            var context = controller.Context ??
+            if (controller.Context == null)
                 throw new InvalidOperationException(
                     "Controller invocation requires a context");
             Controller = controller;
             return GlobalExecute?.GetInvocationList()
                        .All(ex => ((Execute)ex)(this)) != false
-                   && Action(ctrl, context);
+                   && Action(ctrl, args);
         }
     }
 }

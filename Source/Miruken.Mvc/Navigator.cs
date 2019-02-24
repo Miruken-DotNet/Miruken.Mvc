@@ -50,14 +50,7 @@
             var child = parent.CreateChild();
 
             if (style == NavigationStyle.Push)
-            {
-                child.ChildContextEnded += (ctx, reason) =>
-                {
-                    if (!(reason is Navigation))
-                        ctx.Parent?.End(reason);
-                };
                 child = child.CreateChild();
-            }
 
             try
             {
@@ -98,15 +91,31 @@
                         if (!(reason is Navigation))
                             resolve(ctx, true);
                     };
-                    if (!navigation.InvokeOn(controller))
+                    if (style == NavigationStyle.Push)
+                    {
+                        child.Parent.ChildContextEnded += (ctx, reason) =>
+                        {
+                            if (!(reason is Navigation))
+                                ctx.Parent?.End(reason);
+                            resolve(ctx, true);
+                        };
+                    }
+                    if (!navigation.InvokeOn(controller, args =>
+                    {
+                        var values = child.ResolveArgs(args);
+                        if (values != null)
+                        {
+                            if (style != NavigationStyle.Push)
+                                initiator?.Context?.End(initiator);
+                        }
+                        return values;
+                    }))
                     {
                         reject(new InvalidOperationException(
                             "Navigation could not be performed.  The most likely cause is missing dependencies."),
                             true);
                         child.End();
                     }
-                    if (style != NavigationStyle.Push)
-                        initiator?.Context?.End(initiator);
                 }
                 catch (Exception ex)
                 {
