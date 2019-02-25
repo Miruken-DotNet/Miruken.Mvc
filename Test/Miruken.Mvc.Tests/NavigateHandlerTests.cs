@@ -64,6 +64,16 @@
             {
                 Next<GoodbyeController>(ctrl => ctrl.Context.End());
             }
+
+            public void Exception()
+            {
+                throw new InvalidOperationException("Crashed");
+            }
+
+            public void NextException()
+            {
+                Next<GoodbyeController>(ctrl => throw new InvalidOperationException("No manners"));
+            }
         }
 
         public class GoodbyeController : Controller
@@ -128,7 +138,7 @@
         {
             var ctrl = _rootContext.Next<HelloController>();
             ctrl.SayHello("Brenda");
-            Assert.AreEqual(_rootContext, ctrl.Context.Parent);
+            Assert.AreSame(_rootContext, ctrl.Context.Parent);
         }
 
         [TestMethod]
@@ -136,7 +146,7 @@
         {
             var ctrl = _rootContext.Push<HelloController>();
             ctrl.SayHello("Craig");
-            Assert.AreEqual(_rootContext, ctrl.Context.Parent.Parent);
+            Assert.AreSame(_rootContext, ctrl.Context.Parent.Parent);
         }
 
         [TestMethod]
@@ -145,7 +155,7 @@
             _rootContext.Next<HelloController>(ctrl =>
             {
                 ctrl.SayHelloRegion("Brenda");
-                Assert.AreEqual(_rootContext, ctrl.Context.Parent);
+                Assert.AreSame(_rootContext, ctrl.Context.Parent);
             });
         }
 
@@ -159,7 +169,7 @@
                 Assert.IsNull(ctrl.Context);
             }).Then((ctx, _) =>
             {
-                Assert.AreEqual(_rootContext, ctx.Parent.Parent);
+                Assert.AreSame(_rootContext, ctx.Parent.Parent);
                 called = true;
             });
             Assert.IsTrue(called);
@@ -175,7 +185,7 @@
                 Assert.IsNull(ctrl.Context);
             }).Then((ctx, _) =>
             {
-                Assert.AreEqual(_rootContext, ctx.Parent.Parent);
+                Assert.AreSame(_rootContext, ctx.Parent.Parent);
                 called = true;
             });
             Assert.IsTrue(called);
@@ -189,12 +199,66 @@
             Assert.IsNull(ctrl.Context);
         }
 
+        [TestMethod]
+        public void Should_Fail_Navigation_If_Action_Throws_Exception()
+        {
+            var called = false;
+            _rootContext.Next<HelloController>(ctrl =>
+            {
+                ctrl.Exception();
+            }).Catch((ex, _) =>
+            {
+                var navigationException = ex as NavigationException;
+                Assert.IsNotNull(navigationException);
+                Assert.AreEqual("Crashed", ex.InnerException?.Message);
+                Assert.AreSame(_rootContext, navigationException.Context);
+                called = true;
+            });
+            Assert.IsTrue(called);
+        }
+
+        [TestMethod]
+        public void Should_Fail_Navigation_If_Next_Action_Throws_Exception()
+        {
+            var called = false;
+            _rootContext.Push<HelloController>(ctrl =>
+            {
+                ctrl.NextException();
+            }).Catch((ex, _) =>
+            {
+                var navigationException = ex as NavigationException;
+                Assert.IsNotNull(navigationException);
+                Assert.AreEqual("No manners", ex.InnerException?.Message);
+                Assert.AreSame(_rootContext, navigationException.Context.Parent?.Parent);
+                called = true;
+            });
+            Assert.IsTrue(called);
+        }
+
+        [TestMethod]
+        public void Should_Navigation_Next_After_Failed_Navigation()
+        {
+            var called = false;
+            _rootContext.Push<HelloController>(ctrl =>
+            {
+                ctrl.NextException();
+            }).Catch((ex, _) =>
+            {
+                var navigationException = ex as NavigationException;
+                Assert.IsNotNull(navigationException);
+                navigationException.Context.Parent?.Parent?
+                    .Next<GoodbyeController>(gb => gb.SayGoodbye("Joe"));
+                called = true;
+            });
+            Assert.IsTrue(called);
+        }
+
         [TestMethod, 
          ExpectedException(typeof(InvalidOperationException))]
         public void Should_Reject_Initial_Property_Navigation()
         {
             var ctrl = _rootContext.Next<HelloController>();
-            Assert.AreEqual(_rootContext, ctrl.Context);
+            Assert.AreSame(_rootContext, ctrl.Context);
         }
 
         [TestMethod]

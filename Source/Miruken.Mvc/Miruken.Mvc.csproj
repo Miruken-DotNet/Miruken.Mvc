@@ -78,6 +78,7 @@
     <Compile Include="Controller.cs" />
     <Compile Include="Handler.Navigate.cs" />
     <Compile Include="IController.cs" />
+    <Compile Include="NavigationException.cs" />
     <Compile Include="Navigator.cs" />
     <Compile Include="NavigateInterceptor.cs" />
     <Compile Include="Animation\Translate.cs" />

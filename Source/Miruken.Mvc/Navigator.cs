@@ -88,16 +88,25 @@
                 {
                     child.ContextEnding += (ctx, reason) =>
                     {
-                        if (!(reason is Navigation))
+                        if (reason is NavigationException exception)
+                            reject(exception, true);
+                        else if (!(reason is Navigation))
                             resolve(ctx, true);
                     };
                     if (style == NavigationStyle.Push)
                     {
                         child.Parent.ChildContextEnded += (ctx, reason) =>
                         {
-                            if (!(reason is Navigation))
+                            if (reason is NavigationException exception)
+                            {
                                 ctx.Parent?.End(reason);
-                            resolve(ctx, true);
+                                reject(exception, true);
+                            }
+                            else if (!(reason is Navigation))
+                            {
+                                ctx.Parent?.End(reason);
+                                resolve(ctx, true);
+                            }
                         };
                     }
                     if (!navigation.InvokeOn(controller, args =>
@@ -111,16 +120,17 @@
                         return values;
                     }))
                     {
-                        reject(new InvalidOperationException(
-                            "Navigation could not be performed.  The most likely cause is missing dependencies."),
-                            true);
-                        child.End();
+                        var exception = new NavigationException(context,
+                            "Navigation could not be performed.  The most likely cause is missing dependencies.");
+                        reject(exception, true);
+                        child.End(exception);
                     }
                 }
                 catch (Exception ex)
                 {
-                    reject(ex, true);
-                    child.End();
+                    var exception = new NavigationException(context, "Navigation failed", ex);
+                    reject(exception, true);
+                    child.End(exception);
                 }
                 finally
                 {
