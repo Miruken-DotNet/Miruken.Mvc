@@ -21,9 +21,9 @@
         public Promise<Context> Navigate(Navigation navigation,
             Context context, IHandler composer)
         {
-            var style     = navigation.Style;
-            var initiator = context.Self().Resolve<Navigation>();
             var parent    = context;
+            var initiator = context.Self().Resolve<Navigation>();
+            var style     = initiator?.Back == null ? navigation.Style : NavigationStyle.Next;
 
             if (initiator != null)
             {
