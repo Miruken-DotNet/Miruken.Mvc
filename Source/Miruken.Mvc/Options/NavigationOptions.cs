@@ -9,6 +9,7 @@
         public WindowOptions Window    { get; set; }
         public IAnimation    Animation { get; set; }
         public bool?         NoBack    { get; set; }
+        public bool?         GoBack    { get; set; }
 
         public override void MergeInto(NavigationOptions other)
         {
@@ -16,6 +17,9 @@
 
             if (NoBack.HasValue && !other.NoBack.HasValue)
                 other.NoBack = NoBack;
+
+            if (GoBack.HasValue && !other.GoBack.HasValue)
+                other.GoBack = NoBack;
 
             if (Region != null)
             {
@@ -48,6 +52,14 @@
             return new NavigationOptions
             {
                 NoBack = true
+            }.Decorate(handler);
+        }
+
+        public static IHandler NavBack(this IHandler handler)
+        {
+            return new NavigationOptions
+            {
+                GoBack = true
             }.Decorate(handler);
         }
 

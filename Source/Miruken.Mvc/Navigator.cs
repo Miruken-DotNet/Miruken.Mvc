@@ -23,7 +23,8 @@
         {
             var parent    = context;
             var initiator = context.Self().Resolve<Navigation>();
-            var style     = initiator?.Back == null ? navigation.Style : NavigationStyle.Next;
+            var options   = composer.GetOptions(new NavigationOptions());
+            var style     = options?.GoBack == true ? NavigationStyle.Next : navigation.Style;
 
             if (initiator != null)
             {
@@ -67,9 +68,7 @@
                     child.End();
             }
 
-            var options = composer.GetOptions(new NavigationOptions());
-
-            navigation.NoBack = options?.NoBack == true;
+            navigation.NoBack = options?.NoBack == true || options?.GoBack == true;
             if (!navigation.NoBack && navigation.Back == null && initiator != null &&
                 style == NavigationStyle.Next)
             {
@@ -155,7 +154,7 @@
                 if (navigation == null) return null;
 
                 if (navigation.Back != null)
-                    return composer.NoBack().CommandAsync<Context>(navigation.Back);
+                    return composer.NavBack().CommandAsync<Context>(navigation.Back);
 
                 if (navigation.Style == NavigationStyle.Push)
                 {
