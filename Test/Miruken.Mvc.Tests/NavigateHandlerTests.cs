@@ -17,9 +17,10 @@
 
         static NavigateHandlerTests()
         {
-            HandlerDescriptor.GetDescriptor<HelloController>();
-            HandlerDescriptor.GetDescriptor<GoodbyeController>();
-            HandlerDescriptor.GetDescriptor<PartialController>();
+            HandlerDescriptorFactory.Current.RegisterDescriptor<Navigator>();
+            HandlerDescriptorFactory.Current.RegisterDescriptor<HelloController>();
+            HandlerDescriptorFactory.Current.RegisterDescriptor<GoodbyeController>();
+            HandlerDescriptorFactory.Current.RegisterDescriptor<PartialController>();
         }
 
         public class HelloController : Controller
@@ -110,7 +111,7 @@
         public void TestInitialize()
         {
             _rootContext = new Context();
-            _navigator    = new Navigator(new TestViewRegion());
+            _navigator   = new Navigator(new TestViewRegion());
             _rootContext.AddHandlers(new StaticHandler(), _navigator);
         }
 
