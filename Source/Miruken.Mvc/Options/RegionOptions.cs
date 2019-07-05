@@ -8,7 +8,7 @@ namespace Miruken.Mvc.Options
 
     public class RegionOptions : Options<RegionOptions>
     {
-        public object Tag       { get; set; }
+        public object Region    { get; set; }
         public bool?  Push      { get; set; }
         public bool?  Overlay   { get; set; }
         public bool?  Unload    { get; set; }
@@ -25,8 +25,8 @@ namespace Miruken.Mvc.Options
         {
             if (other == null) return;
 
-            if (Tag != null && other.Tag == null)
-                other.Tag = Tag;
+            if (Region != null && other.Region == null)
+                other.Region = Region;
 
             if (Push.HasValue && !other.Push.HasValue)
                 other.Push = Push;
@@ -47,6 +47,14 @@ namespace Miruken.Mvc.Options
 
     public static class RegionOptionsExtensions
     {
+        public static IHandler Region(this IHandler handler, string region)
+        {
+            return new NavigationOptions
+            {
+                Region = new RegionOptions { Region = region }
+            }.Decorate(handler);
+        }
+
         public static IHandler PushLayer(this IHandler handler)
         {
             return new NavigationOptions

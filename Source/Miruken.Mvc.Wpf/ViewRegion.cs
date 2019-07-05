@@ -63,14 +63,16 @@
             var overlay     = false;
             ViewLayer layer = null;
 
-            var navigation  = composer.Resolve<Navigation>();
-            var options     = composer.GetOptions(new NavigationOptions());
+            var navigation    = composer.Resolve<Navigation>();
+            var options       = composer.GetOptions(new NavigationOptions());
+            var regionOptions = options?.Region;
+            var region        = regionOptions?.Region;
+            if (region != null && region != Tag)
+                return Handler.Unhandled<IViewLayer>();
 
             var windowOptions = options?.Window;
             if (!(noWindow || windowOptions == null))
                 return CreateWindow(windowOptions, view, navigation, composer);
-
-            var regionOptions = options?.Region;
 
             if (Layers.Count == 0)
                 push = true;
