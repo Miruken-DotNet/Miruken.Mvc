@@ -51,6 +51,8 @@
                 : new WeakReference<IController>(value);
         }
 
+        public object ViewRegion { get; set; }
+
         public IViewLayer ViewLayer
         {
             get => _viewLayer != null &&

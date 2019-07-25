@@ -67,8 +67,19 @@
             var options       = composer.GetOptions(new NavigationOptions());
             var regionOptions = options?.Region;
             var region        = regionOptions?.Region;
-            if (region != null && region != Tag)
-                return Handler.Unhandled<IViewLayer>();
+            if (region != null)
+            {
+                if (region != Tag)
+                    return Handler.Unhandled<IViewLayer>();
+                if (navigation != null)
+                    navigation.ViewRegion = region;
+            }
+            else
+            {
+                var impliedRegion = navigation?.ViewRegion;
+                if (impliedRegion != null && impliedRegion != Tag)
+                    return Handler.Unhandled<IViewLayer>();
+            }
 
             var windowOptions = options?.Window;
             if (!(noWindow || windowOptions == null))
