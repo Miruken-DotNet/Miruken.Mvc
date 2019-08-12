@@ -39,6 +39,8 @@
                     }
                 }
 
+                navigation.ViewRegion = initiator.ViewRegion;
+
                 if (style != NavigationStyle.Push)
                 {
                     parent = parent.Parent ?? throw new InvalidOperationException(
