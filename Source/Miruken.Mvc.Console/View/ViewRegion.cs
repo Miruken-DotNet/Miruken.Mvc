@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
-    using System.Windows.Threading;
+    using System.Threading;
     using Callback;
     using Concurrency;
     using Infrastructure;
@@ -250,14 +250,14 @@
             {
                 return new Promise<bool>(ChildCancelMode.Any, (resolve, reject, onCancel) =>
                 {
-                    DispatcherTimer timer = null;
+                    Timer timer = null;
 
                     void StopTimer(bool cancelled, bool complete)
                     {
                         var t = timer;
                         if (t == null) return;
                         timer = null;
-                        t.IsEnabled = false;
+                        t.Change(Timeout.Infinite, Timeout.Infinite);
                         if (complete) resolve(cancelled, false);
                     }
 
@@ -282,12 +282,8 @@
                     };
                     Disposed += disposed;
 
-                    timer = new DispatcherTimer
-                    {
-                        Interval = TimeSpan.FromMilliseconds(duration.TotalMilliseconds)
-                    };
-                    timer.Tick += (_, e) => StopTimer(false, true);
-                    timer.IsEnabled = true;
+                    timer = new Timer(_ => StopTimer(false, true), null,
+                        (int)duration.TotalMilliseconds, Timeout.Infinite);
                 });
             }
 

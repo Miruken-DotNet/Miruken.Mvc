@@ -36,7 +36,11 @@
                 var navigation = IO.Resolve<Navigation>();
                 Assert.IsNotNull(navigation);
                 Assert.AreSame(this, navigation.Controller);
+#if NETFULL
                 Push<GoodbyeController>().SayGoodbye(name);
+#else
+                Push<GoodbyeController>(ctrl => ctrl.SayGoodbye(name));
+#endif
                 return IO.GetOptions<NavigationOptions>();
             }
 
@@ -49,7 +53,11 @@
 
             public void Compose()
             {
+#if NETFULL
                 Partial<PartialController>().Render();
+#else
+                Partial<PartialController>(ctrl => ctrl.Render());
+#endif
             }
 
             public void Render()
@@ -137,17 +145,33 @@
         [TestMethod]
         public void Should_Navigate_Next()
         {
+#if NETFULL
             var ctrl = _rootContext.Next<HelloController>();
             ctrl.SayHello("Brenda");
             Assert.AreSame(_rootContext, ctrl.Context.Parent);
+#else
+            _rootContext.Next<HelloController>(ctrl =>
+            {
+                ctrl.SayHello("Brenda");
+                Assert.AreSame(_rootContext, ctrl.Context.Parent);
+            });
+#endif
         }
 
         [TestMethod]
         public void Should_Navigate_Push()
         {
+#if NETFULL
             var ctrl = _rootContext.Push<HelloController>();
             ctrl.SayHello("Craig");
             Assert.AreSame(_rootContext, ctrl.Context.Parent.Parent);
+#else
+            _rootContext.Push<HelloController>(ctrl =>
+            {
+                ctrl.SayHello("Craig");
+                Assert.AreSame(_rootContext, ctrl.Context.Parent.Parent);
+            });
+#endif
         }
 
         [TestMethod]
@@ -195,9 +219,17 @@
         [TestMethod]
         public void Should_Navigate_Partial()
         {
+#if NETFULL
             var ctrl = _rootContext.Partial<HelloController>();
             ctrl.Compose();
             Assert.IsNull(ctrl.Context);
+#else
+            _rootContext.Partial<HelloController>(ctrl =>
+            {
+                ctrl.Compose();
+                Assert.IsNull(ctrl.Context);
+            });
+#endif
         }
 
         [TestMethod]
@@ -254,6 +286,7 @@
             Assert.IsTrue(called);
         }
 
+#if NETFULL
         [TestMethod, 
          ExpectedException(typeof(InvalidOperationException))]
         public void Should_Reject_Initial_Property_Navigation()
@@ -261,13 +294,20 @@
             var ctrl = _rootContext.Next<HelloController>();
             Assert.AreSame(_rootContext, ctrl.Context);
         }
+#endif
 
         [TestMethod]
         public void Should_Propagate_Next_Options()
         {
+#if NETFULL
             var ctrl = _rootContext.Push(Origin.MiddleLeft)
                 .Next<HelloController>();
             var options = ctrl.SayHello("Kaitlyn");
+#else
+            NavigationOptions options = null;
+            _rootContext.Push(Origin.MiddleLeft)
+                .Push<HelloController>(ctrl => options = ctrl.SayHello("Kaitlyn"));
+#endif
             Assert.IsNotNull(options);
             var translation = options.Animation as Translate;
             Assert.IsNotNull(translation);
@@ -278,9 +318,15 @@
         [TestMethod]
         public void Should_Propagate_Push_Options()
         {
+#if NETFULL
             var ctrl = _rootContext.SlideIn(Origin.MiddleRight)
                 .Push<HelloController>();
             var options = ctrl.SayHello("Lauren");
+#else
+            NavigationOptions options = null;
+            _rootContext.SlideIn(Origin.MiddleRight)
+                .Push<HelloController>(ctrl => options = ctrl.SayHello("Lauren"));
+#endif
             Assert.IsNotNull(options);
             var translation = options.Animation as Translate;
             Assert.IsNotNull(translation);
@@ -291,7 +337,11 @@
         [TestMethod]
         public void Should_Render_A_View()
         {
+#if NETFULL
             _rootContext.Next<HelloController>().Render();
+#else
+            _rootContext.Next<HelloController>(ctrl => ctrl.Render());
+#endif
         }
     }
 }

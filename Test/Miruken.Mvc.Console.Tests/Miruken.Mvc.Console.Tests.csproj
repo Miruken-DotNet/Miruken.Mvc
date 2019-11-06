@@ -31,11 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Source\Miruken.Mvc\Miruken.Mvc.csproj" />
-    </ItemGroup>
-
-    <ItemGroup Condition="$(DefineConstants.Contains('NETFULL'))">
-        <Reference Include="System.Windows.Forms" />
+      <ProjectReference Include="..\..\Source\Miruken.Mvc.Console\Miruken.Mvc.Console.csproj" />
     </ItemGroup>
 
 </Project>

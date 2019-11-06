@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netcoreapp2.2;net48;net461</TargetFrameworks>
+        <TargetFrameworks>net48;net461</TargetFrameworks>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
@@ -31,11 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Source\Miruken.Mvc\Miruken.Mvc.csproj" />
-    </ItemGroup>
-
-    <ItemGroup Condition="$(DefineConstants.Contains('NETFULL'))">
-        <Reference Include="System.Windows.Forms" />
+        <ProjectReference Include="..\..\Source\Miruken.Mvc.Castle\Miruken.Mvc.Castle.csproj" />
     </ItemGroup>
 
 </Project>

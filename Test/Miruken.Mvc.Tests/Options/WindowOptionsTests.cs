@@ -1,4 +1,5 @@
-﻿namespace Miruken.Mvc.Tests.Options
+﻿#if NETFULL
+namespace Miruken.Mvc.Tests.Options
 {
     using System.Windows.Forms;
     using Mvc.Options;
@@ -17,3 +18,5 @@
         }
     }
 }
+#endif
+

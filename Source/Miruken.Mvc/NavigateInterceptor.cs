@@ -1,4 +1,5 @@
-﻿namespace Miruken.Mvc
+﻿#if NETFULL
+namespace Miruken.Mvc
 {
     using System;
     using System.Globalization;
@@ -90,3 +91,4 @@
         }
     }
 }
+#endif

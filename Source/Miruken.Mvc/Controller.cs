@@ -122,6 +122,8 @@
 
         #region Navigate
 
+#if NETFULL
+
         protected C Next<C>() where C : class, IController
         {
             return Next<C>(Context);
@@ -132,6 +134,7 @@
         {
             return handler.Next<C>();
         }
+#endif
 
         protected Promise<Context> Next<C>(Action<C> action)
             where C : class, IController
@@ -157,6 +160,8 @@
             return handler.NavigateBlock<C>(NavigationStyle.Next);
         }
 
+#if NETFULL
+
         protected C Push<C>()
             where C : class, IController
         {
@@ -168,6 +173,7 @@
         {
             return handler.Push<C>();
         }
+#endif
 
         protected Promise<Context> Push<C>(Action<C> action)
             where C : class, IController
@@ -193,6 +199,7 @@
             return handler.NavigateBlock<C>(NavigationStyle.Push);
         }
 
+#if NETFULL
         protected C Partial<C>()
             where C : class, IController
         {
@@ -204,6 +211,7 @@
         {
             return handler.Partial<C>();
         }
+#endif
 
         protected Promise<Context> Partial<C>(Action<C> action)
             where C : class, IController
@@ -240,8 +248,10 @@
             where C : class, IController
         {
             return handler.Navigate(style, action);
+
         }
 
+#if NETFULL
         protected C Navigate<C>(NavigationStyle style) 
             where C : class, IController
         {
@@ -253,6 +263,7 @@
         {
             return handler.Navigate<C>(style);
         }
+#endif
 
         protected TargetActionBuilder<C, Promise<Context>> NavigateBlock<C>(
             NavigationStyle style)

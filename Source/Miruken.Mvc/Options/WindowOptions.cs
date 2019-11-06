@@ -2,9 +2,12 @@
 {
     using System;
     using System.Drawing;
+    using Callback;
+
+#if NETFULL
     using System.Linq;
     using System.Windows.Forms;
-    using Callback;
+#endif
 
     public enum ScreenFill
     {
@@ -27,7 +30,9 @@
         public bool?       Standalone { get; set; }
         public bool?       Readonly   { get; set; }
         public bool?       HideCursor { get; set; }
+#if NETFULL
         public Screen      Screen     { get; set; }
+#endif
         public ScreenFill? FillScreen { get; set; }
         public Rectangle?  Frame      { get; set; }
         public Type        WindowType { get; set; }
@@ -54,8 +59,10 @@
             if (HideCursor.HasValue && !other.HideCursor.HasValue)
                 other.HideCursor = HideCursor;
 
+#if NETFULL
             if (Screen != null && other.Screen == null)
                 other.Screen = Screen;
+#endif
 
             if (FillScreen.HasValue && !other.FillScreen.HasValue)
                 other.FillScreen = FillScreen;
@@ -67,6 +74,7 @@
                 other.WindowType = WindowType;
         }
 
+#if NETFULL
         public Rectangle? GetFrame(Rectangle? hint = null)
         {
             if (Frame.HasValue) return Frame.Value;
@@ -114,6 +122,7 @@
                                      (owner.Height - size.Height) / 2);
             return new Rectangle(location, size);
         }
+#endif
     }
 
     public static class WindowOptionsExtensions

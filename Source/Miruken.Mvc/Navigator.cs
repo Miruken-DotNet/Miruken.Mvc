@@ -200,7 +200,7 @@
             Context context, object key, IHandler composer)
         {
             var controller = (IController)context.Self()
-                .Chain(composer).Infer().Resolve(key, constraints =>
+                .Chain(composer).Resolve(key, constraints =>
                     constraints.Require(Qualifier.Of<ContextualAttribute>()));
             if (controller == null) return null;
             controller.Context = context;

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WpfTestApp</RootNamespace>
     <AssemblyName>WpfTestApp</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -43,14 +43,17 @@
       <HintPath>..\..\packages\Castle.Windsor.4.1.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Miruken, Version=3.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.3.0.6\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="FastExpressionCompiler, Version=2.0.0.0, Culture=neutral, PublicKeyToken=dfbf2bd50fcf7768, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FastExpressionCompiler.2.0.0\lib\net45\FastExpressionCompiler.dll</HintPath>
     </Reference>
-    <Reference Include="Miruken.Castle, Version=3.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Castle.3.0.6\lib\net461\Miruken.Castle.dll</HintPath>
+    <Reference Include="Miruken, Version=3.9.99.106, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.3.9.99-Alpha.106\lib\net461\Miruken.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Miruken.Castle, Version=3.9.99.106, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Castle.3.9.99-Alpha.106\lib\net461\Miruken.Castle.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -160,19 +163,18 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Source\Miruken.Mvc.Castle\Miruken.Mvc.Castle.csproj">
-      <Project>{f9f72245-b193-40ba-a07f-ed3f57aa20f2}</Project>
+      <Project>{a6735c48-655a-484e-9843-82cc9f9348a1}</Project>
       <Name>Miruken.Mvc.Castle</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Source\Miruken.Mvc.Wpf\Miruken.Mvc.Wpf.csproj">
-      <Project>{657afca9-9eb0-48fd-9648-fd9d96d1ef14}</Project>
+      <Project>{504fea7d-f409-41f1-ab4a-88010ba26d21}</Project>
       <Name>Miruken.Mvc.Wpf</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Source\Miruken.Mvc\Miruken.Mvc.csproj">
-      <Project>{531ce161-7133-449d-86f6-60b72cb3047a}</Project>
+      <Project>{61abf357-226a-463c-b493-59cb0b1e3828}</Project>
       <Name>Miruken.Mvc</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

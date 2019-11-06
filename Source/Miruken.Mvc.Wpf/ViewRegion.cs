@@ -314,8 +314,7 @@
 
             if (animation != null && animation != NoAnimation.Instance)
             {
-                var animator = composer.BestEffort().Infer()
-                    .Map<IAnimator>(animation);
+                var animator = composer.BestEffort().Map<IAnimator>(animation);
                 if (animator != null)
                     return animator.Present(fromView, view, removeFromView);
             }
@@ -348,8 +347,7 @@
 
             if (animation != null && animation != NoAnimation.Instance)
             {
-                var animator = composer.BestEffort().Infer()
-                    .Map<IAnimator>(animation);
+                var animator = composer.BestEffort().Map<IAnimator>(animation);
                 if (animator != null)
                     return animator.Dismiss(fromView, toView);
             }

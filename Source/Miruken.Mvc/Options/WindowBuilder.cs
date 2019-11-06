@@ -1,7 +1,9 @@
 ﻿namespace Miruken.Mvc.Options
 {
+#if NETFULL
     using System.Linq;
     using System.Windows.Forms;
+#endif
 
     public class WindowBuilder
     {
@@ -24,6 +26,7 @@
             return this;
         }
 
+#if NETFULL
         public WindowBuilder PrimaryScreen()
         {
             WindowOptions.Screen = Screen.PrimaryScreen;
@@ -35,6 +38,7 @@
             WindowOptions.Screen = Screen.AllScreens.FirstOrDefault(s => !s.Primary);
             return this;
         }
+#endif
 
         public WindowBuilder FullScreen()
         {
