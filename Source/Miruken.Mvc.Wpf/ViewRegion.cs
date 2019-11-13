@@ -85,9 +85,7 @@
             if (!(noWindow || windowOptions == null))
                 return CreateWindow(windowOptions, view, navigation, composer);
 
-            if (Layers.Count == 0)
-                push = true;
-            else if (regionOptions != null)
+            if (regionOptions != null)
             {
                 if (regionOptions.Push == true)
                     push = true;
@@ -101,19 +99,25 @@
                     push = true;
                 }
                 else
+                {
                     layer = (ViewLayer) regionOptions.Choose(
                         Layers.Cast<IViewLayer>().ToArray());
+                }
             }
 
             if (push)
             {
-                if (overlay)
-                    PushOverlay();
-                else
-                    PushLayer();
+                layer = overlay ? CreateLayer(true, true) : (ViewLayer)PushLayer();
             }
-            else if (layer == null && navigation?.ViewLayer is ViewLayer myLayer)
-                layer = myLayer;
+            else
+            {
+                if (layer == null && navigation?.ViewLayer is ViewLayer myLayer &&
+                    Layers.Contains(myLayer))
+                    layer = myLayer;
+                else
+                    layer = Layers.FirstOrDefault(l => !l.Push)
+                        ?? CreateLayer(bottom: true);
+            }
 
             if (layer == null) layer = ActiveLayer;
             if (navigation != null && navigation.ViewLayer == null)
@@ -147,10 +151,10 @@
             var layer = region.TransitionTo(content, context, true);
             layer.Disposed += (s, e) =>
             {
-                if (window.Dispatcher.CheckAccess())
+                if (window.Dispatcher?.CheckAccess() == true)
                     window.Close();
                 else
-                    window.Dispatcher.Invoke(new ThreadStart(window.Close));
+                    window.Dispatcher?.Invoke(new ThreadStart(window.Close));
             };
             window.Closed += (s, e) => layer.Dispose();
 
@@ -244,11 +248,6 @@
 
         public IDisposable PushLayer()
         {
-            return CreateLayer(false);
-        }
-
-        public IDisposable PushOverlay()
-        {
             return CreateLayer(true);
         }
 
@@ -274,10 +273,14 @@
             layer.TransitionFrom();
         }
 
-        private ViewLayer CreateLayer(bool overlay)
+        private ViewLayer CreateLayer(
+            bool push = false, bool overlay = false, bool bottom = false)
         {
-            var layer = new ViewLayer(this, overlay);
-            Layers.Add(layer);
+            var layer = new ViewLayer(this, push, overlay, bottom);
+            if (bottom)
+                Layers.Insert(0, layer);
+            else 
+                Layers.Add(layer);
             return layer;
         }
 
@@ -297,14 +300,14 @@
         #region Helper Methods
 
         private Promise AddView(ViewController fromView,
-            ViewController view, NavigationOptions options,
+            ViewController view, int? viewIndex, NavigationOptions options,
             bool removeFromView, IHandler composer)
         {
-            if (!Dispatcher.CheckAccess())
+            if (Dispatcher?.CheckAccess() == false)
                 return (Promise)Dispatcher.Invoke(
-                    new Func<ViewController, ViewController,
+                    new Func<ViewController, ViewController, int?,
                     NavigationOptions, bool, IHandler, Promise>(AddView),
-                    fromView, view, options, removeFromView, composer);
+                    fromView, view, viewIndex, options, removeFromView, composer);
 
             if (_unwinding || Children.Contains(view))
                 return Promise.Empty;
@@ -319,10 +322,15 @@
                     return animator.Present(fromView, view, removeFromView);
             }
 
-            var fromIndex = Children.IndexOf(fromView);
+            var fromIndex = viewIndex ?? -1;
+            if (fromIndex < 0)
+            {
+                fromIndex = Children.IndexOf(fromView);
+                if (fromIndex >= 0) ++fromIndex;
+            }
 
             if (fromIndex >= 0)
-                Children.Insert(fromIndex + 1, view);
+                Children.Insert(fromIndex, view);
             else
                 Children.Add(view);
 
@@ -339,7 +347,7 @@
             ViewController toView, IAnimation animation,
             IHandler composer)
         {
-            if (!Dispatcher.CheckAccess())
+            if (Dispatcher?.CheckAccess() == false)
                 return (Promise)Dispatcher.Invoke(
                     new Func<ViewController, ViewController,
                     IAnimation, IHandler, Promise>(RemoveView),
@@ -387,17 +395,23 @@
 
         public class ViewLayer : IViewLayer
         {
-            private readonly bool _overlay;
             private IAnimation _animation;
             private IHandler _composer;
             protected bool _disposed;
 
-            public ViewLayer(ViewRegion region, bool overlay)
+            public ViewLayer(ViewRegion region,
+                bool push = false, bool overlay = false, bool bottom = false)
             {
-                _overlay = overlay;
-                Events   = new EventHandlerList();
-                Region   = region;
+                Region  = region;
+                Push    = push;
+                Overlay = overlay;
+                Bottom  = bottom;
+                Events  = new EventHandlerList();
             }
+
+            public bool Push    { get; }
+            public bool Overlay { get; }
+            public bool Bottom  { get; }
 
             protected ViewRegion       Region { get; }
             protected EventHandlerList Events { get; }
@@ -439,7 +453,7 @@
                     _animation = options?.Animation;
 
                 var oldView = View;
-                if (_overlay && oldView != null)
+                if (Overlay && oldView != null)
                 {
                     var layer = Region.DropLayer(this);
                     if (layer != null)
@@ -450,6 +464,8 @@
                     }
                 }
 
+                var viewIndex = Bottom && oldView == null ? 0 : (int?)null;
+
                 var removeFromView = oldView != null;
                 if (!removeFromView)
                 {
@@ -458,7 +474,7 @@
                         oldView = below.View;
                 }
                 View = new ViewController(Region, view);
-                Region.AddView(oldView, View, options, removeFromView, composer);
+                Region.AddView(oldView, View, viewIndex, options, removeFromView, composer);
                 Events.Raise(this, TransitionedEvent);
 
                 return this;
@@ -467,7 +483,7 @@
             public void TransitionFrom()
             {
                 var dispatcher = Region.Dispatcher;
-                if (!dispatcher.CheckAccess())
+                if (dispatcher?.CheckAccess() == false)
                 {
                     if (!dispatcher.HasShutdownStarted && 
                         !dispatcher.HasShutdownFinished)
