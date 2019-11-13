@@ -300,14 +300,14 @@
         #region Helper Methods
 
         private Promise AddView(ViewController fromView,
-            ViewController view, int? viewIndex, NavigationOptions options,
+            ViewController view, bool bottom, NavigationOptions options,
             bool removeFromView, IHandler composer)
         {
             if (Dispatcher?.CheckAccess() == false)
                 return (Promise)Dispatcher.Invoke(
-                    new Func<ViewController, ViewController, int?,
+                    new Func<ViewController, ViewController, bool,
                     NavigationOptions, bool, IHandler, Promise>(AddView),
-                    fromView, view, viewIndex, options, removeFromView, composer);
+                    fromView, view, bottom, options, removeFromView, composer);
 
             if (_unwinding || Children.Contains(view))
                 return Promise.Empty;
@@ -322,8 +322,14 @@
                     return animator.Present(fromView, view, removeFromView);
             }
 
-            var fromIndex = viewIndex ?? -1;
-            if (fromIndex < 0)
+            var fromIndex = -1;
+            if (bottom)
+            {
+                var layer = Layers.FirstOrDefault(l => l.View != null);
+                if (layer != null)
+                    fromIndex = Children.IndexOf(layer.View);
+            }
+            else
             {
                 fromIndex = Children.IndexOf(fromView);
                 if (fromIndex >= 0) ++fromIndex;
@@ -464,8 +470,6 @@
                     }
                 }
 
-                var viewIndex = Bottom && oldView == null ? 0 : (int?)null;
-
                 var removeFromView = oldView != null;
                 if (!removeFromView)
                 {
@@ -473,8 +477,10 @@
                     if (below != null)
                         oldView = below.View;
                 }
+
                 View = new ViewController(Region, view);
-                Region.AddView(oldView, View, viewIndex, options, removeFromView, composer);
+                Region.AddView(oldView, View, Bottom && oldView == null,
+                               options, removeFromView, composer);
                 Events.Raise(this, TransitionedEvent);
 
                 return this;
