@@ -116,7 +116,7 @@
                     layer = myLayer;
                 else
                     layer = Layers.FirstOrDefault(l => !l.Push)
-                        ?? CreateLayer(bottom: true);
+                        ?? CreateLayer(bottom: Layers.Count > 0);
             }
 
             if (layer == null) layer = ActiveLayer;
