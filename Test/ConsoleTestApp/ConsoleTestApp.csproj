@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ConsoleTestApp</RootNamespace>
     <AssemblyName>ConsoleTestApp</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -48,11 +48,11 @@
     <Reference Include="FastExpressionCompiler, Version=2.0.0.0, Culture=neutral, PublicKeyToken=dfbf2bd50fcf7768, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FastExpressionCompiler.2.0.0\lib\net45\FastExpressionCompiler.dll</HintPath>
     </Reference>
-    <Reference Include="Miruken, Version=3.9.99.106, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.3.9.99-Alpha.106\lib\net461\Miruken.dll</HintPath>
+    <Reference Include="Miruken, Version=3.99.15.7, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.3.99.15-Alpha.7\lib\net461\Miruken.dll</HintPath>
     </Reference>
-    <Reference Include="Miruken.Castle, Version=3.9.99.106, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Miruken.Castle.3.9.99-Alpha.106\lib\net461\Miruken.Castle.dll</HintPath>
+    <Reference Include="Miruken.Castle, Version=3.99.15.7, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Miruken.Castle.3.99.15-Alpha.7\lib\net461\Miruken.Castle.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>

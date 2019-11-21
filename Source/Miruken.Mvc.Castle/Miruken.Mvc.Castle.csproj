@@ -26,7 +26,7 @@
     <ItemGroup>
         <PackageReference Include="Castle.Core" Version="4.3.1" />
         <PackageReference Include="Castle.Windsor" Version="4.1.0" />
-        <PackageReference Include="Miruken.Castle" Version="3.9.99-Alpha.106" />
+        <PackageReference Include="Miruken.Castle" Version="3.99.15-Alpha.7" />
     </ItemGroup>
 
     <ItemGroup>
