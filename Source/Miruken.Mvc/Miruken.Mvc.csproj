@@ -34,7 +34,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Miruken" Version="3.99.15-Alpha.7" />
+      <PackageReference Include="Miruken" Version="4.1.5" />
     </ItemGroup>
 
     <ItemGroup Condition="$(DefineConstants.Contains('NETFULL'))">

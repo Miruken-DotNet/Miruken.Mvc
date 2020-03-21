@@ -19,7 +19,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Miruken.Validate" Version="3.99.15-Alpha.7" />
+        <PackageReference Include="Miruken.Validate" Version="4.1.5" />
     </ItemGroup>
 
     <ItemGroup>
