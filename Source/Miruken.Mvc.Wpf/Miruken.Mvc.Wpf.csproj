@@ -20,7 +20,7 @@
 
     <ItemGroup>
         <PackageReference Include="ExpressionEvaluator" Version="2.0.4" />
-        <PackageReference Include="Miruken" Version="4.1.5" />
+        <PackageReference Include="Miruken" Version="4.1.6-Alpha.5" />
     </ItemGroup>
 
     <ItemGroup>
