@@ -1,8 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
     <PropertyGroup>
-        <TargetFrameworks>net48;net461</TargetFrameworks>
+        <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
         <IsPackable>false</IsPackable>
+        <UseWPF>true</UseWPF>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -11,17 +12,6 @@
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-
-    <!-- compilation flags -->
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.2'">
-        <DefineConstants>NETSTANDARD</DefineConstants>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'net461'">
-        <DefineConstants>NETFULL</DefineConstants>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'net48'">
-        <DefineConstants>NETFULL</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

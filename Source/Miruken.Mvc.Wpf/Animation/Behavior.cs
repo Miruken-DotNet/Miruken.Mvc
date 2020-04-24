@@ -4,6 +4,7 @@
     using Callback;
     using Mvc.Animation;
     using Options;
+    using IAnimation = Mvc.Animation.IAnimation;
 
     public class Behavior : Animation
     {

@@ -3,6 +3,7 @@
     using System.Windows;
     using System.Windows.Media.Animation;
     using Mvc.Animation;
+    using IAnimation = Mvc.Animation.IAnimation;
 
     public class FadeAnimator : BlendAnimator<Fade>
     {

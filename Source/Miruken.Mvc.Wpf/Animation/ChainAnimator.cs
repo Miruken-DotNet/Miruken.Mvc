@@ -4,6 +4,7 @@
     using System.Windows.Media.Animation;
     using Concurrency;
     using Mvc.Animation;
+    using IAnimation = Mvc.Animation.IAnimation;
 
     public abstract class ChainAnimator<T> : Animator
         where T : IAnimation

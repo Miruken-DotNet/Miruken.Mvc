@@ -14,14 +14,6 @@
             return handler.Navigate(NavigationStyle.Next, action);
         }
 
-#if NETFULL
-        public static C Next<C>(this IHandler handler)
-            where C : class, IController
-        {
-            return handler.Navigate<C>(NavigationStyle.Next);
-        }
-#endif
-
         public static TargetActionBuilder<C, Promise<Context>> NextBlock<C>(
             this IHandler handler)
             where C : IController
@@ -36,14 +28,6 @@
             return handler.Navigate(NavigationStyle.Push, action);
         }
 
-#if NETFULL
-        public static C Push<C>(this IHandler handler)
-            where C : class, IController
-        {
-            return handler.Navigate<C>(NavigationStyle.Push);
-        }
-#endif
-
         public static TargetActionBuilder<C, Promise<Context>> PushBlock<C>(
             this IHandler handler)
             where C : IController
@@ -57,14 +41,6 @@
         {
             return handler.Navigate(NavigationStyle.Partial, action);
         }
-
-#if NETFULL
-        public static C Partial<C>(this IHandler handler)
-            where C : class, IController
-        {
-            return handler.Navigate<C>(NavigationStyle.Partial);
-        }
-#endif
 
         public static TargetActionBuilder<C, Promise<Context>> PartialBlock<C>(
             this IHandler handler)
@@ -93,18 +69,6 @@
         {
             return handler.NavigateBlock<C>(style).Invoke(action);
         }
-
-#if NETFULL
-        public static C Navigate<C>(this IHandler handler, NavigationStyle style)
-            where C : class, IController
-        {
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
-
-            return (C)new NavigateInterceptor<C>(handler, style)
-                .GetTransparentProxy();
-        }
-#endif
 
         public static Promise<Context> GoBack(this IHandler handler)
         {

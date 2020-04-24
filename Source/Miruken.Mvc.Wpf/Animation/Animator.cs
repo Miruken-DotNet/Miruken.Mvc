@@ -5,7 +5,8 @@
     using System.Windows.Media.Animation;
     using Concurrency;
     using Mvc.Animation;
-    using Point = System.Windows.Point;
+    using IAnimation = Mvc.Animation.IAnimation;
+    using Point      = System.Windows.Point;
 
     public abstract class Animator : IAnimator
     {

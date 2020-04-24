@@ -127,8 +127,8 @@
         }
 
         protected virtual IViewLayer CreateWindow(
-            WindowOptions options, IView content, Navigation navigation,
-            IHandler composer)
+            WindowOptions options, IView content,
+            Navigation navigation, IHandler composer)
         {
             ViewRegion region;
 
@@ -177,7 +177,8 @@
                     break;
             }
 
-            var frame = options.GetFrame(window.GetFrame());
+            var wpfOptions = composer.GetOptions(new WpfWindowOptions());
+            var frame = wpfOptions?.GetFrame(options.FillScreen, window.GetFrame());
             if (frame.HasValue)
             {
                 window.WindowStartupLocation = WindowStartupLocation.Manual;

@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
     <PropertyGroup>
-        <TargetFrameworks>net48;net461</TargetFrameworks>
+        <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
         <PackageId>Miruken.Mvc.Wpf</PackageId>
@@ -16,26 +16,17 @@
         <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
         <Company>Miruken</Company>
         <PackageTags>Miruken Mvc Wpf</PackageTags>
+        <UseWPF>true</UseWPF>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="ExpressionEvaluator" Version="2.0.4" />
-        <PackageReference Include="Miruken" Version="4.1.6-Alpha.5" />
+        <PackageReference Include="Miruken" Version="4.1.6-Alpha.6" />
+        <PackageReference Include="WpfScreenHelper" Version="0.4.0" />
+        <PackageReference Include="NReco.LambdaParser" Version="1.0.11" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Miruken.Mvc\Miruken.Mvc.csproj" />
     </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Miruken.Mvc\Miruken.Mvc.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
 
 </Project>
