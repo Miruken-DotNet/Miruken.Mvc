@@ -27,8 +27,7 @@
         public Binding ProcessAction(object target, IServiceProvider serviceProvider)
         {
             var binding = new Binding();
-            if (string.IsNullOrWhiteSpace(_action))
-                return binding;
+            if (string.IsNullOrWhiteSpace(_action)) return binding;
 
             var action = _action.Trim();
             var rootObjectProvider = (IRootObjectProvider)serviceProvider
@@ -45,6 +44,7 @@
             var provider = (IProvideValueTarget)serviceProvider
                 .GetService(typeof(IProvideValueTarget));
             var target = provider?.TargetObject as DependencyObject ?? DesignObject;
+
             if (DesignerProperties.GetIsInDesignMode(target))
                 return "Designer Mode not supported";
 
@@ -84,11 +84,7 @@
             private EventInfo _canActionChangedEvent;
             private string _canActionExpr;
 
-            public ActionBinding(
-                string action,
-                object controller,
-                object target,
-                object view)
+            public ActionBinding(string action, object controller, object target, object view)
             {
                 _controller = controller;
                 _target     = target;
@@ -102,8 +98,7 @@
 
                 var startParen       = canAction.IndexOf("(", StringComparison.Ordinal);
                 var canActionChanged = canAction.Substring(0, startParen) + "Changed";
-                _canActionChangedEvent = _controller.GetType()
-                    .GetEvent(canActionChanged);
+                _canActionChangedEvent = _controller.GetType().GetEvent(canActionChanged);
             }
 
             public event EventHandler CanExecuteChanged
@@ -127,10 +122,7 @@
                 }
             }
 
-            public void Execute()
-            {
-                Parser.Eval(_actionExpr, GetVariable);
-            }
+            public void Execute() => Parser.Eval(_actionExpr, GetVariable);
 
             private object GetVariable(string name) => name switch
                 {
@@ -139,40 +131,6 @@
                     "@view"   => _view,
                     _ => throw new ArgumentException($"Unknown variable '{name}'")
                 };
-        }
-
-        #endregion
-
-        #region ActionCommandValueConverter
-
-        private class ActionCommandValueConverter : IValueConverter
-        {
-            private readonly ActionBuilder _builder;
-
-            public ActionCommandValueConverter(ActionBuilder builder)
-            {
-                _builder = builder;
-            }
-
-            public object Convert(
-                object      value,
-                Type        targetType,
-                object      parameter, 
-                CultureInfo culture)
-            {
-                return value != null
-                     ? new ActionCommand(_builder.Build(value))
-                     : null;
-            }
-
-            public object ConvertBack(
-                object      value,
-                Type        targetType,
-                object      parameter,
-                CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
         }
 
         #endregion
@@ -196,6 +154,32 @@
 
             public bool CanExecute(object parameter) => _binding.CanExecute();
             public void Execute(object parameter) => _binding.Execute();
+        }
+
+        #endregion
+
+        #region ActionCommandValueConverter
+
+        private class ActionCommandValueConverter : IValueConverter
+        {
+            private readonly ActionBuilder _builder;
+
+            public ActionCommandValueConverter(ActionBuilder builder)
+            {
+                _builder = builder;
+            }
+
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return value != null
+                     ? new ActionCommand(_builder.Build(value))
+                     : null;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         #endregion
