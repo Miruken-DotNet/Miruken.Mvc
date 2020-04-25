@@ -40,6 +40,11 @@
             */
         }
 
+        public bool CanAbout()
+        {
+            return true;
+        }
+
         public void About()
         {
             Push<AboutController>(IO.Modal(), ctrl => ctrl.About());

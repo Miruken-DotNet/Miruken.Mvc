@@ -35,11 +35,7 @@
                 .GetService(typeof(IRootObjectProvider));
 
             binding.Converter = new ActionCommandValueConverter(
-                new ActionScope(action)
-                {
-                    Target = target,
-                    View   = rootObjectProvider?.RootObject
-                });
+                new ActionBuilder(action, target, rootObjectProvider?.RootObject));
 
             return binding;
         }
@@ -56,18 +52,47 @@
             return binding.ProvideValue(serviceProvider);
         }
 
-        public class ActionScope
-        {
-            private readonly string _actionExpr;
-            private readonly string _canActionExpr;
-            private readonly string _canActionChanged;
-            private object _controller;
-            private EventInfo _canActionChangedEvent;
+        #region ActionBuilder
 
-            public ActionScope(string action)
+        private class ActionBuilder
+        {
+            private readonly string _action;
+            private readonly object _target;
+            private readonly object _view;
+
+            public ActionBuilder(string action, object target, object view)
             {
-                if (action == null)
-                    throw new ArgumentNullException(nameof(action));
+                _action = action;
+                _target = target;
+                _view   = view;
+            }
+
+            public ActionBinding Build(object controller) =>
+                new ActionBinding(_action, controller, _target, _view);
+        }
+
+        #endregion
+
+        #region ActionBinding
+
+        private class ActionBinding
+        {
+            private readonly object _controller;
+            private readonly object _target;
+            private readonly object _view;
+            private readonly string _actionExpr;
+            private EventInfo _canActionChangedEvent;
+            private string _canActionExpr;
+
+            public ActionBinding(
+                string action,
+                object controller,
+                object target,
+                object view)
+            {
+                _controller = controller;
+                _target     = target;
+                _view       = view;
 
                 if (!action.EndsWith(")")) action += "()";
                 var canAction = "Can" + char.ToUpper(action[0]) + action.Substring(1);
@@ -75,42 +100,29 @@
                 _actionExpr    = $"@ctrl.{action}";
                 _canActionExpr = $"@ctrl.{canAction}";
 
-                var startParen = canAction.IndexOf("(", StringComparison.Ordinal);
-                _canActionChanged = canAction.Substring(0, startParen) + "Changed";
+                var startParen       = canAction.IndexOf("(", StringComparison.Ordinal);
+                var canActionChanged = canAction.Substring(0, startParen) + "Changed";
+                _canActionChangedEvent = _controller.GetType()
+                    .GetEvent(canActionChanged);
             }
-
-            public object Controller
-            {
-                get => _controller;
-                set
-                {
-                    _controller = value;
-                    if (value != null)
-                    {
-                        _canActionChangedEvent = _controller.GetType()
-                            .GetEvent(_canActionChanged);
-                    }
-                }
-            }
-
-            public object Target { get; set; }
-            public object View   { get; set; }
 
             public event EventHandler CanExecuteChanged
             {
-                add => _canActionChangedEvent?.AddEventHandler(Controller, value);
-                remove => _canActionChangedEvent?.RemoveEventHandler(Controller, value);
+                add => _canActionChangedEvent?.AddEventHandler(_controller, value);
+                remove => _canActionChangedEvent?.RemoveEventHandler(_controller, value);
             }
 
             public bool CanExecute()
             {
+                if (_canActionExpr == null) return true;
                 try
                 {
                     return (bool) Parser.Eval(_canActionExpr, GetVariable);
                 }
                 catch
                 {
-                    // CanExecute not available
+                    _canActionExpr         = null;
+                    _canActionChangedEvent = null;
                     return true;
                 }
             }
@@ -122,22 +134,24 @@
 
             private object GetVariable(string name) => name switch
                 {
-                    "@ctrl"   => Controller,
-                    "@target" => Target,
-                    "@view"   => View,
+                    "@ctrl"   => _controller,
+                    "@target" => _target,
+                    "@view"   => _view,
                     _ => throw new ArgumentException($"Unknown variable '{name}'")
                 };
         }
+
+        #endregion
 
         #region ActionCommandValueConverter
 
         private class ActionCommandValueConverter : IValueConverter
         {
-            private readonly ActionScope _scope;
+            private readonly ActionBuilder _builder;
 
-            public ActionCommandValueConverter(ActionScope scope)
+            public ActionCommandValueConverter(ActionBuilder builder)
             {
-                _scope = scope;
+                _builder = builder;
             }
 
             public object Convert(
@@ -146,9 +160,9 @@
                 object      parameter, 
                 CultureInfo culture)
             {
-                if (value == null) return null;
-                _scope.Controller = value;
-                return new ActionCommand(_scope);
+                return value != null
+                     ? new ActionCommand(_builder.Build(value))
+                     : null;
             }
 
             public object ConvertBack(
@@ -167,22 +181,21 @@
 
         private class ActionCommand : ICommand
         {
-            private readonly ActionScope _scope;
+            private readonly ActionBinding _binding;
 
-            public ActionCommand(ActionScope scope)
+            public ActionCommand(ActionBinding binding)
             {
-                _scope = scope;
+                _binding = binding;
             }
 
             public event EventHandler CanExecuteChanged
             {
-                add => _scope.CanExecuteChanged += value;
-                remove => _scope.CanExecuteChanged -= value;
+                add => _binding.CanExecuteChanged += value;
+                remove => _binding.CanExecuteChanged -= value;
             }
 
-            public bool CanExecute(object parameter) => _scope.CanExecute();
-
-            public void Execute(object parameter) => _scope.Execute();
+            public bool CanExecute(object parameter) => _binding.CanExecute();
+            public void Execute(object parameter) => _binding.Execute();
         }
 
         #endregion
