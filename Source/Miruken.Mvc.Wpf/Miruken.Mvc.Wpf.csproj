@@ -20,9 +20,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Miruken" Version="4.1.6-Alpha.6" />
-        <PackageReference Include="WpfScreenHelper" Version="0.4.0" />
-        <PackageReference Include="NReco.LambdaParser" Version="1.0.11" />
+        <PackageReference Include="Miruken" Version="4.1.6-Alpha.9" />
+        <PackageReference Include="WpfScreenHelper" Version="1.0.0" />
+        <PackageReference Include="NReco.LambdaParser" Version="1.0.12" />
     </ItemGroup>
 
     <ItemGroup>
